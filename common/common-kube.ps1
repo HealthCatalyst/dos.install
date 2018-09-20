@@ -244,7 +244,7 @@ function global:ReadYamlAndReplaceTokens([Parameter(Mandatory = $true)][Validate
         $content = $response | Select-Object -Expand Content
     }
     else {
-        $content = $(Get-Content -Path "$baseUrl/$templateFile")
+        $content = $(Get-Content -Raw -Path "$baseUrl/$templateFile")
     }
 
     $content = $(Merge-Tokens $content $tokens)
@@ -401,7 +401,9 @@ function global:DeployYamlFile([Parameter(Mandatory = $true)][ValidateNotNullOrE
     # $resources can be null
     [hashtable]$Return = @{} 
 
-    $(ReadYamlAndReplaceTokens -baseUrl $baseUrl -templateFile $templateFile -local $local -tokens $tokens).Content | kubectl apply -f -
+    $content = $(ReadYamlAndReplaceTokens -baseUrl $baseUrl -templateFile $templateFile -local $local -tokens $tokens).Content
+    Write-Host $content
+    $content | kubectl apply -f -
     $result = $?
     if ($result -ne $True) {
         throw "Error applying kubernetes template: $templateFile"

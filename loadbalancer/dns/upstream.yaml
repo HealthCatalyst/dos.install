@@ -9,3 +9,4 @@ metadata:
 data:
   upstreamNameservers: |
     ["8.8.8.8"]
+---

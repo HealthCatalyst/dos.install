@@ -25,8 +25,8 @@ $InformationPreference = "Continue"
 
 if ($prerelease) {
     if($local){
-        #$GITHUB_URL = "."
-        $GITHUB_URL = "https://raw.githubusercontent.com/HealthCatalyst/dos.install/master"
+        $GITHUB_URL = "."
+        # $GITHUB_URL = "https://raw.githubusercontent.com/HealthCatalyst/dos.install/master"
     }
     else {
         $GITHUB_URL = "https://raw.githubusercontent.com/HealthCatalyst/dos.install/master"
@@ -150,7 +150,7 @@ while ($userinput -ne "q") {
             $config = $(ReadConfigFile).Config
             Write-Host $config
         
-            CreateACSCluster -baseUrl $GITHUB_URL -config $config
+            CreateACSCluster -baseUrl $GITHUB_URL -config $config -useAKS $True
             ConfigureKubernetes -config $config
             SetupAzureLoadBalancer -baseUrl $GITHUB_URL -config $config -local $local
             WriteDNSCommands
