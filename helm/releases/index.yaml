@@ -1,13 +1,13 @@
 apiVersion: v1
 entries:
-  dos-realtime:
+  fabricrealtime:
   - apiVersion: v1
     appVersion: "1.0"
-    created: 2018-09-24T14:25:15.9632303-07:00
+    created: 2018-09-24T14:48:16.7695392-07:00
     description: A Helm chart for DOS Realtime
-    digest: da9fd255c57a046ca6beae1d39bd378fd291f45a71e75ffde6b49d857885de53
-    name: dos-realtime
+    digest: bf98e0869f0036d9afacf0aefe51f33108d57fe90c34c067198dd0f6a4b67f8e
+    name: fabricrealtime
     urls:
-    - https://raw.githubusercontent.com/HealthCatalyst/dos.install/master/helm/releases/dos-realtime-0.1.1.tgz
+    - https://raw.githubusercontent.com/HealthCatalyst/dos.install/master/helm/releases/fabricrealtime-0.1.1.tgz
     version: 0.1.1
-generated: 2018-09-24T14:25:15.9622289-07:00
+generated: 2018-09-24T14:48:16.7675449-07:00
