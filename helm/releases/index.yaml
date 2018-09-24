@@ -1,13 +1,13 @@
 apiVersion: v1
 entries:
-  dos.realtime:
+  dos-realtime:
   - apiVersion: v1
     appVersion: "1.0"
-    created: 2018-09-24T14:07:15.8805123-07:00
+    created: 2018-09-24T14:25:15.9632303-07:00
     description: A Helm chart for DOS Realtime
-    digest: 143b4a70c82f7c6f9feef4ef91566c4a27d6a5b8aee5b3f877954d009b5355eb
-    name: dos.realtime
+    digest: da9fd255c57a046ca6beae1d39bd378fd291f45a71e75ffde6b49d857885de53
+    name: dos-realtime
     urls:
-    - https://raw.githubusercontent.com/HealthCatalyst/dos.install/master/helm/releases/dos.realtime-0.1.1.tgz
+    - https://raw.githubusercontent.com/HealthCatalyst/dos.install/master/helm/releases/dos-realtime-0.1.1.tgz
     version: 0.1.1
-generated: 2018-09-24T14:07:15.8795022-07:00
+generated: 2018-09-24T14:25:15.9622289-07:00
