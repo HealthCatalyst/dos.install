@@ -1,0 +1,22 @@
+apiVersion: v1
+entries:
+  realtime:
+  - apiVersion: v1
+    appVersion: "1.0"
+    created: 2018-09-24T13:56:18.6889962-07:00
+    description: A Helm chart for DOS Realtime
+    digest: 96606ab7d49f21ab3bb3b6d601a7939f8d8196c78267325dc8ec6b6e045ccc9d
+    name: realtime
+    urls:
+    - https://raw.githubusercontent.com/HealthCatalyst/dos.install/master/helm/releases/realtime-0.1.1.tgz
+    version: 0.1.1
+  - apiVersion: v1
+    appVersion: "1.0"
+    created: 2018-09-24T13:56:18.6889962-07:00
+    description: A Helm chart for Kubernetes
+    digest: 3c60b2fca464fb4fe2a894d2d11992c1cee30b0d62f8056e0bdf6ff596a6e6a4
+    name: realtime
+    urls:
+    - https://raw.githubusercontent.com/HealthCatalyst/dos.install/master/helm/releases/realtime-0.1.0.tgz
+    version: 0.1.0
+generated: 2018-09-24T13:56:18.6879966-07:00
