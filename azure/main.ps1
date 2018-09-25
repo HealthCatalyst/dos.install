@@ -150,7 +150,7 @@ while ($userinput -ne "q") {
             $config = $(ReadConfigFile).Config
             Write-Host $config
         
-            CreateACSCluster -baseUrl $GITHUB_URL -config $config -useAKS $True
+            CreateACSCluster -baseUrl $GITHUB_URL -config $config -useAKS $False
             ConfigureKubernetes -config $config
             SetupAzureLoadBalancer -baseUrl $GITHUB_URL -config $config -local $local
             WriteDNSCommands
