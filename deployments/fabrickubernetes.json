@@ -1,13 +1,13 @@
 {
     "$schema": "https://raw.githubusercontent.com/HealthCatalyst/dos.install/master/deployments/schema.json",
     "kubectl": {
-        "version": "1.10.0"
+        "version": "1.11.0"
     },
     "kubernetes": {
-        "version": "1.10.0"
+        "version": "1.11.2"
     },
     "azcli": {
-        "version": "2.0.30"
+        "version": "2.0.45"
     },
     "azure": {
         "subscription": "Health Catalyst - Fabric",

@@ -748,7 +748,7 @@ function mountSMBWithParams([Parameter(Mandatory=$true)][ValidateNotNullOrEmpty(
     # sudo mount -t cifs $pathToShare /mnt/data -o vers=2.1,username=<storage-account-name>,password=<storage-account-key>,dir_mode=0777,file_mode=0777,serverino
 
     # remove previous entry for this drive
-    grep -v "/mnt/data" /etc/fstab | sudo tee /etc/fstab > /dev/null
+    grep -v "/mnt/data" /etc/fstab | sudo tee /etc/fstab
 
     sudo umount "/mnt/data"
 
@@ -760,7 +760,7 @@ function mountSMBWithParams([Parameter(Mandatory=$true)][ValidateNotNullOrEmpty(
         if($result -ne 0){
             throw "Unable to mount $pathToShare with username=$username,domain=$domain exitcode=$result"
         }
-        echo "$pathToShare /mnt/data cifs nofail,vers=2.1,username=$username,domain=$domain,pass=$password,dir_mode=0777,file_mode=0777" | sudo tee -a /etc/fstab > /dev/null
+        echo "$pathToShare /mnt/data cifs nofail,vers=2.1,username=$username,domain=$domain,pass=$password,dir_mode=0777,file_mode=0777" | sudo tee -a /etc/fstab
     }
     else {
         WriteToLog "Mounting as non-UNC folder"
@@ -769,7 +769,7 @@ function mountSMBWithParams([Parameter(Mandatory=$true)][ValidateNotNullOrEmpty(
         if($result -ne 0){
             throw "Unable to mount $pathToShare with username=$username exitcode=$result"
         }
-        echo "$pathToShare /mnt/data cifs nofail,vers=2.1,username=$username,pass=$password,dir_mode=0777,file_mode=0777,serverino" | sudo tee -a /etc/fstab > /dev/null       
+        echo "$pathToShare /mnt/data cifs nofail,vers=2.1,username=$username,pass=$password,dir_mode=0777,file_mode=0777,serverino" | sudo tee -a /etc/fstab      
     }
 
     WriteToLog "Mounting all shares"

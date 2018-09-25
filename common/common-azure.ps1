@@ -1,13 +1,17 @@
 # This file contains common functions for Azure
 # 
-$versionazurecommon = "2018.08.24.02"
+$versionazurecommon = "2018.09.19.01"
 
 Write-Information -MessageData "---- Including common-azure.ps1 version $versionazurecommon -----"
 function global:GetCommonAzureVersion() {
     return $versionazurecommon
 }
 
-function global:CreateACSCluster([Parameter(Mandatory = $true)][ValidateNotNullOrEmpty()][string] $baseUrl, [Parameter(Mandatory = $true)][ValidateNotNull()] $config, [ValidateNotNull()][bool] $useAKS) {
+function global:CreateACSCluster(
+    [Parameter(Mandatory = $true)][ValidateNotNullOrEmpty()][string] $baseUrl, 
+    [Parameter(Mandatory = $true)][ValidateNotNull()] $config, 
+    [ValidateNotNull()][bool] $useAKS) 
+{
 
     $logfile = "$(get-date -f yyyy-MM-dd-HH-mm)-createacscluster.txt"
     WriteToConsole "Logging to $logfile"
@@ -252,22 +256,24 @@ function global:CreateACSCluster([Parameter(Mandatory = $true)][ValidateNotNullO
 
     # sometimes powershell starts in a strange folder where the current user doesn't have permissions
     # so CD into the temp folder to avoid errors
-    Set-Location -Path $AKS_LOCAL_TEMP_FOLDER
+    # Set-Location -Path $AKS_LOCAL_TEMP_FOLDER
 
     $output = "$AKS_LOCAL_TEMP_FOLDER\acs.json"
-    Write-Host "Downloading parameters file from github to $output"
     if (Test-Path $output) {
         Remove-Item $output
     }
 
     # download the template file from github
+    Write-Host "Downloading template file: $baseUrl/azure/$templateFile and saving to $output"
+
     if ($baseUrl.StartsWith("http")) { 
-        Write-Host "Downloading file: $baseUrl/azure/$templateFile"
         Invoke-WebRequest -Uri "$baseUrl/azure/$templateFile" -OutFile $output -ContentType "text/plain; charset=utf-8"
     }
     else {
         Copy-Item -Path "$baseUrl/azure/$templateFile" -Destination "$output"
     }
+
+    Write-Host "Replacing values in $output"
 
     # subnet CIDR to mask
     # https://doc.m0n0.ch/quickstartpc/intro-CIDR.html
@@ -301,8 +307,7 @@ function global:CreateACSCluster([Parameter(Mandatory = $true)][ValidateNotNullO
         Foreach-Object {$_ -replace 'REPLACE-WINDOWS-PASSWORD', "${WINDOWS_PASSWORD}"}  | 
         Foreach-Object {$_ -replace 'REPLACE_VNET_CIDR', "${AKS_SUBNET_CIDR}"}  
 
-    
-
+    Write-Host "Saving $output"
     # have to do it this way instead of Outfile so we can get a UTF-8 file without BOM
     # from https://stackoverflow.com/questions/5596982/using-powershell-to-write-a-file-in-utf-8-without-the-bom
     $Utf8NoBomEncoding = New-Object System.Text.UTF8Encoding $False
@@ -310,11 +315,14 @@ function global:CreateACSCluster([Parameter(Mandatory = $true)][ValidateNotNullO
 
     $acsoutputfolder = "$AKS_LOCAL_TEMP_FOLDER\_output\$dnsNamePrefix"
     if (!(Test-Path -Path "$acsoutputfolder")) {
+        Write-Host "Creating folder $acsoutputfolder"
         New-Item -ItemType directory -Path "$acsoutputfolder"
     }
 
-    Write-Host "Deleting everything in the output folder"
-    Remove-Item -Path $acsoutputfolder -Recurse -Force
+    if (!$useAKS) {
+        Write-Host "Deleting everything in the output folder"
+        Remove-Item -Path $acsoutputfolder -Recurse -Force
+    }
 
     # to get valid kubernetes versions: acs-engine orchestrators --orchestrator kubernetes
 
@@ -379,7 +387,10 @@ function global:CreateACSCluster([Parameter(Mandatory = $true)][ValidateNotNullO
 
     $deploymentfile = "$acsoutputfolder\azuredeploy.json"
     if ($useAKS) {
-        $deploymentfile = "aks\kube-managed.json"
+        Write-Host "Copying $baseUrl/azure/aks/kube-managed.json to $deploymentfile"
+        Copy-Item -Path "$baseUrl/azure/aks/kube-managed.json" -Destination "$deploymentfile"
+        Write-Host "Copying $output to $acsoutputfolder\azuredeploy.parameters.json"
+        Copy-Item -Path "$output" -Destination "$acsoutputfolder\azuredeploy.parameters.json"
     }
     
     Write-Host "Validating deployment"
@@ -459,9 +470,14 @@ function global:CreateACSCluster([Parameter(Mandatory = $true)][ValidateNotNullO
         (Get-Content "$kubeconfigjsonfile").replace("$publicNameOfMasterVM", "$privateIpOfMasterVM") | Set-Content "$kubeconfigjsonfile"    
     }
 
-    Copy-Item -Path "$kubeconfigjsonfile" -Destination "$env:userprofile\.kube\config"
+    if($useAKS){
+        az aks get-credentials --name $AKS_CLUSTER_NAME --resource-group $AKS_PERS_RESOURCE_GROUP
+    }
+    else {
+        Copy-Item -Path "$kubeconfigjsonfile" -Destination "$env:userprofile\.kube\config"
 
-    Copy-Item -Path "$kubeconfigjsonfile" -Destination "$AKS_LOCAL_TEMP_FOLDER\.kube\config"
+        Copy-Item -Path "$kubeconfigjsonfile" -Destination "$AKS_LOCAL_TEMP_FOLDER\.kube\config"
+    }
 
     # If ((Get-Content "$($env:windir)\system32\Drivers\etc\hosts" ) -notcontains "127.0.0.1 hostname1")  
     #  {ac -Encoding UTF8  "$($env:windir)\system32\Drivers\etc\hosts" "127.0.0.1 hostname1" }
@@ -763,6 +779,7 @@ function global:SetupAzureLoadBalancer([Parameter(Mandatory = $true)][ValidateNo
     elseif ("$($config.ingress.external.type)" -ne "vnetonly") {
         Write-Host "Setting up a public load balancer"
     
+        $ipResourceGroup = $AKS_PERS_RESOURCE_GROUP
         $externalip = az network public-ip show -g $AKS_PERS_RESOURCE_GROUP -n IngressPublicIP --query "ipAddress" -o tsv;
         if ([string]::IsNullOrWhiteSpace($externalip)) {
             az network public-ip create -g $AKS_PERS_RESOURCE_GROUP -n IngressPublicIP --location $AKS_PERS_LOCATION --allocation-method Static
