@@ -780,7 +780,6 @@ function global:SetupAzureLoadBalancer([Parameter(Mandatory = $true)][ValidateNo
         Write-Host "Setting up a public load balancer"
     
         $ipResourceGroup = $AKS_PERS_RESOURCE_GROUP
-        if($Use)
         $externalip = az network public-ip show -g $AKS_PERS_RESOURCE_GROUP -n IngressPublicIP --query "ipAddress" -o tsv;
         if ([string]::IsNullOrWhiteSpace($externalip)) {
             az network public-ip create -g $AKS_PERS_RESOURCE_GROUP -n IngressPublicIP --location $AKS_PERS_LOCATION --allocation-method Static
