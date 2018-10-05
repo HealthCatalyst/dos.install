@@ -22,9 +22,6 @@ spec:
       labels:
         app: dnstester
     spec:
-      dnsConfig:
-        options:
-          - name: single-request-reopen    
       containers:
       - image: healthcatalyst/fabric.docker.dnstester:1
         imagePullPolicy: Always
