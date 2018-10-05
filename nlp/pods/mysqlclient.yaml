@@ -49,6 +49,8 @@ spec:
             value: monitor
           - name: SLEEPINTERVAL
             value: "10"   
+          - name: INTERVALBETWEENMESSAGES
+            value: "10"
           - name: ENVNAME
             value: $CUSTOMERID$
         resources:
