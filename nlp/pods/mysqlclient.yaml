@@ -48,9 +48,9 @@ spec:
           - name: COMMAND_TO_RUN
             value: monitor
           - name: SLEEPINTERVAL
-            value: "10"   
+            value: "300"
           - name: INTERVALBETWEENMESSAGES
-            value: "10"
+            value: "3600"
           - name: ENVNAME
             value: $CUSTOMERID$
         resources:
