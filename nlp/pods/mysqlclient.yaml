@@ -22,6 +22,9 @@ spec:
       labels:
         app: mysqlclient
     spec:
+      dnsConfig:
+        options:
+          - name: single-request-reopen    
       containers:
       - image: healthcatalyst/fabric.mysqlclient:1
         # command:
@@ -55,4 +58,3 @@ spec:
       - name: mysql-persistent-storage-backup
         persistentVolumeClaim:
           claimName: nlp.mysqlbackup
----

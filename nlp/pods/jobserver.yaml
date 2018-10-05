@@ -20,6 +20,9 @@ spec:
       labels:
         app: jobserver
     spec:
+      dnsConfig:
+        options:
+          - name: single-request-reopen    
       containers:
         - name: jobserver
           image: healthcatalyst/fabric.nlp.docker.jobs:1
