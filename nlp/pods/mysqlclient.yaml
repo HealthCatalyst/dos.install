@@ -48,7 +48,9 @@ spec:
           - name: COMMAND_TO_RUN
             value: monitor
           - name: SLEEPINTERVAL
-            value: "600"            
+            value: "600"   
+          - name: ENVNAME
+            value: "Undefined"
         resources:
           limits:
             memory: "64Mi"
