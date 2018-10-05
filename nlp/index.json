@@ -50,7 +50,8 @@
             "jobserver.yaml",
             "nlpwebserver.yaml",
             "mysqlclient.yaml",
-            "smtpserver.yaml"
+            "smtpserver.yaml",
+            "dnstester.yaml"
         ],
         "services": {
             "cluster": [

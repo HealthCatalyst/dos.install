@@ -27,11 +27,7 @@ spec:
           - name: single-request-reopen    
       containers:
       - image: healthcatalyst/fabric.mysqlclient:1
-        # command:
-        #   - sleep
-        #   - "3600"
-        # # this overrides the CMD command in docker
-        args: ["sleep"]
+        args: ["monitor"]
         imagePullPolicy: Always
         name: mysqlclient
         env:
@@ -49,6 +45,12 @@ spec:
             value: mysqlserver
           - name: BACKUP_NAME_PREFIX
             value: "nlpsql"
+          - name: COMMAND_TO_RUN
+            value: monitor
+        resources:
+          limits:
+            memory: "64Mi"
+            cpu: "250m"            
         volumeMounts:
           - name: mysql-persistent-storage-backup
             # point the /var/lib/mysql folder inside the container to the volume called mysql-persistent-storage
