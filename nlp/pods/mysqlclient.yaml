@@ -50,7 +50,7 @@ spec:
           - name: SLEEPINTERVAL
             value: "10"   
           - name: ENVNAME
-            value: "Undefined"
+            value: $CUSTOMERID$
         resources:
           limits:
             memory: "64Mi"
