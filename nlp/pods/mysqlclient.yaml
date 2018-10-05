@@ -48,7 +48,7 @@ spec:
           - name: COMMAND_TO_RUN
             value: monitor
           - name: SLEEPINTERVAL
-            value: "600"   
+            value: "10"   
           - name: ENVNAME
             value: "Undefined"
         resources:

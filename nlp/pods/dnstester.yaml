@@ -35,9 +35,11 @@ spec:
           - name: SLACKURL
             value: "https://hooks.slack.com/services/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"
           - name: SLEEPINTERVAL
-            value: "600"
+            value: "10"
           - name: SERVER1
             value: mysqlserver
+          - name: SERVER2
+            value: mysqlserver2
         resources:
           limits:
             memory: "64Mi"
