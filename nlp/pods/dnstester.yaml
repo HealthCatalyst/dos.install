@@ -37,8 +37,6 @@ spec:
             value: "10"
           - name: SERVER1
             value: mysqlserver
-          - name: SERVER2
-            value: mysqlserver2
         resources:
           limits:
             memory: "64Mi"
