@@ -47,6 +47,8 @@ spec:
             value: "nlpsql"
           - name: COMMAND_TO_RUN
             value: monitor
+          - name: SLEEPINTERVAL
+            value: "600"            
         resources:
           limits:
             memory: "64Mi"
