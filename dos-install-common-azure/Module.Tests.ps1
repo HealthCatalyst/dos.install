@@ -19,7 +19,7 @@ Describe "$module Tests" {
         "$here\$module.psd1" | Should Exist
     }
     It "$module folder has functions" {
-        "$functionFolder\*.ps1" | Should Exist
+        "$functionFolder" | Should Exist
     }
     It "$module is valid Powershell Code" {
         $psFile = Get-Content -Path "$here\$module.psm1" -ErrorAction Stop
@@ -32,11 +32,11 @@ Describe "$module Tests" {
 
     foreach($file in $files)
     {
-        Write-Host "file: $file"
+        # Write-Host "file: $file"
         [string]$function = $file
         $function = $function.Replace($functionFolder,"")
         $function = $function.Replace(".ps1","")
-        Write-Host "function: $function"
+        # Write-Host "function: $function"
 
         if(!$function.EndsWith("Tests")){
 

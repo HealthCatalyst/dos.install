@@ -6,7 +6,6 @@ Get-Module "$module" | Remove-Module -Force
 
 Import-Module "$here\$module.psm1" -Force
 
-
 # $Credential = Get-Credential -UserName "$env:USERNAME@$env:USERDNSDOMAIN" -Message "login please" 
 # Connect-AzureRmAccount -Credential $Credential
 LoginToAzure
@@ -19,7 +18,7 @@ Describe "$module Tests" {
         "$here\$module.psd1" | Should Exist
     }
     It "$module folder has functions" {
-        "$functionFolder\*.ps1" | Should Exist
+        "$functionFolder" | Should Exist
     }
     It "$module is valid Powershell Code" {
         $psFile = Get-Content -Path "$here\$module.psm1" -ErrorAction Stop

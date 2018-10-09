@@ -258,12 +258,15 @@ function SetupLoadBalancer() {
         -internalSubnetName "$internalSubnetName" -internalIp "$internalIp" `
         -local $local
 
+    
     # setting up traefik
     # https://github.com/containous/traefik/blob/master/docs/user-guide/kubernetes.md
 
+    Write-Verbose "Calling GetLoadBalancerIPs"
     $loadBalancerIPResult = GetLoadBalancerIPs
     $EXTERNAL_IP = $loadBalancerIPResult.ExternalIP
     $INTERNAL_IP = $loadBalancerIPResult.InternalIP
+    Write-Verbose "Back from GetLoadBalancerIPs"
 
     if ($($config.ingress.fixloadbalancer)) {
         FixLoadBalancers -resourceGroup $AKS_PERS_RESOURCE_GROUP

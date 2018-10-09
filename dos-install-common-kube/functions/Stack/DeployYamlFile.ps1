@@ -50,7 +50,7 @@ function DeployYamlFile() {
     [hashtable]$Return = @{} 
 
     $content = $(ReadYamlAndReplaceTokens -baseUrl $baseUrl -templateFile $templateFile -local $local -tokens $tokens).Content
-    Write-Host $content
+    Write-Verbose $content
     $content | kubectl apply -f -
     $result = $?
     if ($result -ne $True) {
