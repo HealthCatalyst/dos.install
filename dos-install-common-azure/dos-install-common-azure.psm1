@@ -1,1 +1,1 @@
-. $PSScriptRoot\SetStorageAccountNameIntoSecret.ps1
+. $PSScriptRoot\function-SetStorageAccountNameIntoSecret.ps1
