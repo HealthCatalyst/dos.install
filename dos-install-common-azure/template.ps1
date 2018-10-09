@@ -39,3 +39,5 @@ function TODO()
   Write-Verbose 'TODO: Done'
 
 }
+
+Export-ModuleMember -Function "TODO"

@@ -20,7 +20,12 @@
 
 #>
 
+# https://docs.microsoft.com/en-us/powershell/module/azurerm.resources/?view=azurermps-6.9.0
+# https://docs.microsoft.com/en-us/powershell/module/azurerm.storage/get-azurermstorageaccountkey?view=azurermps-6.9.0
+
 Import-Module AzureRM
+Import-Module AzureRM.Storage
+Import-Module AzureRM.Profile
 
 function SetStorageAccountNameIntoSecret()
 {
@@ -42,8 +47,8 @@ function SetStorageAccountNameIntoSecret()
   $storageAccountName = $(GetStorageAccountName -resourceGroup $resourceGroup).StorageAccountName
 
   Write-Host "Get storage account key"
-  $storageKey = az storage account keys list --resource-group $resourceGroup --account-name $storageAccountName --query "[0].value" --output tsv
-
+  $storageKey = (Get-AzureRmStorageAccountKey -ResourceGroupName $resourceGroup -AccountName $storageAccountName).Value[0]
+  
   # Write-Host "Storagekey: [$STORAGE_KEY]"
 
   Write-Host "Creating kubernetes secret for Azure Storage Account: azure-secret"
