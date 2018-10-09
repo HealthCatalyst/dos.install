@@ -4,4 +4,4 @@ Set-Location $naPath
 Import-Module Pester
 
 Invoke-Pester "$naPath\Module.Tests.ps1"
-# Invoke-Pester "$naPath\SetStorageAccountNameIntoSecret.Tests.ps1"
+Invoke-Pester "$naPath\function-SetStorageAccountNameIntoSecret.Tests.ps1"
