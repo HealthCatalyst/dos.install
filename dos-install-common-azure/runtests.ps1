@@ -7,5 +7,7 @@ $ErrorActionPreference = "Stop"
 Import-Module Pester
 
 Invoke-Pester "$naPath\Module.Tests.ps1"
-Invoke-Pester "$naPath\functions\function-GetStorageAccountName.Tests.ps1"
-Invoke-Pester "$naPath\functions\function-SetStorageAccountNameIntoSecret.Tests.ps1"
+
+# Storage
+Invoke-Pester "$naPath\functions\Storage\GetStorageAccountName.Tests.ps1"
+Invoke-Pester "$naPath\functions\Storage\SetStorageAccountNameIntoSecret.Tests.ps1"

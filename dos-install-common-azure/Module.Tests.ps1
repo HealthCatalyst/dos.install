@@ -19,7 +19,7 @@ Describe "$module Tests" {
         "$here\$module.psd1" | Should Exist
     }
     It "$module folder has functions" {
-        "$functionFolder\function-*.ps1" | Should Exist
+        "$functionFolder\*.ps1" | Should Exist
     }
     It "$module is valid Powershell Code" {
         $psFile = Get-Content -Path "$here\$module.psm1" -ErrorAction Stop
@@ -28,32 +28,32 @@ Describe "$module Tests" {
         $errors.Count | Should Be 0
     }
 
-    $functions = ('LoginToAzure', 'GetStorageAccountName', 'SetStorageAccountNameIntoSecret')
+    $functions = ('LoginToAzure', 'Storage\GetStorageAccountName', 'Storage\SetStorageAccountNameIntoSecret')
 
     foreach($function in $functions)
     {
         Context "Test Function $function" {
             It "$function.ps1 should exist" {
-                "$functionFolder\function-$function.ps1" | Should Exist
+                "$functionFolder\$function.ps1" | Should Exist
             }
             It "$function.ps1 should be an advanced function" {
-                "$functionFolder\function-$function.ps1" | Should Contain 'function'
-                "$functionFolder\function-$function.ps1" | Should Contain 'cmdletbinding'
-                "$functionFolder\function-$function.ps1" | Should Contain 'param'
+                "$functionFolder\$function.ps1" | Should Contain 'function'
+                "$functionFolder\$function.ps1" | Should Contain 'cmdletbinding'
+                "$functionFolder\$function.ps1" | Should Contain 'param'
             }
             It "$function.ps1 should contain Write-Verbose blocks" {
-                "$functionFolder\function-$function.ps1" | Should Contain 'Write-Verbose'
+                "$functionFolder\$function.ps1" | Should Contain 'Write-Verbose'
             }
             It "$function.ps1 is valid Powershell Code" {
-                $psFile = Get-Content -Path "$functionFolder\function-$function.ps1" -ErrorAction Stop
+                $psFile = Get-Content -Path "$functionFolder\$function.ps1" -ErrorAction Stop
                 $errors = $null
                 $null = [System.Management.Automation.PSParser]::Tokenize($psFile, [ref]$errors)
                 $errors.Count | Should Be 0
             }            
         }
         Context "$function has tests" {
-            It "function-$function.Tests.ps1 should exist" {
-                "$functionFolder\function-$function.Tests.ps1" | Should Exist
+            It "$function.Tests.ps1 should exist" {
+                "$functionFolder\$function.Tests.ps1" | Should Exist
             }
         }
     }
