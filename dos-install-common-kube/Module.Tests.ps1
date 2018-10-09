@@ -1,6 +1,6 @@
 $here = Split-Path -Parent $MyInvocation.MyCommand.Path
 $functionFolder = "$here\functions"
-$module = "dos-install-common-azure"
+$module = "dos-install-common-kube"
 
 Get-Module "$module" | Remove-Module -Force
 

@@ -7,12 +7,10 @@ Import-Module "..\dos-install-common-kube"
 
 . $PSScriptRoot\functions\LoginToAzure.ps1
 
+. $PSScriptRoot\functions\InstallStack.ps1
+
 # Subscription
 . $PSScriptRoot\functions\Subscription\SetCurrentAzureSubscription.ps1
-
-# KubernetesSecrets
-. $PSScriptRoot\functions\KubernetesSecrets\CreateSecretWithMultipleValues.ps1
-. $PSScriptRoot\functions\KubernetesSecrets\DeleteSecret.ps1
 
 # Storage
 . $PSScriptRoot\functions\Storage\GetStorageAccountName.ps1
