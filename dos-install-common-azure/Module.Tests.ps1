@@ -28,7 +28,13 @@ Describe "$module Tests" {
         $errors.Count | Should Be 0
     }
 
-    $functions = ('LoginToAzure', 'Storage\GetStorageAccountName', 'Storage\SetStorageAccountNameIntoSecret')
+    $functions = (
+    'LoginToAzure',
+    'KubernetesSecrets\CreateSecretWithMultipleValues',
+    'KubernetesSecrets\DeleteSecret',
+    'Storage\GetStorageAccountName', 
+    'Storage\SetStorageAccountNameIntoSecret', 
+    'LoadBalancer\SetupLoadBalancer')
 
     foreach($function in $functions)
     {

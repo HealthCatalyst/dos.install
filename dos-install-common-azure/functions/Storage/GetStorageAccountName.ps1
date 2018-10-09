@@ -46,3 +46,5 @@ function GetStorageAccountName() {
     Write-Verbose 'GetStorageAccountName: Done'
     return $Return
 }
+
+Export-ModuleMember -Function "GetStorageAccountName"

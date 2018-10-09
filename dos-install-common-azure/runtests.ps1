@@ -1,13 +1,24 @@
-$naPath = 'C:\Catalyst\git\dos.install\dos-install-common-azure'
-Set-Location $naPath
+$here = Split-Path -Parent $MyInvocation.MyCommand.Path
 
-$VerbosePreference = "continue"
+# Set-Location $naPath
+
 $ErrorActionPreference = "Stop"
 
 Import-Module Pester
 
-Invoke-Pester "$naPath\Module.Tests.ps1"
+$VerbosePreference = "continue"
+
+$module = "dos-install-common-azure"
+Get-Module "$module" | Remove-Module -Force
+
+Import-Module "$here\$module.psm1" -Force
+
+$module = Get-Module -Name "dos-install-common-azure"
+$module
+$module | Select-Object *
+
+Invoke-Pester "$here\Module.Tests.ps1"
 
 # Storage
-Invoke-Pester "$naPath\functions\Storage\GetStorageAccountName.Tests.ps1"
-Invoke-Pester "$naPath\functions\Storage\SetStorageAccountNameIntoSecret.Tests.ps1"
+Invoke-Pester "$here\functions\Storage\GetStorageAccountName.Tests.ps1"
+Invoke-Pester "$here\functions\Storage\SetStorageAccountNameIntoSecret.Tests.ps1"

@@ -63,7 +63,27 @@ $mockConfig = @"
 # end region
 
 Describe "$filename Tests" {
-    It "sets secret" {
-        SetStorageAccountNameIntoSecret -config $mockConfig | Should Be $true
+    Context "Unit Tests" {
+
+        It "Sets Secret" {
+            mock -CommandName "GetStorageAccountName" -MockWith {
+                return "foo"
+            }
+            mock -CommandName "AzureRmStorageAccountKey" -MockWith {
+                return "mykey"
+            }
+            mock -CommandName "DeleteSecret" -MockWith {
+
+            }
+            mock -CommandName "CreateSecretWithMultipleValues" -MockWith {
+                
+            }
+        }
+    }
+
+    Context "Integration Tests" {
+        It "sets secret" {
+            SetStorageAccountNameIntoSecret -config $mockConfig | Should Be $true
+        }    
     }
 }

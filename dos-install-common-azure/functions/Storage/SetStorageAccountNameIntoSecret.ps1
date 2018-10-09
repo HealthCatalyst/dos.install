@@ -54,13 +54,12 @@ function SetStorageAccountNameIntoSecret()
   Write-Host "Creating kubernetes secret for Azure Storage Account: azure-secret"
   $secretname = "azure-secret"
   $namespace = "default"
-  if (![string]::IsNullOrWhiteSpace($(kubectl get secret $secretname -n $namespace -o jsonpath='{.data}' --ignore-not-found=true))) {
-      kubectl delete secret $secretname -n $namespace
-  }
-  kubectl create secret generic $secretname -n $namespace --from-literal=resourcegroup="${resourceGroup}" --from-literal=azurestorageaccountname="${storageAccountName}" --from-literal=azurestorageaccountkey="${storageKey}"
 
+  DeleteSecret -secretname $secretname -namespace $namespace
+
+  CreateSecretWithMultipleValues -secretname $secretname -namespace $namespace -secret1 "resourcegroup=${resourceGroup}" -secret2 "azurestorageaccountname=${storageAccountName}" -secret3 "azurestorageaccountkey=${storageKey}"
+  
   Write-Verbose 'SetStorageAccountNameIntoSecret: Done'
-
 }
 
 Export-ModuleMember -Function "SetStorageAccountNameIntoSecret"
