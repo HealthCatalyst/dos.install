@@ -3,6 +3,8 @@ Import-Module AzureRM
 Import-Module AzureRM.Storage
 Import-Module AzureRM.Profile
 
+Import-Module "..\dos-install-common-kube"
+
 . $PSScriptRoot\functions\LoginToAzure.ps1
 
 # Subscription

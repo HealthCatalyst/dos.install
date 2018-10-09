@@ -56,10 +56,9 @@ function SetupLoadBalancer() {
 
     $customerid = $config.customerid
 
-    if([string]::IsNullOrWhiteSpace($customerid))
-    {
-      // https://kevinmarquette.github.io/2017-04-10-Powershell-exceptions-everything-you-ever-wanted-to-know/
-      throw "customerid is null in config"
+    if ([string]::IsNullOrWhiteSpace($customerid)) {
+        # https://kevinmarquette.github.io/2017-04-10-Powershell-exceptions-everything-you-ever-wanted-to-know/
+        throw "customerid is null in config"
     }
 
     $customerid = $customerid.ToLower().Trim()
@@ -67,6 +66,15 @@ function SetupLoadBalancer() {
 
     $ingressExternalType = $config.ingress.external.type
     $ingressInternalType = $config.ingress.internal.type
+
+    if ([string]::IsNullOrWhiteSpace($ingressExternalType)) {
+        # https://kevinmarquette.github.io/2017-04-10-Powershell-exceptions-everything-you-ever-wanted-to-know/
+        throw "ingress.external.type is null in config"
+    }
+    if ([string]::IsNullOrWhiteSpace($ingressInternalType)) {
+      # https://kevinmarquette.github.io/2017-04-10-Powershell-exceptions-everything-you-ever-wanted-to-know/
+      throw "ingress.internal.type is null in config"
+  }
     $AKS_IP_WHITELIST = $config.ingress.external.whitelist
 
     # read the vnet and subnet info from kubernetes secret
@@ -87,8 +95,7 @@ function SetupLoadBalancer() {
     # setup network security group
     $AKS_PERS_NETWORK_SECURITY_GROUP = "$($AKS_PERS_RESOURCE_GROUP.ToLower())-nsg"
 
-    if ([string]::IsNullOrWhiteSpace($(Get-AzureRmNetworkSecurityGroup -Name $AKS_PERS_NETWORK_SECURITY_GROUP -ResourceGroupName "$AKS_PERS_RESOURCE_GROUP").Name)) 
-    {
+    if ([string]::IsNullOrWhiteSpace($(Get-AzureRmNetworkSecurityGroup -Name $AKS_PERS_NETWORK_SECURITY_GROUP -ResourceGroupName "$AKS_PERS_RESOURCE_GROUP").Name)) {
 
         Write-Host "Creating the Network Security Group for the subnet"
         New-AzureRmNetworkSecurityGroup -Name $AKS_PERS_NETWORK_SECURITY_GROUP -ResourceGroupName $AKS_PERS_RESOURCE_GROUP
@@ -225,8 +232,8 @@ function SetupLoadBalancer() {
         $publicIpName = "IngressPublicIP"
         $externalip = Get-AzureRmPublicIpAddress -Name $publicIpName -ResourceGroupName $ipResourceGroup
         if ([string]::IsNullOrWhiteSpace($externalip)) {
-          $publicIp = New-AzureRmPublicIpAddress -Name $publicIpName -ResourceGroupName ipResourceGroup -AllocationMethod Static -Location $AKS_PERS_LOCATION
-          $externalip = Get-AzureRmPublicIpAddress -Name $publicIpName -ResourceGroupName $ipResourceGroup
+            $publicIp = New-AzureRmPublicIpAddress -Name $publicIpName -ResourceGroupName ipResourceGroup -AllocationMethod Static -Location $AKS_PERS_LOCATION
+            $externalip = Get-AzureRmPublicIpAddress -Name $publicIpName -ResourceGroupName $ipResourceGroup
         }  
         Write-Host "Using Public IP: [$externalip]"
     }

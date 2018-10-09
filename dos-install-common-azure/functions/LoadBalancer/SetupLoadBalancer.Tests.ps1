@@ -8,7 +8,15 @@ $mockConfig = @"
         "subscription": "Health Catalyst - Fabric",
         "resourceGroup": "fabrickubernetes",
         "location": "eastus"
-    }
+    },
+    "ingress": {
+        "external": {
+            "type": "public"
+        },
+        "internal": {
+            "type": "public"
+        }
+    }    
 }
 "@ | ConvertFrom-Json
 

@@ -52,7 +52,7 @@ function SetCurrentAzureSubscription() {
         $currentsubscriptionId = $(Get-AzureRmContext).Subscription.Id            
     }
 
-    # az account get-access-token --subscription $currentsubscriptionId
+    # # az account get-access-token --subscription $currentsubscriptionId
 
     Write-Verbose 'SetCurrentAzureSubscription: Done'
 
