@@ -30,6 +30,7 @@ Describe "$module Tests" {
 
     $functions = (
     'LoginToAzure',
+    'Subscription\SetCurrentAzureSubscription',
     'KubernetesSecrets\CreateSecretWithMultipleValues',
     'KubernetesSecrets\DeleteSecret',
     'Storage\GetStorageAccountName', 

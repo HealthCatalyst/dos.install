@@ -5,6 +5,9 @@ Import-Module AzureRM.Profile
 
 . $PSScriptRoot\functions\LoginToAzure.ps1
 
+# Subscription
+. $PSScriptRoot\functions\Subscription\SetCurrentAzureSubscription.ps1
+
 # KubernetesSecrets
 . $PSScriptRoot\functions\KubernetesSecrets\CreateSecretWithMultipleValues.ps1
 . $PSScriptRoot\functions\KubernetesSecrets\DeleteSecret.ps1
