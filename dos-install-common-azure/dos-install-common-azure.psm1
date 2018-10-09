@@ -1,4 +1,7 @@
 # Modules
+Import-Module AzureRM
+Import-Module AzureRM.Storage
+Import-Module AzureRM.Profile
 
 . $PSScriptRoot\functions\LoginToAzure.ps1
 

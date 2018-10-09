@@ -1,5 +1,6 @@
 # $here = Split-Path -Parent $MyInvocation.MyCommand.Path
-$filename = "function-SetStorageAccountNameIntoSecret.ps1"
+$filename = "SetStorageAccountNameIntoSecret.ps1"
+$module = "dos-install-common-azure"
 
 # region Mock data
 $mockConfig = @"
@@ -62,28 +63,84 @@ $mockConfig = @"
 "@ | ConvertFrom-Json
 # end region
 
-Describe "$filename Tests" {
-    Context "Unit Tests" {
+Describe "$filename Unit Tests" -Tags 'Unit' {
+    It "Sets Secret" {
+        # https://www.red-gate.com/simple-talk/sysadmin/powershell/practical-powershell-unit-testing-mock-objects/
 
-        It "Sets Secret" {
-            mock -CommandName "GetStorageAccountName" -MockWith {
-                return "foo"
+        # Arrange
+        mock -CommandName "GetStorageAccountName" -MockWith {
+            Write-Host "Mock GetStorageAccountName"
+            return @{
+                StorageAccountName = "foo"
             }
-            mock -CommandName "AzureRmStorageAccountKey" -MockWith {
-                return "mykey"
-            }
-            mock -CommandName "DeleteSecret" -MockWith {
+        } -ModuleName $module
 
+        mock -CommandName "Get-AzureRmStorageAccountKey" -MockWith {
+            Write-Host "Mock Get-AzureRmStorageAccountKey"
+            return @{
+                Value = @("mykey")
             }
-            mock -CommandName "CreateSecretWithMultipleValues" -MockWith {
-                
-            }
-        }
+        } -Module $module
+
+        mock -CommandName "DeleteSecret" -MockWith {
+            [CmdletBinding()]
+            param(
+                [parameter (Mandatory = $true) ]
+                [string]
+                $secretname
+                ,
+                [parameter (Mandatory = $true) ]
+                [string] 
+                $namespace                
+            )
+            Write-Host "Mock DeleteSecret: $secretname"
+            $secretname | Should Be "azure-secret"
+            $namespace | Should Be "default"
+        } -ModuleName $module
+
+        mock -CommandName "CreateSecretWithMultipleValues" -MockWith {
+            [CmdletBinding()]
+            param
+            (
+              [parameter (Mandatory = $true) ]
+              [string]
+              $secretname
+              ,
+              [parameter (Mandatory = $true) ]
+              [string] 
+              $namespace
+              ,
+              [parameter (Mandatory = $true) ]
+              [string] 
+              $secret1
+              ,
+              [parameter (Mandatory = $true) ]
+              [string] 
+              $secret2
+              ,    
+              [parameter (Mandatory = $true) ]
+              [string] 
+              $secret3
+            )            
+            Write-Host "Mock CreateSecretWithMultipleValues: $secretname, secret1=$secret1, secret2=$secret2, secret3=$secret3"
+            $secretname | Should Be "azure-secret"
+            $secret1 | Should Be "resourcegroup=fabrickubernetes"            
+            $secret2 | Should Be "azurestorageaccountname=foo"            
+            $secret3 | Should Be "azurestorageaccountkey=mykey"            
+        } -ModuleName $module
+
+        # Act
+        $VerbosePreference = "Continue"
+        SetStorageAccountNameIntoSecret -config $mockConfig
+
+        # Assert
+        Assert-VerifiableMocks
     }
 
-    Context "Integration Tests" {
-        It "sets secret" {
-            SetStorageAccountNameIntoSecret -config $mockConfig | Should Be $true
-        }    
-    }
+}
+
+Describe "$filename Integration Tests" -Tags 'Integration' {
+    It "sets secret" {
+        SetStorageAccountNameIntoSecret -config $mockConfig | Should Be $true
+    }      
 }
