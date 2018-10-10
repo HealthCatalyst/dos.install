@@ -16,6 +16,10 @@
             "type": "string",
             "maxLength": 11
         },
+        "networkSecurityGroupName": {
+            "type": "string",
+            "maxLength": 24
+        },        
         "tenantId": {
             "type": "string",
             "metadata": {
@@ -165,6 +169,15 @@
                     ]
                 }
             ]
+        },
+        {
+            "apiVersion": "2017-06-01",
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "name": "[parameters('networkSecurityGroupName')]",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "securityRules": []
+            }
         }
     ],
     "outputs": {}

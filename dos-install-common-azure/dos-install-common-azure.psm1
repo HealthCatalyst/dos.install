@@ -13,6 +13,7 @@ Import-Module "..\dos-install-common-kube"
 # arm
 . $PSScriptRoot\functions\arm\BuildSubnetId.ps1
 . $PSScriptRoot\functions\arm\CreateServicePrincipal.ps1
+. $PSScriptRoot\functions\arm\CleanResourceGroup.ps1
 . $PSScriptRoot\functions\arm\DeployTemplate.ps1
 . $PSScriptRoot\functions\arm\GetConfigHashTable.ps1
 . $PSScriptRoot\functions\arm\GetConfigObjectFromFile.ps1

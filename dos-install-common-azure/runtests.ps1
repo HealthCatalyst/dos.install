@@ -47,5 +47,8 @@ Invoke-Pester "$here\Module.Tests.ps1"
 # arm
 # Invoke-Pester "$here\functions\arm\CreateServicePrincipal.Tests.ps1" -Tag 'Integration' -Verbose
 
-Invoke-Pester "$here\functions\arm\DeployTemplate.Tests.ps1" -Tag 'Unit' -Verbose
-Invoke-Pester "$here\functions\arm\DeployTemplate.Tests.ps1" -Tag 'Integration' -Verbose
+# Invoke-Pester "$here\functions\arm\CleanResourceGroup.Tests.ps1" -Tag 'Cluster' -Verbose
+
+# Invoke-Pester "$here\functions\arm\DeployTemplate.Tests.ps1" -Tag 'Unit' -Verbose
+Invoke-Pester "$here\functions\arm\DeployTemplate.Tests.ps1" -Tag 'Cluster' -Verbose
+Invoke-Pester "$here\functions\arm\DeployTemplate.Tests.ps1" -Tag 'ACS' -Verbose

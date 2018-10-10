@@ -5,9 +5,9 @@ $mockConfig = @"
 {
     "customerid": "test",
     "azure": {
-        "subscription": "Health Catalyst - Fabric",
-        "resourceGroup": "fabrickubernetes",
-        "location": "eastus"
+        "subscription": "PlatformStaff-DevTest",
+        "resourceGroup": "fabrickubernetes2",
+        "location": "westus"
     },
     "ingress": {
         "external": {
