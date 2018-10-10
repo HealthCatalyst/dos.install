@@ -16,7 +16,10 @@ $mockConfig = @"
         "internal": {
             "type": "public"
         }
-    }    
+    },
+    "dns": {
+        "name": "hcut.healthcatalyst.net"
+    }       
 }
 "@ | ConvertFrom-Json
 

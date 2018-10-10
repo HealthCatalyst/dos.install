@@ -4,6 +4,7 @@
 . $PSScriptRoot\functions\kubernetes\secrets\DeleteSecret.ps1
 . $PSScriptRoot\functions\kubernetes\secrets\ReadSecretData.ps1
 . $PSScriptRoot\functions\kubernetes\secrets\ReadSecretValue.ps1
+. $PSScriptRoot\functions\kubernetes\secrets\SaveSecretValue.ps1
 
 # kubernetes\pods
 . $PSScriptRoot\functions\kubernetes\pods\WaitForPodsInNamespace.ps1

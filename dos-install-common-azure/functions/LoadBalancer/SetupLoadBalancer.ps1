@@ -72,9 +72,12 @@ function SetupLoadBalancer() {
         throw "ingress.external.type is null in config"
     }
     if ([string]::IsNullOrWhiteSpace($ingressInternalType)) {
-      # https://kevinmarquette.github.io/2017-04-10-Powershell-exceptions-everything-you-ever-wanted-to-know/
-      throw "ingress.internal.type is null in config"
-  }
+        throw "ingress.internal.type is null in config"
+    }
+    if ([string]::IsNullOrWhiteSpace($($config.dns.name))) {
+        throw "dns.name is null in config"
+    }
+
     $AKS_IP_WHITELIST = $config.ingress.external.whitelist
 
     # read the vnet and subnet info from kubernetes secret
