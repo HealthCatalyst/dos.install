@@ -45,5 +45,7 @@ Invoke-Pester "$here\Module.Tests.ps1"
 # Invoke-Pester "$here\functions\LoadBalancer\SetupLoadBalancer.Tests.ps1" -Tag 'Integration' -Verbose
 
 # arm
+# Invoke-Pester "$here\functions\arm\CreateServicePrincipal.Tests.ps1" -Tag 'Integration' -Verbose
+
 Invoke-Pester "$here\functions\arm\DeployTemplate.Tests.ps1" -Tag 'Unit' -Verbose
 Invoke-Pester "$here\functions\arm\DeployTemplate.Tests.ps1" -Tag 'Integration' -Verbose

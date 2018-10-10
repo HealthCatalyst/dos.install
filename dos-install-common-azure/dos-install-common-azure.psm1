@@ -11,7 +11,13 @@ Import-Module "..\dos-install-common-kube"
 . $PSScriptRoot\functions\InstallStack.ps1
 
 # arm
+. $PSScriptRoot\functions\arm\BuildSubnetId.ps1
+. $PSScriptRoot\functions\arm\CreateServicePrincipal.ps1
 . $PSScriptRoot\functions\arm\DeployTemplate.ps1
+. $PSScriptRoot\functions\arm\GetConfigHashTable.ps1
+. $PSScriptRoot\functions\arm\GetConfigObjectFromFile.ps1
+. $PSScriptRoot\functions\arm\GetKeyVaultSecretValue.ps1
+. $PSScriptRoot\functions\arm\StripJsonComments.ps1
 
 # Subscription
 . $PSScriptRoot\functions\Subscription\SetCurrentAzureSubscription.ps1

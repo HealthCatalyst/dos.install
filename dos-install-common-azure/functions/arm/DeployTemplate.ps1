@@ -25,6 +25,10 @@ function DeployTemplate() {
     (
         [Parameter(Mandatory = $true)]
         [string]
+        $DeploymentName
+        ,
+        [Parameter(Mandatory = $true)]
+        [string]
         $TemplateFile
         ,
         [Parameter(Mandatory = $true)]
@@ -38,7 +42,7 @@ function DeployTemplate() {
     # get objectId via $(Get-AzureRmADUser -UserPrincipalName '{imran.qureshi@healthcatalyst.com}').Id
 
     # Create or update the resource group using the specified template file and template parameters file
-    New-AzureRmResourceGroupDeployment -Name 'XPlat_PS_Script' `
+    New-AzureRmResourceGroupDeployment -Name "$DeploymentName" `
         -ResourceGroupName "fabrickubernetes2" `
         -TemplateFile $TemplateFile `
         -TemplateParameterFile $TemplateParameterFile `
@@ -46,5 +50,6 @@ function DeployTemplate() {
 
     Write-Verbose 'DeployTemplate: Done'
 }
+
 
 Export-ModuleMember -Function "DeployTemplate"
