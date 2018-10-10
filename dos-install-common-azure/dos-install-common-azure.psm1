@@ -3,12 +3,15 @@ Import-Module AzureRM
 Import-Module AzureRM.Storage
 Import-Module AzureRM.Profile
 Import-Module AzureRM.Resources
+Import-Module AzureRM.Aks
 
 Import-Module "..\dos-install-common-kube"
 
 . $PSScriptRoot\functions\LoginToAzure.ps1
 
 . $PSScriptRoot\functions\InstallStack.ps1
+
+. $PSScriptRoot\functions\Uninstall-AllModules.ps1
 
 # arm
 . $PSScriptRoot\functions\arm\BuildSubnetId.ps1

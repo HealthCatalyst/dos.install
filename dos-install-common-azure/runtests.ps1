@@ -47,9 +47,19 @@ Invoke-Pester "$here\Module.Tests.ps1"
 # arm
 # Invoke-Pester "$here\functions\arm\CreateServicePrincipal.Tests.ps1" -Tag 'Integration' -Verbose
 
-Invoke-Pester "$here\functions\arm\CleanResourceGroup.Tests.ps1" -Tag 'Cluster' -Verbose
+# Invoke-Pester "$here\functions\arm\CleanResourceGroup.Tests.ps1" -Tag 'Cluster' -Verbose
 
 # Invoke-Pester "$here\functions\arm\DeployTemplate.Tests.ps1" -Tag 'Unit' -Verbose
 # Invoke-Pester "$here\functions\arm\DeployTemplate.Tests.ps1" -Tag 'Cluster' -Verbose
 # Invoke-Pester "$here\functions\arm\DeployTemplate.Tests.ps1" -Tag 'ACS' -Verbose
-Invoke-Pester "$here\functions\arm\DeployTemplate.Tests.ps1" -Tag 'AKS' -Verbose
+# Invoke-Pester "$here\functions\arm\DeployTemplate.Tests.ps1" -Tag 'AKS' -Verbose
+
+Set-AzureRmContext -SubscriptionId "c8b1589f-9270-46ee-967a-417817e7d10d" -Verbose
+Get-AzureRmAks
+
+$resourceGroup="fabrickubernetes2"
+$name="Kluster-$resourceGroup"
+
+Import-AzureRmAksCredential -ResourceGroupName "$resourceGroup" -Name $name -Force
+
+Start-AzureRmAksDashboard -ResourceGroupName "$resourceGroup" -Name $name -Verbose
