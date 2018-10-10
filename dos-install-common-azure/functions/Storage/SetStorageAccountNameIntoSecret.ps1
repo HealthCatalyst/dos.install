@@ -32,14 +32,18 @@ function SetStorageAccountNameIntoSecret()
   (
     [parameter (Mandatory = $true) ]
     [ValidateNotNull()]
-    $config
+    [string]
+    $resourceGroup
+    ,
+    [parameter (Mandatory = $true) ]
+    [ValidateNotNull()]
+    [string]
+    $customerid
   )
 
   Write-Verbose 'SetStorageAccountNameIntoSecret: Starting'
 
-  $resourceGroup = $($config.azure.resourceGroup)
   Write-Verbose "Resource Group: $resourceGroup"
-  $customerid = $($config.customerid)
   Write-Verbose "CustomerID: $customerid"
 
   $storageAccountName = $(GetStorageAccountName -resourceGroup $resourceGroup).StorageAccountName

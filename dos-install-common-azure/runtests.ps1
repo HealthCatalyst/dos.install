@@ -32,7 +32,7 @@ Invoke-Pester "$here\Module.Tests.ps1"
 
 # Storage
 # Invoke-Pester "$here\functions\Storage\GetStorageAccountName.Tests.ps1"
-# Invoke-Pester "$here\functions\Storage\SetStorageAccountNameIntoSecret.Tests.ps1" -Tag 'Unit'
+Invoke-Pester "$here\functions\Storage\SetStorageAccountNameIntoSecret.Tests.ps1" -Tag 'Unit'
 # Invoke-Pester "$here\functions\Storage\SetStorageAccountNameIntoSecret.Tests.ps1" -Tag 'Integration'
 
 # # Subscription

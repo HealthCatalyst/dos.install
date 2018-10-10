@@ -20,3 +20,8 @@
 
 # helpers
 . $PSScriptRoot\functions\helpers\HasProperty.ps1
+. $PSScriptRoot\functions\helpers\Test-CommandExists.ps1
+
+# config
+. $PSScriptRoot\functions\config\GetConfigFile.ps1
+. $PSScriptRoot\functions\config\ReadConfigFile.ps1

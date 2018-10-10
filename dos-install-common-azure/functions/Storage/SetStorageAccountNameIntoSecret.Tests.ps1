@@ -131,7 +131,7 @@ Describe "$filename Unit Tests" -Tags 'Unit' {
 
         # Act
         $VerbosePreference = "Continue"
-        SetStorageAccountNameIntoSecret -config $mockConfig
+        SetStorageAccountNameIntoSecret -resourceGroup "fabrickubernetes" -customerid "hcut"
 
         # Assert
         Assert-VerifiableMocks
@@ -141,6 +141,6 @@ Describe "$filename Unit Tests" -Tags 'Unit' {
 
 Describe "$filename Integration Tests" -Tags 'Integration' {
     It "sets secret" {
-        SetStorageAccountNameIntoSecret -config $mockConfig | Should Be $true
+        SetStorageAccountNameIntoSecret -resourceGroup "fabrickubernetes" -customerid "hcut" | Should Be $true
     }      
 }
