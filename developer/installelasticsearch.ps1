@@ -30,13 +30,14 @@ docker stop $dockername
 docker rm $dockername
 docker pull healthcatalyst/$dockername
 
-$ipForElasticSearch = docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' fabric.docker.elasticsearch
+$ipForElasticSearch = $(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' fabric.docker.elasticsearch)
 Write-Output "ip for elasticsearch: $ipForElasticSearch"
 if([string]::IsNullOrWhiteSpace($ipForElasticSearch))
 {
     exit 1
 }
 
+Write-Host "Running Kibana"
 docker run --rm -d -p 5601:5601 --add-host elasticsearch:$ipForElasticSearch --name $dockername -t healthcatalyst/$dockername
 
-
+Write-Host "Kibana was started"
