@@ -20,3 +20,10 @@ Describe "$filename ACS Integration Tests" -Tags @('Integration','ACS') {
         DeployTemplate -DeploymentName "DeployACS" -TemplateFile ..\azure\arm\acs.json -TemplateParameterFile ..\..\clientenvironments\fabrickubernetes2\acs.parameters.json -Verbose
     }
 }
+
+Describe "$filename AKS Integration Tests" -Tags @('Integration','AKS') {
+    It "Deploys cluster Template" {
+        Set-AzureRmContext -SubscriptionId "c8b1589f-9270-46ee-967a-417817e7d10d" -Verbose
+        DeployTemplate -DeploymentName "DeployAKS" -TemplateFile ..\azure\arm\aks.json -TemplateParameterFile ..\..\clientenvironments\fabrickubernetes2\aks.parameters.json -Verbose
+    }
+}
