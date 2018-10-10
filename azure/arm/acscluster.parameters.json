@@ -11,6 +11,43 @@
         "storagePostfix": {
             "value": "## TO BE DEFINED ##"
         },
+        "keyVaultPostfix": {
+            "value": "## TO BE DEFINED ##"
+        },
+        "tenantId": {
+            "value": "## TO BE DEFINED ##"
+        },
+        "objectId": {
+            "value": "## TO BE DEFINED ##"
+        },
+        "keysPermissions": {
+            "value": [
+                "all"
+            ]
+        },
+        "secretsPermissions": {
+            "value": [
+                "all"
+            ]
+        },
+        "vaultSku": {
+            "value": "Standard"
+        },
+        "enabledForDeployment": {
+            "value": false
+        },
+        "enabledForTemplateDeployment": {
+            "value": false
+        },
+        "enableVaultForVolumeEncryption": {
+            "value": false
+        },
+        "secretName": {
+            "value": "## TO BE DEFINED ##"
+        },
+        "secretValue": {
+            "value": "## TO BE DEFINED ##"
+        },
         "subscriptionID": {
             "value": ""
         }

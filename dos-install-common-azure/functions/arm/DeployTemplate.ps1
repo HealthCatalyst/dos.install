@@ -34,6 +34,9 @@ function DeployTemplate() {
 
     Write-Verbose 'DeployTemplate: Starting'
 
+    # get tenantId via Get-AzureRmSubscription
+    # get objectId via $(Get-AzureRmADUser -UserPrincipalName '{imran.qureshi@healthcatalyst.com}').Id
+
     # Create or update the resource group using the specified template file and template parameters file
     New-AzureRmResourceGroupDeployment -Name 'XPlat_PS_Script' `
         -ResourceGroupName "fabrickubernetes2" `
