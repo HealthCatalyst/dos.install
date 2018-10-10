@@ -9,7 +9,7 @@ Import-Module "$here\$module.psm1" -Force
 
 # $Credential = Get-Credential -UserName "$env:USERNAME@$env:USERDNSDOMAIN" -Message "login please" 
 # Connect-AzureRmAccount -Credential $Credential
-LoginToAzure
+LoginToAzure -Verbose
 
 Describe "$module Tests" {
     It "has the root module $module.psm1" {

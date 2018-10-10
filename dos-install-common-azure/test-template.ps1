@@ -1,5 +1,4 @@
-$filename = "TODO"
-$module = "dos-install-common-azure"
+$filename = $($(Split-Path -Leaf $MyInvocation.MyCommand.Path).Replace(".Tests.ps1",""))
 
 $mockConfig = @"
 {

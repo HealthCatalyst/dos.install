@@ -37,7 +37,7 @@ Describe "$filename Unit Tests" -Tags 'Unit' {
 }
 
 Describe "$filename Integration Tests" -Tags 'Integration' {
-    It "TestMethod" {
+    It "Sets up Load Balancer" {
         SetupLoadBalancer -baseUrl $GITHUB_URL -config $mockConfig -local $true -Verbose
     }
 }
