@@ -58,8 +58,6 @@ function CreateServicePrincipal() {
     Write-Host "Sleeping to wait for Service Principal to propagate"    
     Start-Sleep -Seconds 5;
 
-    $role = New-AzureRmRoleAssignment -ResourceGroupName "$resourceGroup" -ObjectId $servicePrincipalId -RoleDefinitionName Owner
-
     $Return.ObjectId = $($app.ObjectId)
     $Return.ApplicationId = $($app.ApplicationId)
     $Return.ClientSecret = $clientSecret

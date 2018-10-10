@@ -14,6 +14,7 @@ Import-Module "..\dos-install-common-kube"
 . $PSScriptRoot\functions\Uninstall-AllModules.ps1
 
 # arm
+. $PSScriptRoot\functions\arm\AssignPermissionsToServicePrincipal.ps1
 . $PSScriptRoot\functions\arm\BuildSubnetId.ps1
 . $PSScriptRoot\functions\arm\CreateServicePrincipal.ps1
 . $PSScriptRoot\functions\arm\CleanResourceGroup.ps1
