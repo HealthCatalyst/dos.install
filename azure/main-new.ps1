@@ -37,7 +37,7 @@ else {
 Write-Host "GITHUB_URL: $GITHUB_URL"
 
 $set = "abcdefghijklmnopqrstuvwxyz0123456789".ToCharArray()
-$randomstring += $set | Get-Random
+[string] $randomstring += $set | Get-Random
 
 Write-Host "Powershell version: $($PSVersionTable.PSVersion.Major).$($PSVersionTable.PSVersion.Minor).$($PSVersionTable.PSVersion.Build)"
 

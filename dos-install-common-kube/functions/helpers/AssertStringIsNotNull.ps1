@@ -29,6 +29,7 @@ function AssertStringIsNotNull()
     [string] 
     $text
   )
+  Write-Verbose 'AssertStringIsNotNull'  
 }
 
 function AssertStringIsNotNullOrEmpty()
@@ -41,6 +42,7 @@ function AssertStringIsNotNullOrEmpty()
     [string] 
     $text
   )
+  Write-Verbose 'AssertStringIsNotNullOrEmpty'  
 }
 
 Export-ModuleMember -Function "AssertStringIsNotNull"

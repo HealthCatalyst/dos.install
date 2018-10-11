@@ -22,6 +22,8 @@
 . $PSScriptRoot\functions\helpers\HasProperty.ps1
 . $PSScriptRoot\functions\helpers\Test-CommandExists.ps1
 . $PSScriptRoot\functions\helpers\AssertStringIsNotNull.ps1
+. $PSScriptRoot\functions\helpers\Find-OpenPort.ps1
+. $PSScriptRoot\functions\helpers\Get-IsPortFree.ps1
 
 # config
 . $PSScriptRoot\functions\config\GetConfigFile.ps1

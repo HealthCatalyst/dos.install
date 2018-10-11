@@ -28,9 +28,9 @@ function LaunchKubernetesDashboard() {
     Write-Verbose 'LaunchKubernetesDashboard: Starting'
 
     # launch Kubernetes dashboard
-    $launchJob = $true
-    $myPortArray = 8001, 8002, 8003, 8004, 8005, 8006, 8007, 8008, 8009, 8010, 8011, 8012, 8013, 8014, 8015, 8016, 8017, 8018, 8019, 8020, 8021, 8022, 8023, 8024, 8025, 8026, 8027, 8028, 8029, 8030, 8031, 8032, 8033, 8034, 8035, 8036, 8037, 8038, 8039
-    $port = $(FindOpenPort -portArray $myPortArray).Port
+    [bool] $launchJob = $true
+    [int[]] $myPortArray = 8001, 8002, 8003, 8004, 8005, 8006, 8007, 8008, 8009, 8010, 8011, 8012, 8013, 8014, 8015, 8016, 8017, 8018, 8019, 8020, 8021, 8022, 8023, 8024, 8025, 8026, 8027, 8028, 8029, 8030, 8031, 8032, 8033, 8034, 8035, 8036, 8037, 8038, 8039
+    [int] $port = $(Find-OpenPort -portArray $myPortArray).Port
     Write-Host "Starting Kub Dashboard on port $port"
     # $existingProcess = Get-ProcessByPort 8001
     # if (!([string]::IsNullOrWhiteSpace($existingProcess))) {
@@ -60,7 +60,7 @@ function LaunchKubernetesDashboard() {
     # }
                 
     # Write-Host "Your kubeconfig file is here: $env:KUBECONFIG"
-    $kubectlversion = $(kubectl version --short=true)[1]
+    [string] $kubectlversion = $(kubectl version --short=true)[1]
     if ($kubectlversion -match "v1.8") {
         Write-Host "Launching http://localhost:$port/api/v1/namespaces/kube-system/services/kubernetes-dashboard/proxy in the web browser"
         Start-Process -FilePath "http://localhost:$port/api/v1/namespaces/kube-system/services/kubernetes-dashboard/proxy";
@@ -72,19 +72,19 @@ function LaunchKubernetesDashboard() {
         Start-Process -FilePath "$url";
     }
 
-    $namespace = "kube-system"
-    $secretText = $(kubectl get secrets -n $namespace -o jsonpath="{.items[*].metadata.name}")
+    [string] $namespace = "kube-system"
+    [string] $secretText = $(kubectl get secrets -n $namespace -o jsonpath="{.items[*].metadata.name}")
     AssertStringIsNotNullOrEmpty -text $secretText
 
-    $secrets = $secretText.Split(" ")
-    $mydashboardUserSecretName = $secrets | Where-Object {$_ -like "my-dashboard-user-token-*"}
+    [string[]] $secrets = $secretText.Split(" ")
+    [string] $mydashboardUserSecretName = $secrets | Where-Object {$_ -like "my-dashboard-user-token-*"}
     AssertStringIsNotNullOrEmpty -text $mydashboardUserSecretName
 
     $secretjson = $(kubectl get secret $mydashboardUserSecretName -n $namespace -o json) | ConvertFrom-Json
-    $tokenBase64 = $secretjson.data.token
+    [string] $tokenBase64 = $secretjson.data.token
     AssertStringIsNotNullOrEmpty -text $tokenBase64
 
-    $token = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($tokenBase64))
+    [string] $token = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($tokenBase64))
     AssertStringIsNotNullOrEmpty -text $token
 
     Write-Host "---- Bearer Token ----"
@@ -92,30 +92,6 @@ function LaunchKubernetesDashboard() {
     Write-Host "---- End of Bearer Token ----"
 
     Write-Verbose 'LaunchKubernetesDashboard: Done'
-
-}
-
-function FindOpenPort($portArray) {
-    [hashtable]$Return = @{} 
-
-    ForEach ($port in $portArray) {
-        $result = Get-ProcessByPort $port
-        if ([string]::IsNullOrEmpty($result)) {
-            $Return.Port = $port
-            return $Return
-        }
-    }   
-    $Return.Port = 0
-
-    return $Return
-}
-
-function global:Get-ProcessByPort( [Parameter(Mandatory = $true)][ValidateNotNullOrEmpty()] [int] $Port ) {    
-    $netstat = netstat.exe -ano | Select-Object -Skip 4
-    $p_line = $netstat | Where-Object { $p = ( -split $_ | Select-Object -Index 1) -split ':' | Select-Object -Last 1; $p -eq $Port } | Select-Object -First 1
-    if (!$p_line) { return; } 
-    $p_id = $p_line -split '\s+' | Select-Object -Last 1
-    return $p_id;
 }
 
 Export-ModuleMember -Function "LaunchKubernetesDashboard"
