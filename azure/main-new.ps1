@@ -75,10 +75,12 @@ while ($userinput -ne "q") {
     Write-Warning "CURRENT CLUSTER: $currentcluster"   
     
     Write-Host "------ Infrastructure -------"
-    Write-Host "1: Configure existing Azure Container Service"    
+    Write-Host "1: Configure existing Azure Container Service" 
+
+    Write-Host "1: Configure existing Azure Container Service" 
     
     Write-Host "------ Older Scripts -------"
-    # Write-Host "100: Go to old menu"
+    Write-Host "100: Go to old menu"
 
     Write-Host "q: Quit"
     #--------------------------------------
@@ -102,13 +104,19 @@ while ($userinput -ne "q") {
 
             InitHelm
         } 
-        # '100' {
-        #     curl -useb https://raw.githubusercontent.com/HealthCatalyst/dos.install/master/azure/main.ps1 | iex;
-        #     # $Script = Invoke-WebRequest -useb ${GITHUB_URL}/azure/main.ps1?f=$randomstring;
-        #     # $ScriptBlock = [Scriptblock]::Create($Script.Content)
-        #     # Invoke-Command -ScriptBlock $ScriptBlock  
-        #     exit 0
-        # } 
+        '100' {
+            # curl -useb https://raw.githubusercontent.com/HealthCatalyst/dos.install/master/azure/main.ps1 | iex;
+            # $Script = Invoke-WebRequest -useb ${GITHUB_URL}/azure/main.ps1?f=$randomstring;
+            # $ScriptBlock = [Scriptblock]::Create($Script.Content)
+            # Invoke-Command -ScriptBlock $ScriptBlock  
+            $scriptPath = "curl -useb https://raw.githubusercontent.com/HealthCatalyst/dos.install/master/azure/main.ps1 | iex;"
+            # $argumentList = ""
+            # Invoke-Expression "$scriptPath $argumentList"
+            # Invoke-Expression 'cmd /c start powershell -Command { $scriptPath $argumentList }'
+            # Start-Process powershell -Command "$scriptPath"
+            start-process powershell.exe -argument "-noexit -nologo -command $scriptPath"
+            exit 0
+        } 
         'q' {
             return
         }
