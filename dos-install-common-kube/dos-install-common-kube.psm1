@@ -10,6 +10,10 @@
 . $PSScriptRoot\functions\kubernetes\pods\WaitForPodsInNamespace.ps1
 . $PSScriptRoot\functions\kubernetes\pods\GetLoadBalancerIPs.ps1
 
+# helm
+. $PSScriptRoot\functions\helm\InitHelm.ps1
+. $PSScriptRoot\functions\helm\InstallLoadBalancerHelmPackage.ps1
+
 # Stack
 . $PSScriptRoot\functions\Stack\Merge-Tokens.ps1
 . $PSScriptRoot\functions\Stack\ReadYamlAndReplaceTokens.ps1
@@ -28,9 +32,5 @@
 # config
 . $PSScriptRoot\functions\config\GetConfigFile.ps1
 . $PSScriptRoot\functions\config\ReadConfigFile.ps1
-
-# helm
-. $PSScriptRoot\functions\helm\InitHelm.ps1
-. $PSScriptRoot\functions\helm\InstallLoadBalancerHelmPackage.ps1
 
 . $PSScriptRoot\functions\LaunchKubernetesDashboard.ps1

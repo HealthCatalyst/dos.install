@@ -37,6 +37,8 @@ function SaveSecretValue() {
         [ValidateNotNullOrEmpty()]
         $value
         , 
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
         [string]
         $namespace      
     )

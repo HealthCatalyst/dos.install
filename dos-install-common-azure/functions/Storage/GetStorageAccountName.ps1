@@ -21,6 +21,7 @@
 #>
 function GetStorageAccountName() {
     [CmdletBinding()]
+    [OutputType([hashtable])]
     param
     (
         [parameter (Mandatory = $true) ]
@@ -33,7 +34,7 @@ function GetStorageAccountName() {
 
     [hashtable]$Return = @{} 
 
-    $storageAccountName = "${resourceGroup}storage"
+    [string] $storageAccountName = "${resourceGroup}storage"
     # remove non-alphanumeric characters and use lowercase since azure doesn't allow those in a storage account
     $storageAccountName = $storageAccountName -replace '[^a-zA-Z0-9]', ''
     $storageAccountName = $storageAccountName.ToLower()
@@ -44,6 +45,7 @@ function GetStorageAccountName() {
     $Return.StorageAccountName = $storageAccountName
 
     Write-Verbose 'GetStorageAccountName: Done'
+
     return $Return
 }
 

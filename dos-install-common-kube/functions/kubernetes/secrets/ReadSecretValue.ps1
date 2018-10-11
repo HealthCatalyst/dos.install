@@ -28,15 +28,17 @@ function ReadSecretValue() {
         [string] 
         $secretname
         , 
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
         [string]
         $namespace
     )
 
     Write-Verbose 'ReadSecretValue: Starting'
-    $return = ReadSecretData -secretname $secretname -valueName "value" -namespace $namespace
+    $returnValue = ReadSecretData -secretname $secretname -valueName "value" -namespace $namespace
     Write-Verbose 'ReadSecretValue: Done'
 
-    Return $return
+    Return $returnValue
 }
 
 Export-ModuleMember -Function "ReadSecretValue"

@@ -34,19 +34,22 @@ function SetCurrentAzureSubscription() {
     #Create an hashtable variable 
     [hashtable]$Return = @{} 
 
-    $currentsubscriptionName = $(Get-AzureRmContext).Subscription.Name
-    $currentsubscriptionId = $(Get-AzureRmContext).Subscription.Id
+    [string] $currentsubscriptionName = $(Get-AzureRmContext).Subscription.Name
+    AssertStringIsNotNullOrEmpty $currentsubscriptionName
 
-    Write-Information -MessageData "Current SubscriptionId: ${currentsubscriptionId}, newSubcriptionID: ${subscriptionId}"
+    [string] $currentsubscriptionId = $(Get-AzureRmContext).Subscription.Id
+    AssertStringIsNotNullOrEmpty $currentsubscriptionId
 
-    Get-AzureRmSubscription
+    Write-Verbose "Current SubscriptionId: ${currentsubscriptionId}, newSubcriptionID: ${subscriptionId}"
+
+    # Get-AzureRmSubscription
 
     if ($subscriptionName -eq $currentsubscriptionName -or ($subscriptionName -eq $currentsubscriptionId)) {
         # nothing to do
-        Write-Information -MessageData "Subscription is already set properly so no need to anything"
+        Write-Verbose "Subscription is already set properly so no need to anything"
     }
     else {
-        Write-Information -MessageData "Setting subscription to $subscriptionName"
+        Write-Verbose "Setting subscription to $subscriptionName"
         Select-AzureRmSubscription -SubscriptionName $subscriptionName
         $currentsubscriptionName = $(Get-AzureRmContext).Subscription.Name
         $currentsubscriptionId = $(Get-AzureRmContext).Subscription.Id            

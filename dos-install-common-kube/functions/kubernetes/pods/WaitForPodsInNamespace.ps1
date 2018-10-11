@@ -28,6 +28,8 @@ function WaitForPodsInNamespace() {
         [string] 
         $namespace
         , 
+        [Parameter(Mandatory = $true)]
+        [int]
         $interval
     )
 
@@ -36,48 +38,48 @@ function WaitForPodsInNamespace() {
     [hashtable]$Return = @{} 
 
     $pods = $(kubectl get pods -n $namespace -o jsonpath='{.items[*].metadata.name}')
-    $waitingonPod = "n"
+    [string] $waitingonPodText = "n"
 
     $counter = 0
     Do {
-        $waitingonPod = ""
+        $waitingonPodText = ""
         Write-Information -MessageData "---- waiting until all pods are running in namespace $namespace ---"
 
         Start-Sleep -Seconds $interval
         $counter++
-        $pods = $(kubectl get pods -n $namespace -o jsonpath='{.items[*].metadata.name}')
+        [string] $pods = $(kubectl get pods -n $namespace -o jsonpath='{.items[*].metadata.name}')
 
         if (!$pods) {
             throw "No pods were found in namespace $namespace"
         }
 
         foreach ($pod in $pods.Split(" ")) {
-            $podstatus = $(kubectl get pods $pod -n $namespace -o jsonpath='{.status.phase}')
+            [string] $podstatus = $(kubectl get pods $pod -n $namespace -o jsonpath='{.status.phase}')
             if ($podstatus -eq "Running") {
                 # nothing to do
             }
             elseif ($podstatus -eq "Pending") {
                 # Write-Information -MessageData "${pod}: $podstatus"
-                $containerReady = $(kubectl get pods $pod -n $namespace -o jsonpath="{.status.containerStatuses[0].ready}")
+                [string] $containerReady = $(kubectl get pods $pod -n $namespace -o jsonpath="{.status.containerStatuses[0].ready}")
                 if ($containerReady -ne "true" ) {
-                    $containerStatus = $(kubectl get pods $pod -n $namespace -o jsonpath="{.status.containerStatuses[0].state.waiting.reason}")
+                    [string] $containerStatus = $(kubectl get pods $pod -n $namespace -o jsonpath="{.status.containerStatuses[0].state.waiting.reason}")
                     if (![string]::IsNullOrEmpty(($containerStatus))) {
-                        $waitingonPod = "${waitingonPod}${pod}($containerStatus);"    
+                        $waitingonPodText = "${waitingonPodText}${pod}($containerStatus);"    
                     }
                     else {
-                        $waitingonPod = "${waitingonPod}${pod}(container);"                        
+                        $waitingonPodText = "${waitingonPodText}${pod}(container);"                        
                     }
                     # Write-Information -MessageData "container in $pod is not ready yet: $containerReady"
                 }
             }
             else {
-                $waitingonPod = "${waitingonPod}${pod}($podstatus);" 
+                $waitingonPodText = "${waitingonPodText}${pod}($podstatus);" 
             }
         }
             
-        Write-Information -MessageData "[$counter] $waitingonPod"
+        Write-Information -MessageData "[$counter] $waitingonPodText"
     }
-    while (![string]::IsNullOrEmpty($waitingonPod) -and ($counter -lt 30) )
+    while (![string]::IsNullOrEmpty($waitingonPodText) -and ($counter -lt 30) )
 
     kubectl get pods -n $namespace -o wide
 

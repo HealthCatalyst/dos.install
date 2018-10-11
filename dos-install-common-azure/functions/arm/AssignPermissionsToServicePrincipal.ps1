@@ -25,10 +25,12 @@ function AssignPermissionsToServicePrincipal()
   param
   (
       [Parameter(Mandatory=$true)]
+      [ValidateNotNullOrEmpty()]
       [string]
       $applicationId
       ,
       [Parameter(Mandatory=$true)]
+      [ValidateNotNullOrEmpty()]
       [string]
       $objectId      
   )

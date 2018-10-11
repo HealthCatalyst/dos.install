@@ -25,17 +25,33 @@ function InstallLoadBalancerHelmPackage() {
     (
         [Parameter(Mandatory = $true)]
         [string]
-        $ExternalIP
+        $packageUrl
         ,
         [Parameter(Mandatory = $true)]
+        [bool]
+        $Ssl
+        ,
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $customerid       
+        ,
+        [Parameter(Mandatory = $true)]
+        [string]
+        $ExternalIP
+        ,
+        [Parameter(Mandatory = $false)]
+        [AllowEmptyString()]
         [string]
         $InternalIP
         ,
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $false)]
+        [AllowEmptyString()]
         [string]
         $ExternalSubnet
         ,
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $false)]
+        [AllowEmptyString()]
         [string]
         $InternalSubnet
         ,
@@ -50,15 +66,21 @@ function InstallLoadBalancerHelmPackage() {
 
     Write-Verbose 'InstallLoadBalancerHelmPackage: Starting'
 
-    $package = "fabricloadbalancer"
+    [string] $package = "fabricloadbalancer"
 
     Write-Output "Removing old deployment"
     helm del --purge $package
 
-    Write-Output "Install helm package"
-    helm install ./fabricloadbalancer `
+    Start-Sleep -Seconds 5
+    
+    kubectl delete 'pods,services,configMaps,deployments,ingress' -l k8s-traefik=traefik -n kube-system --ignore-not-found=true
+    
+    
+    Write-Output "Install helm package from $packageUrl"
+    helm install $packageUrl `
         --name $package `
         --namespace kube-system `
+        --set ssl=$Ssl `
         --set ExternalIP="$ExternalIP" `
         --set InternalIP="$InternalIP" `
         --set ExternalSubnet="$ExternalSubnet" `
@@ -71,7 +93,6 @@ function InstallLoadBalancerHelmPackage() {
     helm list 
 
     Write-Verbose 'InstallLoadBalancerHelmPackage: Done'
-
 }
 
 Export-ModuleMember -Function "InstallLoadBalancerHelmPackage"

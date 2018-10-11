@@ -40,7 +40,9 @@ function ReadSecretData() {
     Write-Verbose 'ReadSecretData: Starting'
     if ([string]::IsNullOrWhiteSpace($namespace)) { $namespace = "default"}
 
-    $secretbase64 = kubectl get secret $secretname -o jsonpath="{.data.${valueName}}" -n $namespace --ignore-not-found=true 2> $null
+    [string] $secretbase64 = kubectl get secret $secretname -o jsonpath="{.data.${valueName}}" -n $namespace --ignore-not-found=true 2> $null
+
+    [string] $secretvalue = ""
 
     if (![string]::IsNullOrWhiteSpace($secretbase64)) {
         $secretvalue = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($secretbase64))

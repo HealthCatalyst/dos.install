@@ -24,10 +24,12 @@ function DeleteSecret() {
     param
     (
         [parameter (Mandatory = $true) ]
+        [ValidateNotNullOrEmpty()]
         [string]
         $secretname
         ,
         [parameter (Mandatory = $true) ]
+        [ValidateNotNullOrEmpty()]
         [string] 
         $namespace
     )

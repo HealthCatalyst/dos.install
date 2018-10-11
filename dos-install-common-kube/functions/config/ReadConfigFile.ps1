@@ -21,6 +21,7 @@
 #>
 function ReadConfigFile() {
     [CmdletBinding()]
+    [OutputType([hashtable])]
     param
     (
 
@@ -29,9 +30,10 @@ function ReadConfigFile() {
     Write-Verbose 'ReadConfigFile: Starting'
     [hashtable]$Return = @{} 
 
-    $configfilepath = $(GetConfigFile).FilePath
+    [string] $configfilepath = $(GetConfigFile).FilePath
+    AssertStringIsNotNullOrEmpty $configfilepath
 
-    Write-Information -MessageData "Reading config from $configfilepath"
+    Write-Verbose "Reading config from $configfilepath"
     $config = $(Get-Content $configfilepath -Raw | ConvertFrom-Json)
 
     $Return.Config = $config

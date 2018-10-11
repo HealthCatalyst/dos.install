@@ -31,31 +31,28 @@ function SetStorageAccountNameIntoSecret()
   param
   (
     [parameter (Mandatory = $true) ]
-    [ValidateNotNull()]
+    [ValidateNotNullOrEmpty()]
     [string]
     $resourceGroup
     ,
     [parameter (Mandatory = $true) ]
-    [ValidateNotNull()]
+    [ValidateNotNullOrEmpty()]
     [string]
     $customerid
   )
 
   Write-Verbose 'SetStorageAccountNameIntoSecret: Starting'
 
-  Write-Verbose "Resource Group: $resourceGroup"
-  Write-Verbose "CustomerID: $customerid"
-
-  $storageAccountName = $(GetStorageAccountName -resourceGroup $resourceGroup).StorageAccountName
+  [string] $storageAccountName = $(GetStorageAccountName -resourceGroup $resourceGroup).StorageAccountName
   Write-Verbose "StorageAccountName: [$storageAccountName]"
 
-  $storageKey = (Get-AzureRmStorageAccountKey -ResourceGroupName $resourceGroup -AccountName $storageAccountName).Value[0]
+  [string] $storageKey = (Get-AzureRmStorageAccountKey -ResourceGroupName $resourceGroup -AccountName $storageAccountName).Value[0]
   
   Write-Verbose "Storagekey: [$storageKey]"
 
-  Write-Host "Creating kubernetes secret for Azure Storage Account: azure-secret"
-  $secretname = "azure-secret"
-  $namespace = "default"
+  Write-Verbose "Creating kubernetes secret for Azure Storage Account: azure-secret"
+  [string] $secretname = "azure-secret"
+  [string] $namespace = "default"
 
   DeleteSecret -secretname $secretname -namespace $namespace
 

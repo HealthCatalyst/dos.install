@@ -25,22 +25,27 @@ function CreateSecretWithMultipleValues()
   param
   (
     [parameter (Mandatory = $true) ]
+    [ValidateNotNullOrEmpty()]
     [string]
     $secretname
     ,
     [parameter (Mandatory = $true) ]
+    [ValidateNotNullOrEmpty()]
     [string] 
     $namespace
     ,
     [parameter (Mandatory = $true) ]
+    [ValidateNotNullOrEmpty()]
     [string] 
     $secret1
     ,
     [parameter (Mandatory = $true) ]
+    [ValidateNotNullOrEmpty()]
     [string] 
     $secret2
     ,    
     [parameter (Mandatory = $true) ]
+    [ValidateNotNullOrEmpty()]
     [string] 
     $secret3
   )

@@ -2,8 +2,19 @@
     "$schema": "https://raw.githubusercontent.com/HealthCatalyst/dos.install/master/deployments/schema.json",
     "azure": {
         "subscription": "PlatformStaff-DevTest",
-        "resourceGroup": "fabrickubernetes2",
+        "resourceGroup": "hcut-acs-rg",
         "location": "westus"
     },
-    "customerid": "hcut"
+    "customerid": "hcut",
+    "ingress": {
+        "external":{
+            "type": "public"
+        },
+        "internal": {
+            "type": "public"
+        }
+    },
+    "dns": {
+        "name": "hcut.healthcatalyst.net"
+    }    
 }

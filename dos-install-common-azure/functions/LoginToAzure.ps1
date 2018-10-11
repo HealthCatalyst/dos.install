@@ -28,7 +28,7 @@ function LoginToAzure()
 
   Write-Verbose 'LoginToAzure: Starting'
 
-  $needLogin = $true
+  [bool] $needLogin = $true
   Try 
   {
       $content = Get-AzureRmContext

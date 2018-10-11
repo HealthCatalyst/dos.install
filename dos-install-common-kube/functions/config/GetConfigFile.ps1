@@ -21,6 +21,7 @@
 #>
 function GetConfigFile() {
     [CmdletBinding()]
+    [OutputType([hashtable])]
     param
     (
 
@@ -29,15 +30,22 @@ function GetConfigFile() {
     Write-Verbose 'GetConfigFile: Starting'
     [hashtable]$Return = @{} 
 
-    $folder = $ENV:CatalystConfigPath
+    [string] $folder = $ENV:CatalystConfigPath
     if ([string]::IsNullOrEmpty("$folder")) {
         $folder = "c:\kubernetes\deployments"
     }
+
+    if(!(Test-Path $folder -PathType Container)) {
+        Write-Host "ScriptRoot:$PSScriptRoot"
+        $here = "$PSScriptRoot"
+        $folder = "$here\..\..\..\deployments"
+    }
+
     if (Test-Path -Path $folder -PathType Container) {
         Write-Information -MessageData "Looking in $folder for *.json files"
         Write-Information -MessageData "You can set CatalystConfigPath environment variable to use a different path"
 
-        $files = Get-ChildItem "$folder" -Filter *.json
+        [array] $files = Get-ChildItem "$folder" -Filter *.json
 
         if ($files.Count -gt 0) {
             Write-Host "Choose config file from $folder"
@@ -52,6 +60,9 @@ function GetConfigFile() {
             $Return.FilePath = $($($files[$index - 1]).FullName)
             return $Return
         }
+    }
+    else{
+        Write-Host "Folder $folder not found"
     }
 
     Write-Information -MessageData "Sample config file: https://raw.githubusercontent.com/HealthCatalyst/dos.install/master/deployments/sample.json"
