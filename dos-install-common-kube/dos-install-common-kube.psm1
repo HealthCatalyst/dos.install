@@ -28,3 +28,6 @@
 
 # helm
 . $PSScriptRoot\functions\helm\InitHelm.ps1
+. $PSScriptRoot\functions\helm\InstallLoadBalancerHelmPackage.ps1
+
+. $PSScriptRoot\functions\LaunchKubernetesDashboard.ps1
