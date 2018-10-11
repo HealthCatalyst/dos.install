@@ -67,9 +67,10 @@ function LaunchKubernetesDashboard()
         Start-Process -FilePath "http://localhost:$port/api/v1/namespaces/kube-system/services/kubernetes-dashboard/proxy";
     }
     else {
-        Write-Host "Launching http://localhost:$port/api/v1/namespaces/kube-system/services/http:kubernetes-dashboard:/proxy/ in the web browser"
+        $url = "http://localhost:$port/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/"
+        Write-Host "Launching $url in the web browser"
         Write-Host "Click Skip on login screen";
-        Start-Process -FilePath "http://localhost:$port/api/v1/namespaces/kube-system/services/http:kubernetes-dashboard:/proxy/";
+        Start-Process -FilePath "$url";
     }            
 
   Write-Verbose 'LaunchKubernetesDashboard: Done'
