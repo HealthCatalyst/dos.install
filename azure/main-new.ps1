@@ -99,6 +99,8 @@ while ($userinput -ne "q") {
 
             SetupNetworkSecurity -config $config
             SetupLoadBalancer -baseUrl $GITHUB_URL -config $config -local $local
+
+            InitHelm
         } 
         # '100' {
         #     curl -useb https://raw.githubusercontent.com/HealthCatalyst/dos.install/master/azure/main.ps1 | iex;

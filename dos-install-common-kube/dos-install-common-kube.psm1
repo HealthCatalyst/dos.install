@@ -25,3 +25,6 @@
 # config
 . $PSScriptRoot\functions\config\GetConfigFile.ps1
 . $PSScriptRoot\functions\config\ReadConfigFile.ps1
+
+# helm
+. $PSScriptRoot\functions\helm\InitHelm.ps1
