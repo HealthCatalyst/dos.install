@@ -1,5 +1,7 @@
 $here = Split-Path -Parent $MyInvocation.MyCommand.Path
 
+Set-StrictMode -Version Latest
+
 # Set-Location $naPath
 
 $ErrorActionPreference = "Stop"
@@ -13,18 +15,18 @@ Get-Module "$module" | Remove-Module -Force
 
 Import-Module "$here\$module.psm1" -Force
 
-$module = Get-Module -Name $module
-$module
-$module | Select-Object *
+# $module = Get-Module -Name $module
+# $module
+# $module | Select-Object *
 
 $module = "dos-install-common-kube"
 Get-Module "$module" | Remove-Module -Force
 
 Import-Module "$here\..\$module\$module.psm1" -Force
 
-$module = Get-Module -Name $module
-$module
-$module | Select-Object *
+# $module = Get-Module -Name $module
+# $module
+# $module | Select-Object *
 
 
 
@@ -39,17 +41,20 @@ Invoke-Pester "$here\functions\Storage\SetStorageAccountNameIntoSecret.Tests.ps1
 # Invoke-Pester "$here\functions\Subscription\SetCurrentAzureSubscription.Tests.ps1" -Tag 'Unit'
 # Invoke-Pester "$here\functions\Subscription\SetCurrentAzureSubscription.Tests.ps1" -Tag 'Integration'
 
+# Network
+ # Invoke-Pester "$here\functions\Network\SetupNetworkSecurity.Tests.ps1" -Tag 'Integration' -Verbose
+
+
 # Load Balancer
-# Subscription
 # Invoke-Pester "$here\functions\LoadBalancer\SetupLoadBalancer.Tests.ps1" -Tag 'Unit'
-# Invoke-Pester "$here\functions\LoadBalancer\SetupLoadBalancer.Tests.ps1" -Tag 'Integration' -Verbose
+Invoke-Pester "$here\functions\LoadBalancer\SetupLoadBalancer.Tests.ps1" -Tag 'Integration' -Verbose
 
 # arm
 # Invoke-Pester "$here\functions\arm\CreateServicePrincipal.Tests.ps1" -Tag 'Integration' -Verbose
 
 # Invoke-Pester "$here\functions\arm\AssignPermissionsToServicePrincipal.Tests.ps1" -Tag 'Integration' -Verbose
 
-Invoke-Pester "$here\functions\arm\CleanResourceGroup.Tests.ps1" -Tag 'Cluster' -Verbose
+# Invoke-Pester "$here\functions\arm\CleanResourceGroup.Tests.ps1" -Tag 'Cluster' -Verbose
 
 # Invoke-Pester "$here\functions\arm\DeployTemplate.Tests.ps1" -Tag 'Unit' -Verbose
 # Invoke-Pester "$here\functions\arm\DeployTemplate.Tests.ps1" -Tag 'Cluster' -Verbose

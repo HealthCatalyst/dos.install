@@ -1,30 +1,30 @@
-$here = Split-Path -Parent $MyInvocation.MyCommand.Path
-
 $filename = $($(Split-Path -Leaf $MyInvocation.MyCommand.Path).Replace(".Tests.ps1",""))
 
 $mockConfig = @"
 {
-    "customerid": "test",
     "azure": {
         "subscription": "PlatformStaff-DevTest",
         "resourceGroup": "hcut-acs-rg",
         "location": "westus"
     },
+    "customerid" : "hcut",
     "ingress": {
-        "external": {
+        "external":{
             "type": "public"
         },
         "internal": {
-            "type": "public"
+            "type": "vnetonly",
+            "ipAddress": "10.0.0.112",
+            "subnet": "kubsubnet"
         }
     },
     "dns": {
-        "name": "hcut.healthcatalyst.net"
-    }       
+        "name": "hcut.healthcatalyst.net",
+        "create_dns_entries": false,
+        "dns_resource_group": "dns"
+    }        
 }
 "@ | ConvertFrom-Json
-
-$GITHUB_URL = "$here\..\..\..\"
 
 Describe "$filename Unit Tests" -Tags 'Unit' {
     It "TestMethod" {
@@ -32,7 +32,7 @@ Describe "$filename Unit Tests" -Tags 'Unit' {
 }
 
 Describe "$filename Integration Tests" -Tags 'Integration' {
-    It "Sets up Load Balancer" {
-        SetupLoadBalancer -baseUrl $GITHUB_URL -config $mockConfig -local $true -Verbose
+    It "Can Setup Network Security" {
+        SetupNetworkSecurity -config $mockConfig
     }
 }

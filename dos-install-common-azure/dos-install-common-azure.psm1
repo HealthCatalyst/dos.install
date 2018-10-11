@@ -34,3 +34,6 @@ Import-Module "$here\..\dos-install-common-kube\dos-install-common-kube.psm1"
 
 # LoadBalancer
 . $PSScriptRoot\functions\LoadBalancer\SetupLoadBalancer.ps1
+
+# Network
+. $PSScriptRoot\functions\Network\SetupNetworkSecurity.ps1

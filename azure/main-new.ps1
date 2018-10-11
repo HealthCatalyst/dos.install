@@ -88,13 +88,17 @@ while ($userinput -ne "q") {
             $config = $(ReadConfigFile).Config
             Write-Verbose $config
         
+            LoginToAzure
+
+            SetCurrentAzureSubscription -subscriptionName $($config.azure.subscription)
+
             SetStorageAccountNameIntoSecret -resourceGroup $config.azure.resourceGroup -customerid $config.customerid
 
             kubectl get "deployments,pods,services,ingress,secrets" --namespace="default" -o wide
             kubectl get "deployments,pods,services,ingress,secrets" --namespace=kube-system -o wide
 
-            # SetupAzureLoadBalancer -baseUrl $GITHUB_URL -config $config -local $local
-
+            SetupNetworkSecurity -config $config
+            SetupLoadBalancer -baseUrl $GITHUB_URL -config $config -local $local
         } 
         # '100' {
         #     curl -useb https://raw.githubusercontent.com/HealthCatalyst/dos.install/master/azure/main.ps1 | iex;
