@@ -1,4 +1,4 @@
-param([bool]$prerelease, [bool]$local)    
+param([bool]$prerelease, [bool]$local)
 $version = "2018.06.06.01"
 Write-Host "--- main.ps1 version $version ---"
 Write-Host "prerelease flag: $prerelease"
@@ -8,7 +8,7 @@ Write-Host "prerelease flag: $prerelease"
 # Set-StrictMode -Version latest
 
 if ($local) {
-    Write-Host "use local files: $local"    
+    Write-Host "use local files: $local"
 }
 
 # https://stackoverflow.com/questions/9948517/how-to-stop-a-powershell-script-on-the-first-error
@@ -48,7 +48,7 @@ if ($local) {
     Import-Module "$here\..\$module\$module.psm1" -Force
 }
 else {
-    Install-Module -Name dos-install-common-kube   
+    Install-Module -Name dos-install-common-kube
 }
 
 if ($local) {
@@ -57,7 +57,7 @@ if ($local) {
     Import-Module "$here\..\$module\$module.psm1" -Force
 }
 else {
-    Install-Module -Name dos-install-common-azure    
+    Install-Module -Name dos-install-common-azure
 }
 
 $userinput = ""
@@ -67,18 +67,18 @@ while ($userinput -ne "q") {
     if (Test-CommandExists kubectl) {
         $currentcluster = $(kubectl config current-context 2> $null)
     }
-    
+
     Write-Host "================ Health Catalyst ================"
     if ($prerelease) {
         Write-Host "prerelease flag: $prerelease"
     }
-    Write-Warning "CURRENT CLUSTER: $currentcluster"   
-    
-    Write-Host "------ Infrastructure -------"
-    Write-Host "1: Configure existing Azure Container Service" 
+    Write-Warning "CURRENT CLUSTER: $currentcluster"
 
-    Write-Host "2: Launch Kubernetes Dashboard" 
-    
+    Write-Host "------ Infrastructure -------"
+    Write-Host "1: Configure existing Azure Container Service"
+
+    Write-Host "2: Launch Kubernetes Dashboard"
+
     Write-Host "------ Older Scripts -------"
     Write-Host "100: Go to old menu"
 
@@ -89,7 +89,7 @@ while ($userinput -ne "q") {
         '1' {
             $config = $(ReadConfigFile).Config
             Write-Verbose $config
-        
+
             LoginToAzure
 
             SetCurrentAzureSubscription -subscriptionName $($config.azure.subscription)
@@ -99,19 +99,19 @@ while ($userinput -ne "q") {
             kubectl get "deployments,pods,services,ingress,secrets" --namespace="default" -o wide
             kubectl get "deployments,pods,services,ingress,secrets" --namespace=kube-system -o wide
 
+            InitHelm
+
             SetupNetworkSecurity -config $config
             SetupLoadBalancer -baseUrl $GITHUB_URL -config $config -local $local
-
-            InitHelm
-        } 
+        }
         '2' {
             LaunchKubernetesDashboard
-        } 
+        }
         '100' {
             # curl -useb https://raw.githubusercontent.com/HealthCatalyst/dos.install/master/azure/main.ps1 | iex;
             # $Script = Invoke-WebRequest -useb ${GITHUB_URL}/azure/main.ps1?f=$randomstring;
             # $ScriptBlock = [Scriptblock]::Create($Script.Content)
-            # Invoke-Command -ScriptBlock $ScriptBlock  
+            # Invoke-Command -ScriptBlock $ScriptBlock
             $scriptPath = "curl -useb https://raw.githubusercontent.com/HealthCatalyst/dos.install/master/azure/main.ps1 | iex;"
             # $argumentList = ""
             # Invoke-Expression "$scriptPath $argumentList"
@@ -119,7 +119,7 @@ while ($userinput -ne "q") {
             # Start-Process powershell -Command "$scriptPath"
             start-process powershell.exe -argument "-noexit -nologo -command $scriptPath"
             exit 0
-        } 
+        }
         'q' {
             return
         }
@@ -128,7 +128,7 @@ while ($userinput -ne "q") {
         $userinput = Read-Host -Prompt "Press Enter to continue or q to exit"
         if ($userinput -eq "q") {
             return
-        }    
+        }
     }
     [Console]::ResetColor()
     Clear-Host

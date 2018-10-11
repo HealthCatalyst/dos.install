@@ -1,16 +1,16 @@
 <#
   .SYNOPSIS
   SetupLoadBalancer
-  
+
   .DESCRIPTION
   SetupLoadBalancer
-  
+
   .INPUTS
   SetupLoadBalancer - The name of SetupLoadBalancer
 
   .OUTPUTS
   None
-  
+
   .EXAMPLE
   SetupLoadBalancer
 
@@ -25,16 +25,16 @@ function SetupLoadBalancer() {
     (
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [string] 
+        [string]
         $baseUrl
         ,
         [Parameter(Mandatory = $true)]
-        [ValidateNotNull()] 
+        [ValidateNotNull()]
         $config
         ,
         [Parameter(Mandatory = $true)]
         [ValidateNotNull()]
-        [bool] 
+        [bool]
         $local
     )
 
@@ -76,34 +76,22 @@ function SetupLoadBalancer() {
         SaveSecretValue -secretname whitelistip -valueName iprange -value "${whiteListIp}"
     }
 
-    # delete existing containers
-    kubectl delete 'pods,services,configMaps,deployments,ingress' -l k8s-traefik=traefik -n kube-system --ignore-not-found=true
-
-    # set Google DNS servers to resolve external  urls
-    # http://blog.kubernetes.io/2017/04/configuring-private-dns-zones-upstream-nameservers-kubernetes.html
-    kubectl delete -f "$baseUrl/loadbalancer/dns/upstream.yaml" --ignore-not-found=true
-    Start-Sleep -Seconds 10
-    kubectl create -f "$baseUrl/loadbalancer/dns/upstream.yaml"
-    # to debug dns: https://kubernetes.io/docs/tasks/administer-cluster/dns-custom-nameservers/#inheriting-dns-from-the-node
-
-    kubectl delete ServiceAccount traefik-ingress-controller-serviceaccount -n kube-system --ignore-not-found=true
-
     if ($($config.ssl) ) {
         # if the SSL cert is not set in kube secrets then ask for the files
         # ask for tls cert files
         [string] $sslCertFolder = $($config.ssl_folder)
         if ((!(Test-Path -Path "$sslCertFolder"))) {
             Write-Error "SSL Folder does not exist: $sslCertFolder"
-        }     
+        }
 
-        [string] $sslCertFolderUnixPath = (($sslCertFolder -replace "\\", "/")).ToLower().Trim("/")    
+        [string] $sslCertFolderUnixPath = (($sslCertFolder -replace "\\", "/")).ToLower().Trim("/")
 
         kubectl delete secret traefik-cert-ahmn -n kube-system --ignore-not-found=true
 
         if ($($config.ssl_merge_intermediate_cert)) {
             # download the intermediate certificate and append to certificate
             [string] $intermediatecert = $(Invoke-WebRequest -UseBasicParsing -Uri "$baseUrl/intermediate.crt").Content
-            [string] $sitecert = Get-Content "$sslCertFolder\tls.crt" -Raw 
+            [string] $sitecert = Get-Content "$sslCertFolder\tls.crt" -Raw
 
             [string] $siteplusintermediatecert = $sitecert + $intermediatecert
 
@@ -114,7 +102,7 @@ function SetupLoadBalancer() {
         }
         else {
             Write-Host "Storing TLS certs from $sslCertFolderUnixPath as kubernetes secret"
-            kubectl create secret generic traefik-cert-ahmn -n kube-system --from-file="$sslCertFolderUnixPath/tls.crt" --from-file="$sslCertFolderUnixPath/tls.key"                
+            kubectl create secret generic traefik-cert-ahmn -n kube-system --from-file="$sslCertFolderUnixPath/tls.crt" --from-file="$sslCertFolderUnixPath/tls.key"
         }
     }
     else {
@@ -138,11 +126,12 @@ function SetupLoadBalancer() {
 
         [string] $ipResourceGroup = $resourceGroup
         [string] $publicIpName = "IngressPublicIP"
-        $externalip = Get-AzureRmPublicIpAddress -Name $publicIpName -ResourceGroupName $ipResourceGroup
-        if ([string]::IsNullOrWhiteSpace($externalip)) {
+        $externalIpObject = Get-AzureRmPublicIpAddress -Name $publicIpName -ResourceGroupName $ipResourceGroup
+        if ($externalIpObject -eq $null) {
             New-AzureRmPublicIpAddress -Name $publicIpName -ResourceGroupName ipResourceGroup -AllocationMethod Static -Location $location
-            $externalip = Get-AzureRmPublicIpAddress -Name $publicIpName -ResourceGroupName $ipResourceGroup
-        }  
+            $externalIpObject = Get-AzureRmPublicIpAddress -Name $publicIpName -ResourceGroupName $ipResourceGroup
+        }
+        $externalip = $externalIpObject.IpAddress
         Write-Host "Using Public IP: [$externalip]"
     }
 
@@ -175,11 +164,12 @@ function SetupLoadBalancer() {
         # setting up traefik
     # https://github.com/containous/traefik/blob/master/docs/user-guide/kubernetes.md
 
-    Write-Verbose "Calling GetLoadBalancerIPs"
+    Write-Host "Checking load balancers"
     $loadBalancerIPResult = GetLoadBalancerIPs
     $externalIp = $loadBalancerIPResult.ExternalIP
     $internalIp = $loadBalancerIPResult.InternalIP
-    Write-Verbose "Back from GetLoadBalancerIPs"
+
+    Write-Host "IP for public loadbalancer: [$externalIp], private load balancer: [$internalIp]"
 
     if ($($config.ingress.fixloadbalancer)) {
         FixLoadBalancers -resourceGroup $resourceGroup
@@ -196,12 +186,12 @@ function SetupLoadBalancer() {
     SaveSecretValue -secretname "dnshostname" -valueName "value" -value $dnsrecordname -namespace "default"
 
     if ($($config.dns.create_dns_entries)) {
-        SetupDNS -dnsResourceGroup $DNS_RESOURCE_GROUP -dnsrecordname $dnsrecordname -externalIP $externalIp 
+        SetupDNS -dnsResourceGroup $DNS_RESOURCE_GROUP -dnsrecordname $dnsrecordname -externalIP $externalIp
     }
     else {
         Write-Host "To access the urls from your browser, add the following entries in your c:\windows\system32\drivers\etc\hosts file"
         Write-Host "$externalIp $dnsrecordname"
-    }        
+    }
 
     Write-Verbose 'SetupLoadBalancer: Done'
 }

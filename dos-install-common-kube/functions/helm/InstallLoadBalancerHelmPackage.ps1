@@ -1,16 +1,16 @@
 <#
   .SYNOPSIS
   InstallLoadBalancerHelmPackage
-  
+
   .DESCRIPTION
   InstallLoadBalancerHelmPackage
-  
+
   .INPUTS
   InstallLoadBalancerHelmPackage - The name of InstallLoadBalancerHelmPackage
 
   .OUTPUTS
   None
-  
+
   .EXAMPLE
   InstallLoadBalancerHelmPackage
 
@@ -34,7 +34,7 @@ function InstallLoadBalancerHelmPackage() {
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
         [string]
-        $customerid       
+        $customerid
         ,
         [Parameter(Mandatory = $true)]
         [string]
@@ -72,10 +72,11 @@ function InstallLoadBalancerHelmPackage() {
     helm del --purge $package
 
     Start-Sleep -Seconds 5
-    
+
     kubectl delete 'pods,services,configMaps,deployments,ingress' -l k8s-traefik=traefik -n kube-system --ignore-not-found=true
-    
-    
+
+    Start-Sleep -Seconds 5
+
     Write-Output "Install helm package from $packageUrl"
     helm install $packageUrl `
         --name $package `
@@ -90,7 +91,7 @@ function InstallLoadBalancerHelmPackage() {
         --debug
 
     Write-Host "Listing packages"
-    helm list 
+    helm list
 
     Write-Verbose 'InstallLoadBalancerHelmPackage: Done'
 }
