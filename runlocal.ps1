@@ -1,1 +1,1 @@
-.\azure\main.ps1 -prerelease $true -local $true
+.\azure\main-new.ps1 -prerelease $true -local $true

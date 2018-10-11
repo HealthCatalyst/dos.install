@@ -19,14 +19,13 @@
 
 
 #>
-function LaunchKubernetesDashboard()
-{
-  [CmdletBinding()]
-  param
-  (
-  )
+function LaunchKubernetesDashboard() {
+    [CmdletBinding()]
+    param
+    (
+    )
 
-  Write-Verbose 'LaunchKubernetesDashboard: Starting'
+    Write-Verbose 'LaunchKubernetesDashboard: Starting'
 
     # launch Kubernetes dashboard
     $launchJob = $true
@@ -69,11 +68,30 @@ function LaunchKubernetesDashboard()
     else {
         $url = "http://localhost:$port/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/"
         Write-Host "Launching $url in the web browser"
-        Write-Host "Click Skip on login screen";
+        Write-Host "Use the token below";
         Start-Process -FilePath "$url";
-    }            
+    }
 
-  Write-Verbose 'LaunchKubernetesDashboard: Done'
+    $namespace = "kube-system"
+    $secretText = $(kubectl get secrets -n $namespace -o jsonpath="{.items[*].metadata.name}")
+    AssertStringIsNotNullOrEmpty -text $secretText
+
+    $secrets = $secretText.Split(" ")
+    $mydashboardUserSecretName = $secrets | Where-Object {$_ -like "my-dashboard-user-token-*"}
+    AssertStringIsNotNullOrEmpty -text $mydashboardUserSecretName
+
+    $secretjson = $(kubectl get secret $mydashboardUserSecretName -n $namespace -o json) | ConvertFrom-Json
+    $tokenBase64 = $secretjson.data.token
+    AssertStringIsNotNullOrEmpty -text $tokenBase64
+
+    $token = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($tokenBase64))
+    AssertStringIsNotNullOrEmpty -text $token
+
+    Write-Host "---- Bearer Token ----"
+    Write-Host $token
+    Write-Host "---- End of Bearer Token ----"
+
+    Write-Verbose 'LaunchKubernetesDashboard: Done'
 
 }
 

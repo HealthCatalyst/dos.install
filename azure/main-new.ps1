@@ -77,7 +77,7 @@ while ($userinput -ne "q") {
     Write-Host "------ Infrastructure -------"
     Write-Host "1: Configure existing Azure Container Service" 
 
-    Write-Host "1: Configure existing Azure Container Service" 
+    Write-Host "2: Launch Kubernetes Dashboard" 
     
     Write-Host "------ Older Scripts -------"
     Write-Host "100: Go to old menu"
@@ -103,6 +103,9 @@ while ($userinput -ne "q") {
             SetupLoadBalancer -baseUrl $GITHUB_URL -config $config -local $local
 
             InitHelm
+        } 
+        '2' {
+            LaunchKubernetesDashboard
         } 
         '100' {
             # curl -useb https://raw.githubusercontent.com/HealthCatalyst/dos.install/master/azure/main.ps1 | iex;
