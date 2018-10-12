@@ -1,4 +1,8 @@
 
+# kubernetes\cluster
+. $PSScriptRoot\functions\kubernetes\cluster\ShowStatusOfCluster.ps1
+. $PSScriptRoot\functions\kubernetes\cluster\GenerateKubeConfigFile.ps1
+
 # kubernetes\namespace
 . $PSScriptRoot\functions\kubernetes\namespace\CleanOutNamespace.ps1
 . $PSScriptRoot\functions\kubernetes\namespace\CreateNamespaceIfNotExists.ps1
@@ -58,3 +62,7 @@
 # dashboard
 . $PSScriptRoot\functions\dashboard\LaunchKubernetesDashboard.ps1
 . $PSScriptRoot\functions\dashboard\LaunchTraefikDashboard.ps1
+. $PSScriptRoot\functions\dashboard\Get-TokenForDashboardUser.ps1
+. $PSScriptRoot\functions\dashboard\Get-SecretNameForDashboardUser.ps1
+. $PSScriptRoot\functions\dashboard\Get-UserForDashboard.ps1
+

@@ -72,6 +72,9 @@ function ShowMainMenu() {
         Write-Host "32: Redeploy load balancers"
         Write-Host "33: Launch Load Balancer Dashboard"
 
+        Write-Host "------- Troubleshooting ----"
+        Write-Host "50: Troubleshooting Menu"
+
         Write-Host "------ Realtime -------"
         Write-Host "52: Fabric.Realtime Menu"
 
@@ -131,9 +134,6 @@ function ShowMainMenu() {
                 $dnshostname = $(ReadSecretValue -secretname "dnshostname" -namespace "default")
                 Write-Host "$EXTERNAL_IP $dnshostname"
             }
-            '300' {
-                LaunchTraefikDashboard
-            }
             '20' {
                 Write-Host "Current cluster: $(kubectl config current-context)"
                 kubectl version --short
@@ -184,7 +184,10 @@ function ShowMainMenu() {
                 $loadBalancerInternalIP = $loadBalancerInfo.InternalIP
                 LaunchTraefikDashboard -internalIp $loadBalancerInternalIP
             }
-
+            '50' {
+                ShowTroubleshootingMenu -baseUrl $baseUrl
+                $skip = $true
+            }
             '52' {
                 ShowProductMenu -baseUrl $baseUrl -namespace "fabricrealtime"
                 $skip = $true

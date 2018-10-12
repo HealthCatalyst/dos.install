@@ -46,6 +46,9 @@ Import-Module "$here\..\dos-install-common-kube\dos-install-common-kube.psm1"
 . $PSScriptRoot\functions\LoadBalancer\SetupLoadBalancer.ps1
 . $PSScriptRoot\functions\LoadBalancer\TestAzureLoadBalancer.ps1
 . $PSScriptRoot\functions\LoadBalancer\GetUrlAndIPForLoadBalancer.ps1
+. $PSScriptRoot\functions\LoadBalancer\MovePortsToLoadBalancer.ps1
+. $PSScriptRoot\functions\LoadBalancer\MovePortsToLoadBalancerForNamespace.ps1
+
 
 # Network
 . $PSScriptRoot\functions\Network\SetupNetworkSecurity.ps1
@@ -69,6 +72,8 @@ Import-Module "$here\..\dos-install-common-kube\dos-install-common-kube.psm1"
 # Menus
 . $PSScriptRoot\functions\Menus\ShowMainMenu.ps1
 . $PSScriptRoot\functions\Menus\ShowProductMenu.ps1
+. $PSScriptRoot\functions\Menus\ShowTroubleshootingMenu.ps1
+
 
 # VirtualMachine
 . $PSScriptRoot\functions\VirtualMachine\StartVMsInResourceGroup.ps1

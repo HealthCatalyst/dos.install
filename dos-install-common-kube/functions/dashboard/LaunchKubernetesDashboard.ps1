@@ -1,16 +1,16 @@
 <#
   .SYNOPSIS
   LaunchKubernetesDashboard
-  
+
   .DESCRIPTION
   LaunchKubernetesDashboard
-  
+
   .INPUTS
   LaunchKubernetesDashboard - The name of LaunchKubernetesDashboard
 
   .OUTPUTS
   None
-  
+
   .EXAMPLE
   LaunchKubernetesDashboard
 
@@ -36,7 +36,7 @@ function LaunchKubernetesDashboard() {
     # if (!([string]::IsNullOrWhiteSpace($existingProcess))) {
     #     Do { $confirmation = Read-Host "Another process is listening on 8001.  Do you want to kill that process? (y/n)"}
     #     while ([string]::IsNullOrWhiteSpace($confirmation))
-                
+
     #     if ($confirmation -eq "y") {
     #         Stop-ProcessByPort 8001
     #     }
@@ -44,21 +44,21 @@ function LaunchKubernetesDashboard() {
     #         $launchJob = $false
     #     }
     # }
-    
+
     if ($launchJob) {
         # https://stackoverflow.com/questions/19834643/powershell-how-to-pre-evaluate-variables-in-a-scriptblock-for-start-job
         $sb = [scriptblock]::Create("kubectl proxy -p $port")
         $job = Start-Job -Name "KubDashboard" -ScriptBlock $sb -ErrorAction Stop
         Wait-Job $job -Timeout 5;
-        Write-Host "job state: $($job.state)"  
-        Receive-Job -Job $job 6>&1  
+        Write-Host "job state: $($job.state)"
+        Receive-Job -Job $job 6>&1
     }
-    
+
     # if ($job.state -eq 'Failed') {
     #     Receive-Job -Job $job
     #     Stop-ProcessByPort 8001
     # }
-                
+
     # Write-Host "Your kubeconfig file is here: $env:KUBECONFIG"
     [string] $kubectlversion = $(kubectl version --short=true)[1]
     if ($kubectlversion -match "v1.8") {
@@ -72,20 +72,7 @@ function LaunchKubernetesDashboard() {
         Start-Process -FilePath "$url";
     }
 
-    [string] $namespace = "kube-system"
-    [string] $secretText = $(kubectl get secrets -n $namespace -o jsonpath="{.items[*].metadata.name}")
-    AssertStringIsNotNullOrEmpty -text $secretText
-
-    [string[]] $secrets = $secretText.Split(" ")
-    [string] $mydashboardUserSecretName = $secrets | Where-Object {$_ -like "my-dashboard-user-token-*"}
-    AssertStringIsNotNullOrEmpty -text $mydashboardUserSecretName
-
-    $secretjson = $(kubectl get secret $mydashboardUserSecretName -n $namespace -o json) | ConvertFrom-Json
-    [string] $tokenBase64 = $secretjson.data.token
-    AssertStringIsNotNullOrEmpty -text $tokenBase64
-
-    [string] $token = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($tokenBase64))
-    AssertStringIsNotNullOrEmpty -text $token
+    [string] $token = $(Get-TokenForDashboardUser).Token
 
     Write-Host "---- Bearer Token ----"
     Write-Host $token
