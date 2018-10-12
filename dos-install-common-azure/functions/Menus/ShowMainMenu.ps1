@@ -66,6 +66,12 @@ function ShowMainMenu() {
         Write-Host "26: Copy Kubernetes secrets to keyvault"
         Write-Host "27: Copy secrets from keyvault to kubernetes"
 
+        Write-Host "------ Load Balancer -------"
+        Write-Host "30: Test load balancer"
+        Write-Host "31: Fix load balancers"
+        Write-Host "32: Redeploy load balancers"
+        Write-Host "33: Launch Load Balancer Dashboard"
+
         Write-Host "------ Realtime -------"
         Write-Host "52: Fabric.Realtime Menu"
 
@@ -150,6 +156,35 @@ function ShowMainMenu() {
                 $currentResourceGroup = ReadSecretData -secretname azure-secret -valueName resourcegroup -Verbose
                 CopyKeyVaultSecretsToKubernetes -resourceGroup $currentResourceGroup -Verbose
             }
+            '30' {
+                TestAzureLoadBalancer
+            }
+            '31' {
+                $DEFAULT_RESOURCE_GROUP = ReadSecretData -secretname azure-secret -valueName resourcegroup
+
+                if ([string]::IsNullOrWhiteSpace($AKS_PERS_RESOURCE_GROUP)) {
+                    Do {
+                        $AKS_PERS_RESOURCE_GROUP = Read-Host "Resource Group: (default: $DEFAULT_RESOURCE_GROUP)"
+                        if ([string]::IsNullOrWhiteSpace($AKS_PERS_RESOURCE_GROUP)) {
+                            $AKS_PERS_RESOURCE_GROUP = $DEFAULT_RESOURCE_GROUP
+                        }
+                    }
+                    while ([string]::IsNullOrWhiteSpace($AKS_PERS_RESOURCE_GROUP))
+                }
+                FixLoadBalancers -resourceGroup $AKS_PERS_RESOURCE_GROUP
+            }
+            '32' {
+                $config = $(ReadConfigFile).Config
+                Write-Host $config
+
+                SetupLoadBalancer -baseUrl $baseUrl -config $config -local $local
+            }
+            '33' {
+                $loadBalancerInfo = $(GetLoadBalancerIPs)
+                $loadBalancerInternalIP = $loadBalancerInfo.InternalIP
+                LaunchTraefikDashboard -internalIp $loadBalancerInternalIP
+            }
+
             '52' {
                 ShowProductMenu -baseUrl $baseUrl -namespace "fabricrealtime"
                 $skip = $true

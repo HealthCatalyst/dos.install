@@ -32,6 +32,7 @@ Import-Module "$here\..\dos-install-common-kube\dos-install-common-kube.psm1"
 # Subscription
 . $PSScriptRoot\functions\Subscription\SetCurrentAzureSubscription.ps1
 . $PSScriptRoot\functions\Subscription\GetResourceGroup.ps1
+. $PSScriptRoot\functions\Subscription\GetCurrentAzureSubscription.ps1
 
 # Storage
 . $PSScriptRoot\functions\Storage\GetStorageAccountName.ps1
@@ -43,6 +44,8 @@ Import-Module "$here\..\dos-install-common-kube\dos-install-common-kube.psm1"
 
 # LoadBalancer
 . $PSScriptRoot\functions\LoadBalancer\SetupLoadBalancer.ps1
+. $PSScriptRoot\functions\LoadBalancer\TestAzureLoadBalancer.ps1
+. $PSScriptRoot\functions\LoadBalancer\GetUrlAndIPForLoadBalancer.ps1
 
 # Network
 . $PSScriptRoot\functions\Network\SetupNetworkSecurity.ps1
@@ -72,3 +75,4 @@ Import-Module "$here\..\dos-install-common-kube\dos-install-common-kube.psm1"
 . $PSScriptRoot\functions\VirtualMachine\StopVMsInResourceGroup.ps1
 . $PSScriptRoot\functions\VirtualMachine\ShowSSHCommandsToVMs.ps1
 . $PSScriptRoot\functions\VirtualMachine\RestartVMsInResourceGroup.ps1
+. $PSScriptRoot\functions\VirtualMachine\GetPublicNameofMasterVM.ps1
