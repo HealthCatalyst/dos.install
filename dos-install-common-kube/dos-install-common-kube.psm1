@@ -12,6 +12,7 @@
 . $PSScriptRoot\functions\kubernetes\secrets\SaveSecretPassword.ps1
 . $PSScriptRoot\functions\kubernetes\secrets\DeleteAllSecretsInNamespace.ps1
 . $PSScriptRoot\functions\kubernetes\secrets\ReadAllSecretsAsHashTable.ps1
+. $PSScriptRoot\functions\kubernetes\secrets\GenerateSecretPassword.ps1
 
 # kubernetes\pods
 . $PSScriptRoot\functions\kubernetes\pods\WaitForPodsInNamespace.ps1
@@ -36,6 +37,7 @@
 . $PSScriptRoot\functions\helpers\AssertStringIsNotNull.ps1
 . $PSScriptRoot\functions\helpers\Find-OpenPort.ps1
 . $PSScriptRoot\functions\helpers\Get-IsPortFree.ps1
+. $PSScriptRoot\functions\helpers\GeneratePassword.ps1
 
 # config
 . $PSScriptRoot\functions\config\GetConfigFile.ps1

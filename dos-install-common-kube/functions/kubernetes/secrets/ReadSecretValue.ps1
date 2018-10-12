@@ -1,16 +1,16 @@
 <#
   .SYNOPSIS
   ReadSecretValue
-  
+
   .DESCRIPTION
   ReadSecretValue
-  
+
   .INPUTS
   ReadSecretValue - The name of ReadSecretValue
 
   .OUTPUTS
   None
-  
+
   .EXAMPLE
   ReadSecretValue
 
@@ -21,13 +21,14 @@
 #>
 function ReadSecretValue() {
     [CmdletBinding()]
+    [OutputType([string])]
     param
     (
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [string] 
+        [string]
         $secretname
-        , 
+        ,
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
         [string]

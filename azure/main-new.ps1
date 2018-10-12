@@ -85,6 +85,9 @@ while ($userinput -ne "q") {
     Write-Host "26: Copy Kubernetes secrets to keyvault"
     Write-Host "27: Copy secrets from keyvault to kubernetes"
 
+    Write-Host "------ Realtime -------"
+    Write-Host "31: Install Fabric.Realtime"
+
     Write-Host "------ Older Scripts -------"
     Write-Host "100: Go to old menu"
 
@@ -112,7 +115,6 @@ while ($userinput -ne "q") {
         }
         '2' {
             LaunchKubernetesDashboard
-            LaunchTraefikDashboard
         }
         '3' {
             LaunchTraefikDashboard
@@ -124,6 +126,11 @@ while ($userinput -ne "q") {
         '27' {
             $currentResourceGroup = ReadSecretData -secretname azure-secret -valueName resourcegroup -Verbose
             CopyKeyVaultSecretsToKubernetes -resourceGroup $currentResourceGroup -Verbose
+        }
+        '31' {
+            $packageUrl = "https://raw.githubusercontent.com/HealthCatalyst/helm.realtime/master/fabricrealtime-1.0.0.tgz"
+            $namespace="fabricrealtime"
+            InstallProductInAzure -namespace $namespace -packageUrl $packageUrl
         }
 
         '100' {

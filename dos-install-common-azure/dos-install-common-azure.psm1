@@ -50,6 +50,7 @@ Import-Module "$here\..\dos-install-common-kube\dos-install-common-kube.psm1"
 # Stack
 . $PSScriptRoot\functions\Stack\InstallStackInAzure.ps1
 . $PSScriptRoot\functions\Stack\CreateSecretsForStack.ps1
+. $PSScriptRoot\functions\Stack\InstallProductInAzure.ps1
 
 # keyvault
 . $PSScriptRoot\functions\KeyVault\CopyKubernetesSecretsToKeyVault.ps1

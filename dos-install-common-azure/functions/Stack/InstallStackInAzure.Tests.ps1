@@ -17,7 +17,5 @@ Describe "$filename Unit Tests" -Tags 'Unit' {
 
 Describe "$filename Integration Tests" -Tags 'Integration' {
     It "Can load fabricrealtime stack in Azure" {
-        InstallStackInAzure `
-            -
     }
 }
