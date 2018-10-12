@@ -1,16 +1,16 @@
 <#
   .SYNOPSIS
   WaitForPodsInNamespace
-  
+
   .DESCRIPTION
   WaitForPodsInNamespace
-  
+
   .INPUTS
   WaitForPodsInNamespace - The name of WaitForPodsInNamespace
 
   .OUTPUTS
   None
-  
+
   .EXAMPLE
   WaitForPodsInNamespace
 
@@ -25,9 +25,9 @@ function WaitForPodsInNamespace() {
     (
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [string] 
+        [string]
         $namespace
-        , 
+        ,
         [Parameter(Mandatory = $true)]
         [int]
         $interval
@@ -35,62 +35,73 @@ function WaitForPodsInNamespace() {
 
     Write-Verbose 'WaitForPodsInNamespace: Starting'
 
-    [hashtable]$Return = @{} 
+    [hashtable]$Return = @{}
 
-    $pods = $(kubectl get pods -n $namespace -o jsonpath='{.items[*].metadata.name}')
+    [string] $podsText = $(kubectl get pods -n $namespace -o jsonpath='{.items[*].metadata.name}')
     [string] $waitingonPodText = "n"
 
-    $counter = 0
+    [int] $counter = 0
+    [bool] $failed = $false
     Do {
         $waitingonPodText = ""
-        Write-Information -MessageData "---- waiting until all pods are running in namespace $namespace ---"
+        Write-Host "---- waiting until all pods are running in namespace $namespace ---"
 
         Start-Sleep -Seconds $interval
         $counter++
-        [string] $pods = $(kubectl get pods -n $namespace -o jsonpath='{.items[*].metadata.name}')
+        $podsText = $(kubectl get pods -n $namespace -o jsonpath='{.items[*].metadata.name}')
 
-        if (!$pods) {
+        if ([string]::IsNullOrWhiteSpace($podsText)) {
             throw "No pods were found in namespace $namespace"
         }
 
-        foreach ($pod in $pods.Split(" ")) {
+        [string[]] $pods = $podsText.Split(" ")
+        foreach ($pod in $pods) {
             [string] $podstatus = $(kubectl get pods $pod -n $namespace -o jsonpath='{.status.phase}')
             if ($podstatus -eq "Running") {
                 # nothing to do
             }
             elseif ($podstatus -eq "Pending") {
-                # Write-Information -MessageData "${pod}: $podstatus"
+                # Write-Verbose "${pod}: $podstatus"
                 [string] $containerReady = $(kubectl get pods $pod -n $namespace -o jsonpath="{.status.containerStatuses[0].ready}")
                 if ($containerReady -ne "true" ) {
                     [string] $containerStatus = $(kubectl get pods $pod -n $namespace -o jsonpath="{.status.containerStatuses[0].state.waiting.reason}")
+                    # Write-Verbose "${pod}: $podstatus ($containerStatus)"
                     if (![string]::IsNullOrEmpty(($containerStatus))) {
-                        $waitingonPodText = "${waitingonPodText}${pod}($containerStatus);"    
+                        if ($containerStatus -eq "CreateContainerConfigError") {
+                            $failed = $true
+                            break
+                        }
+                        else {
+                            $waitingonPodText = "${waitingonPodText}${pod}($containerStatus);"
+                        }
                     }
                     else {
-                        $waitingonPodText = "${waitingonPodText}${pod}(container);"                        
+                        $waitingonPodText = "${waitingonPodText}${pod}(container);"
                     }
-                    # Write-Information -MessageData "container in $pod is not ready yet: $containerReady"
                 }
             }
             else {
-                $waitingonPodText = "${waitingonPodText}${pod}($podstatus);" 
+                $waitingonPodText = "${waitingonPodText}${pod}($podstatus);"
             }
         }
-            
-        Write-Information -MessageData "[$counter] $waitingonPodText"
+
+        Write-Host "[$counter] $waitingonPodText"
     }
-    while (![string]::IsNullOrEmpty($waitingonPodText) -and ($counter -lt 30) )
+    while (![string]::IsNullOrEmpty($waitingonPodText) -and !($failed) -and ($counter -lt 30) )
 
     kubectl get pods -n $namespace -o wide
 
-    if ($counter -gt 29) {
-        Write-Information -MessageData "--- warnings in kubenetes event log ---"
-        kubectl get events -n $namespace | grep "Warning" | tail    
-    } 
+    if ($counter -gt 29 -or $failed) {
+        Write-Host "------- Kubernetes Events ------------"
+        kubectl get events -n "$namespace" --sort-by=".metadata.creationTimestamp"
+        Write-Host "------- End of Kubernetes Events ------------"
+        $Return.Success = $false
+        Write-Error "Pods Failed"
+    }
 
     Write-Verbose 'WaitForPodsInNamespace: Done'
-    return $Return    
-
+    $Return.Success = $true
+    return $Return
 }
 
 Export-ModuleMember -Function "WaitForPodsInNamespace"

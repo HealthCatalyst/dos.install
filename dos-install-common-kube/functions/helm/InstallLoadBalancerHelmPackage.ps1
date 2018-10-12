@@ -24,6 +24,7 @@ function InstallLoadBalancerHelmPackage() {
     param
     (
         [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
         [string]
         $packageUrl
         ,
@@ -77,21 +78,17 @@ function InstallLoadBalancerHelmPackage() {
 
     Start-Sleep -Seconds 5
 
-    Write-Output "Install helm package from $packageUrl"
-    helm install $packageUrl `
-        --name $package `
-        --namespace kube-system `
-        --set ssl=$Ssl `
-        --set ExternalIP="$ExternalIP" `
-        --set InternalIP="$InternalIP" `
-        --set ExternalSubnet="$ExternalSubnet" `
-        --set InternalSubnet="$InternalSubnet" `
-        --set ingressInternalType="$IngressInternalType" `
-        --set ingressExternalType="$IngressExternalType" `
-        --debug
-
-    Write-Host "Listing packages"
-    helm list
+    InstallHelmPackage  -namespace "kube-system" `
+        -package $package `
+        -packageUrl $packageUrl `
+        -Ssl $Ssl `
+        -customerid $customerid `
+        -ExternalIP $ExternalIP `
+        -InternalIP $InternalIP `
+        -ExternalSubnet $ExternalSubnet `
+        -InternalSubnet $InternalSubnet `
+        -IngressInternalType $IngressInternalType `
+        -IngressExternalType $IngressExternalType
 
     Write-Verbose 'InstallLoadBalancerHelmPackage: Done'
 }
