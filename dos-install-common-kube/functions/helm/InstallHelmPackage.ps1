@@ -103,8 +103,8 @@ function InstallHelmPackage() {
     [string] $failedText = $(helm list --failed --output json)
     if (![string]::IsNullOrWhiteSpace($failedText)) {
         Write-Error "Helm package failed"
-        $(helm list)
     }
+    $(helm list)
 
     Write-Verbose "InstallHelmPackage: Done $package"
 }

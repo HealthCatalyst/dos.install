@@ -1,6 +1,6 @@
 $here = Split-Path -Parent $MyInvocation.MyCommand.Path
 
-# Set-Location $naPath
+Set-StrictMode -Version Latest
 
 $ErrorActionPreference = "Stop"
 

@@ -78,6 +78,7 @@ while ($userinput -ne "q") {
     Write-Host "1: Configure existing Azure Container Service"
 
     Write-Host "2: Launch Kubernetes Dashboard"
+#    Write-Host "3: Launch Traefik Dashboard"
 
     Write-Host "------ Older Scripts -------"
     Write-Host "100: Go to old menu"
@@ -106,6 +107,10 @@ while ($userinput -ne "q") {
         }
         '2' {
             LaunchKubernetesDashboard
+            LaunchTraefikDashboard
+        }
+        '3' {
+            LaunchTraefikDashboard
         }
         '100' {
             # curl -useb https://raw.githubusercontent.com/HealthCatalyst/dos.install/master/azure/main.ps1 | iex;

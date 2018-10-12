@@ -39,4 +39,6 @@
 . $PSScriptRoot\functions\config\GetConfigFile.ps1
 . $PSScriptRoot\functions\config\ReadConfigFile.ps1
 
-. $PSScriptRoot\functions\LaunchKubernetesDashboard.ps1
+# dashboard
+. $PSScriptRoot\functions\dashboard\LaunchKubernetesDashboard.ps1
+. $PSScriptRoot\functions\dashboard\LaunchTraefikDashboard.ps1
