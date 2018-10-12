@@ -36,6 +36,8 @@ function InstallProductInAzure() {
 
     Write-Verbose 'InstallProductInAzure: Starting'
 
+    Write-Host "Installing product from $packageUrl into $namespace"
+
     $loadbalancerInfo = $(GetLoadBalancerIPs)
     [string] $externalIP = $loadbalancerInfo.ExternalIP
     [string] $internalIP = $loadbalancerInfo.InternalIP

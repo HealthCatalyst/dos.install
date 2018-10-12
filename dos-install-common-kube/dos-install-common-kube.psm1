@@ -13,10 +13,19 @@
 . $PSScriptRoot\functions\kubernetes\secrets\DeleteAllSecretsInNamespace.ps1
 . $PSScriptRoot\functions\kubernetes\secrets\ReadAllSecretsAsHashTable.ps1
 . $PSScriptRoot\functions\kubernetes\secrets\GenerateSecretPassword.ps1
+. $PSScriptRoot\functions\kubernetes\secrets\ReadSecretPassword.ps1
+. $PSScriptRoot\functions\kubernetes\secrets\WriteSecretPasswordToOutput.ps1
+. $PSScriptRoot\functions\kubernetes\secrets\WriteSecretValueToOutput.ps1
 
 # kubernetes\pods
 . $PSScriptRoot\functions\kubernetes\pods\WaitForPodsInNamespace.ps1
 . $PSScriptRoot\functions\kubernetes\pods\GetLoadBalancerIPs.ps1
+. $PSScriptRoot\functions\kubernetes\pods\ShowStatusOfAllPodsInNameSpace.ps1
+. $PSScriptRoot\functions\kubernetes\pods\ShowLogsOfAllPodsInNameSpace.ps1
+. $PSScriptRoot\functions\kubernetes\pods\ShowSSHCommandsToContainers.ps1
+
+# kubernetes\ingress
+. $PSScriptRoot\functions\kubernetes\ingress\TroubleshootIngress.ps1
 
 # helm
 . $PSScriptRoot\functions\helm\InitHelm.ps1
