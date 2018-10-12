@@ -42,20 +42,31 @@ Write-Host "Powershell version: $($PSVersionTable.PSVersion.Major).$($PSVersionT
 Import-Module PowerShellGet
 
 $here = Split-Path -Parent $MyInvocation.MyCommand.Path
-$module = "dos-install-common-kube"
+$topLevelFolder = "$here\..\..\"
+$module = "DosInstallUtilities.Kube"
 Get-Module "$module" | Remove-Module -Force
 if ($local) {
-    Import-Module "$here\..\$module\$module.psm1" -Force
+    Import-Module "$topLevelFolder\$module\$module.psm1" -Force
 }
 else {
     Install-Module -Name $module -Force -AllowClobber
 }
 
-$module = "dos-install-common-azure"
+$module = "DosInstallUtilities.Azure"
 Get-Module "$module" | Remove-Module -Force
 if ($local) {
 
-    Import-Module "$here\..\$module\$module.psm1" -Force
+    Import-Module "$topLevelFolder\$module\$module.psm1" -Force
+}
+else {
+    Install-Module -Name $module -Force -AllowClobber
+}
+
+$module = "DosInstallUtilities.Menu"
+Get-Module "$module" | Remove-Module -Force
+if ($local) {
+
+    Import-Module "$topLevelFolder\$module\$module.psm1" -Force
 }
 else {
     Install-Module -Name $module -Force -AllowClobber
