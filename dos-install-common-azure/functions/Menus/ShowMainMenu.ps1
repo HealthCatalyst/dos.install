@@ -23,7 +23,7 @@ function ShowMainMenu() {
     [CmdletBinding()]
     param
     (
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
         [string]
         $baseUrl
@@ -47,9 +47,20 @@ function ShowMainMenu() {
 
         Write-Host "------ Infrastructure -------"
         Write-Host "1: Configure existing Azure Container Service"
-
         Write-Host "2: Launch Kubernetes Dashboard"
+        Write-Host "------ Troubleshooting Infrastructure -------"
+        Write-Host "3: Start VMs in Resource Group"
+        Write-Host "4: Stop VMs in Resource Group"
+
         #    Write-Host "3: Launch Traefik Dashboard"
+        Write-Host "9: Show nodes"
+        Write-Host "10: Show DNS entries for /etc/hosts"
+
+        Write-Host "----- Troubleshooting ----"
+        Write-Host "20: Show status of cluster"
+        Write-Host "22: Show SSH commands to VMs"
+        Write-Host "23: View status of DNS pods"
+        Write-Host "24: Restart all VMs"
 
         Write-Host "------ Keyvault -------"
         Write-Host "26: Copy Kubernetes secrets to keyvault"
@@ -87,7 +98,49 @@ function ShowMainMenu() {
                 LaunchKubernetesDashboard
             }
             '3' {
+                Do {
+                    $AKS_PERS_RESOURCE_GROUP = Read-Host "Resource Group"
+                }
+                while ([string]::IsNullOrWhiteSpace($AKS_PERS_RESOURCE_GROUP))
+
+                StartVMsInResourceGroup -resourceGroup $AKS_PERS_RESOURCE_GROUP
+            }
+            '4' {
+                Do {
+                    $AKS_PERS_RESOURCE_GROUP = Read-Host "Resource Group"
+                }
+                while ([string]::IsNullOrWhiteSpace($AKS_PERS_RESOURCE_GROUP))
+                StopVMsInResourceGroup -resourceGroup $AKS_PERS_RESOURCE_GROUP
+            }
+            '9' {
+                Write-Host "Current cluster: $(kubectl config current-context)"
+                kubectl version --short
+                kubectl get "nodes"
+            }
+            '10' {
+                Write-Host "If you didn't setup DNS, add the following entries in your c:\windows\system32\drivers\etc\hosts file to access the urls from your browser"
+                $loadBalancerIPResult = GetLoadBalancerIPs
+                $EXTERNAL_IP = $loadBalancerIPResult.ExternalIP
+
+                $dnshostname = $(ReadSecretValue -secretname "dnshostname" -namespace "default")
+                Write-Host "$EXTERNAL_IP $dnshostname"
+            }
+            '300' {
                 LaunchTraefikDashboard
+            }
+            '20' {
+                Write-Host "Current cluster: $(kubectl config current-context)"
+                kubectl version --short
+                kubectl get "deployments,pods,services,ingress,secrets,nodes" --namespace=kube-system -o wide
+            }
+            '22' {
+                ShowSSHCommandsToVMs
+            }
+            '23' {
+                RestartDNSPodsIfNeeded
+            }
+            '24' {
+                RestartAzureVMsInResourceGroup
             }
             '26' {
                 $currentResourceGroup = ReadSecretData -secretname azure-secret -valueName resourcegroup -Verbose

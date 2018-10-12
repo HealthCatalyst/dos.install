@@ -27,6 +27,9 @@
 # kubernetes\ingress
 . $PSScriptRoot\functions\kubernetes\ingress\TroubleshootIngress.ps1
 
+# kubernetes\dns
+. $PSScriptRoot\functions\kubernetes\dns\RestartDNSPodsIfNeeded.ps1
+
 # helm
 . $PSScriptRoot\functions\helm\InitHelm.ps1
 . $PSScriptRoot\functions\helm\InstallHelmPackage.ps1

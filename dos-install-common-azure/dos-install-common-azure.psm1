@@ -66,3 +66,9 @@ Import-Module "$here\..\dos-install-common-kube\dos-install-common-kube.psm1"
 # Menus
 . $PSScriptRoot\functions\Menus\ShowMainMenu.ps1
 . $PSScriptRoot\functions\Menus\ShowProductMenu.ps1
+
+# VirtualMachine
+. $PSScriptRoot\functions\VirtualMachine\StartVMsInResourceGroup.ps1
+. $PSScriptRoot\functions\VirtualMachine\StopVMsInResourceGroup.ps1
+. $PSScriptRoot\functions\VirtualMachine\ShowSSHCommandsToVMs.ps1
+. $PSScriptRoot\functions\VirtualMachine\RestartVMsInResourceGroup.ps1
