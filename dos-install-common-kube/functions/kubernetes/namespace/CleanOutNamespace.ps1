@@ -33,7 +33,7 @@ function CleanOutNamespace() {
 
     [hashtable]$Return = @{}
 
-    Write-Information -MessageData "--- Cleaning out any old resources in $namespace ---"
+    Write-Host "--- Cleaning out any old resources in $namespace ---"
 
     # note kubectl doesn't like spaces in between commas below
     kubectl delete --all 'deployments,pods,services,ingress,persistentvolumeclaims,jobs,cronjobs' --namespace=$namespace --ignore-not-found=true
@@ -41,36 +41,35 @@ function CleanOutNamespace() {
     # can't delete persistent volume claims since they are not scoped to namespace
     kubectl delete 'pv' -l namespace=$namespace --ignore-not-found=true
 
-    Write-Information -MessageData "Waiting for resources to be deleted"
+    Write-Host -MessageData "Waiting for resources to be deleted"
     $CLEANUP_DONE = "n"
     $counter = 0
     Do {
         $CLEANUP_DONE = $(kubectl get 'deployments,pods,services,ingress,persistentvolumeclaims,jobs,cronjobs' --namespace=$namespace -o jsonpath="{.items[*].metadata.name}")
         if (![string]::IsNullOrEmpty($CLEANUP_DONE)) {
             $counter++
-            Write-Information -MessageData "[$counter] Remaining items: $CLEANUP_DONE"
+            Write-Host "[$counter] Remaining items: $CLEANUP_DONE"
             Start-Sleep 5
         }
     }
     while ((![string]::IsNullOrEmpty($CLEANUP_DONE)) -and ($counter -lt 12))
 
     if (![string]::IsNullOrEmpty($CLEANUP_DONE)) {
-        Write-Information -MessageData "Deleting pods didn't work so deleting with force"
+        Write-Host "Deleting pods didn't work so deleting with force"
         kubectl delete --all 'pods' --grace-period=0 --force --namespace=$namespace --ignore-not-found=true
-        Write-Information -MessageData "Waiting for resources to be deleted"
+        Write-Host "Waiting for resources to be deleted"
         $CLEANUP_DONE = "n"
         $counter = 0
         Do {
             $CLEANUP_DONE = $(kubectl get 'deployments,pods,services,ingress,persistentvolumeclaims,jobs,cronjobs' --namespace=$namespace -o jsonpath="{.items[*].metadata.name}")
             if (![string]::IsNullOrEmpty($CLEANUP_DONE)) {
                 $counter++
-                Write-Information -MessageData "[$counter] Remaining items: $CLEANUP_DONE"
+                Write-Host "[$counter] Remaining items: $CLEANUP_DONE"
                 Start-Sleep 5
             }
         }
         while ((![string]::IsNullOrEmpty($CLEANUP_DONE)) -and ($counter -lt 12))
     }
-
 
     Write-Verbose 'CleanOutNamespace: Done'
     return $Return

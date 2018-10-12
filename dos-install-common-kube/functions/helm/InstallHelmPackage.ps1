@@ -100,7 +100,11 @@ function InstallHelmPackage() {
         --debug
 
     Write-Verbose "Listing packages"
-    helm list
+    [string] $failedText = $(helm list --failed --output json)
+    if (![string]::IsNullOrWhiteSpace($failedText)) {
+        Write-Error "Helm package failed"
+        $(helm list)
+    }
 
     Write-Verbose "InstallHelmPackage: Done $package"
 }
