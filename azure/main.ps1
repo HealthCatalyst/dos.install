@@ -1,5 +1,5 @@
 param([bool]$prerelease, [bool]$local)
-$version = "2018.10.12.05"
+$version = "2018.10.12.06"
 [Console]::ResetColor()
 Write-Host "--- main.ps1 version $version ---"
 Write-Host "prerelease flag: $prerelease"
@@ -39,37 +39,35 @@ Write-Host "GITHUB_URL: $GITHUB_URL"
 
 Write-Host "Powershell version: $($PSVersionTable.PSVersion.Major).$($PSVersionTable.PSVersion.Minor).$($PSVersionTable.PSVersion.Build)"
 
-Import-Module PowerShellGet
+Import-Module PowerShellGet -Force
 
 $here = Split-Path -Parent $MyInvocation.MyCommand.Path
 $topLevelFolder = "$here\..\..\"
 $module = "DosInstallUtilities.Kube"
-Get-Module "$module" | Remove-Module -Force
 if ($local) {
+    Get-Module "$module" | Remove-Module -Force
     Import-Module "$topLevelFolder\$module\$module.psm1" -Force
 }
 else {
-    Install-Module -Name $module -Force -AllowClobber
+    Install-Module -Name $module -MinimumVersion 1.3 -AllowClobber
 }
 
 $module = "DosInstallUtilities.Azure"
-Get-Module "$module" | Remove-Module -Force
 if ($local) {
-
+    Get-Module "$module" | Remove-Module -Force
     Import-Module "$topLevelFolder\$module\$module.psm1" -Force
 }
 else {
-    Install-Module -Name $module -Force -AllowClobber
+    Install-Module -Name $module -MinimumVersion 1.3 -AllowClobber
 }
 
 $module = "DosInstallUtilities.Menu"
-Get-Module "$module" | Remove-Module -Force
 if ($local) {
-
+    Get-Module "$module" | Remove-Module -Force
     Import-Module "$topLevelFolder\$module\$module.psm1" -Force
 }
 else {
-    Install-Module -Name $module -Force -AllowClobber
+    Install-Module -Name $module -MinimumVersion 1.0 -AllowClobber
 }
 
 ShowMainMenu -baseUrl $GITHUB_URL -local $local
