@@ -1,0 +1,20 @@
+{
+    "$schema": "https://raw.githubusercontent.com/HealthCatalyst/dos.install/master/deployments/schema.json",
+    "azure": {
+        "subscription": "PlatformStaff-DevTest",
+        "resourceGroup": "hcut-acs-rg",
+        "location": "westus"
+    },
+    "customerid": "hcut",
+    "ingress": {
+        "external":{
+            "type": "public"
+        },
+        "internal": {
+            "type": "public"
+        }
+    },
+    "dns": {
+        "name": "hcut.healthcatalyst.net"
+    }    
+}

@@ -1,0 +1,43 @@
+kind: Deployment
+apiVersion: extensions/v1beta1
+metadata:
+# name for this pod
+  name: fabric.nlp.dnstester
+# namespace for this pod
+  namespace: fabricnlp  
+  labels:
+    app: dnstester
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3  # Clean-up old Replica Sets deployed; only keep previous 3.
+  strategy:
+    # We need to kill the existing Pod before creating an new one
+    # for the new one to be able to attach the persistent disk.
+    type: Recreate        
+  selector:
+    matchLabels:
+      app: dnstester
+  template:
+    metadata:
+      labels:
+        app: dnstester
+    spec:
+      containers:
+      - image: healthcatalyst/fabric.docker.dnstester:1
+        imagePullPolicy: Always
+        name: dnstester
+        env:
+          - name: ENVNAME
+            value: $CUSTOMERID$
+          - name: SLACKURL
+            value: "https://hooks.slack.com/services/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"
+          - name: SLEEPINTERVAL
+            value: "300"
+          - name: INTERVALBETWEENMESSAGES
+            value: "3600"
+          - name: SERVER1
+            value: mysqlserver
+        resources:
+          limits:
+            memory: "64Mi"
+            cpu: "250m"

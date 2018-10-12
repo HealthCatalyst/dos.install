@@ -20,10 +20,13 @@ spec:
       labels:
         app: nlpwebserver
     spec:
+      dnsConfig:
+        options:
+          - name: single-request-reopen    
       containers:
         - name: nlpwebserver
           image: healthcatalyst/fabric.nlp.docker.web:1
-          imagePullPolicy: Always          
+          imagePullPolicy: Always
           env:
             - name: NLPWEB_EXTERNAL_URL
               valueFrom:
