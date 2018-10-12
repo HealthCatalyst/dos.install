@@ -40,6 +40,7 @@ Write-Host "GITHUB_URL: $GITHUB_URL"
 Write-Host "Powershell version: $($PSVersionTable.PSVersion.Major).$($PSVersionTable.PSVersion.Minor).$($PSVersionTable.PSVersion.Build)"
 
 Import-Module PowerShellGet -Force
+Import-Module AzureRM -Force
 
 $here = Split-Path -Parent $MyInvocation.MyCommand.Path
 $topLevelFolder = "$here\..\..\"
