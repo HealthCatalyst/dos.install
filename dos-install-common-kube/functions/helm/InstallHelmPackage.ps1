@@ -43,11 +43,6 @@ function InstallHelmPackage() {
         $Ssl
         ,
         [Parameter(Mandatory = $true)]
-        [ValidateNotNullOrEmpty()]
-        [string]
-        $customerid
-        ,
-        [Parameter(Mandatory = $true)]
         [string]
         $ExternalIP
         ,

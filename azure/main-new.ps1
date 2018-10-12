@@ -1,7 +1,7 @@
 param([bool]$prerelease, [bool]$local)
-$version = "2018.10.12.02"
+$version = "2018.10.12.04"
 [Console]::ResetColor()
-Write-Host "--- main.ps1 version $version ---"
+Write-Host "--- main-new.ps1 version $version ---"
 Write-Host "prerelease flag: $prerelease"
 
 # http://www.rlmueller.net/PSGotchas.htm
@@ -41,6 +41,7 @@ Write-Host "Powershell version: $($PSVersionTable.PSVersion.Major).$($PSVersionT
 
 Import-Module PowerShellGet
 
+$here = Split-Path -Parent $MyInvocation.MyCommand.Path
 $module = "dos-install-common-kube"
 Get-Module "$module" | Remove-Module -Force
 if ($local) {
@@ -53,11 +54,11 @@ else {
 $module = "dos-install-common-azure"
 Get-Module "$module" | Remove-Module -Force
 if ($local) {
-    $here = Split-Path -Parent $MyInvocation.MyCommand.Path
+
     Import-Module "$here\..\$module\$module.psm1" -Force
 }
 else {
     Install-Module -Name $module -Force -AllowClobber
 }
 
-ShowMainMenu -baseUrl $GITHUB_URL
+ShowMainMenu -baseUrl $GITHUB_URL -local $local

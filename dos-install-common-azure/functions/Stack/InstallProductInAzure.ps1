@@ -32,6 +32,10 @@ function InstallProductInAzure() {
         [ValidateNotNullOrEmpty()]
         [string]
         $packageUrl
+        ,
+        [Parameter(Mandatory = $true)]
+        [bool]
+        $local
     )
 
     Write-Verbose 'InstallProductInAzure: Starting'
@@ -53,13 +57,14 @@ function InstallProductInAzure() {
         -package $namespace `
         -packageUrl $packageUrl `
         -Ssl $false `
-        -customerid "test" `
         -ExternalIP $externalIP `
         -InternalIP $internalIP `
         -ExternalSubnet $externalSubnetName `
         -InternalSubnet $internalSubnetName `
         -IngressInternalType "public" `
         -IngressExternalType "public" `
+        -local $local `
+        -isAzure $true `
         -Verbose
 
     Write-Verbose 'InstallProductInAzure: Done'

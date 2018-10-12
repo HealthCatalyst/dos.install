@@ -43,11 +43,6 @@ function InstallStackInKubernetes() {
         $Ssl
         ,
         [Parameter(Mandatory = $true)]
-        [ValidateNotNullOrEmpty()]
-        [string]
-        $customerid
-        ,
-        [Parameter(Mandatory = $true)]
         [string]
         $ExternalIP
         ,
@@ -111,7 +106,6 @@ function InstallStackInKubernetes() {
         -package $package `
         -packageUrl $packageUrl `
         -Ssl $Ssl `
-        -customerid $customerid `
         -ExternalIP $ExternalIP `
         -InternalIP $InternalIP `
         -ExternalSubnet $ExternalSubnet `

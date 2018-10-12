@@ -23,7 +23,14 @@ function ShowTroubleshootingMenu() {
     [CmdletBinding()]
     param
     (
-        [ValidateNotNullOrEmpty()][string] $baseUrl
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $baseUrl
+        ,
+        [Parameter(Mandatory = $true)]
+        [bool]
+        $local
     )
 
     $isAzure = $true

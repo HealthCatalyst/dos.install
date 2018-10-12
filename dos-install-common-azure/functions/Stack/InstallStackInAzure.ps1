@@ -26,18 +26,24 @@ function InstallStackInAzure() {
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
         [string]
-        $baseUrl
-        ,
-        [Parameter(Mandatory = $true)]
-        [ValidateNotNullOrEmpty()]
-        [string]
         $namespace
         ,
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
         [string]
-        $appfolder
+        $package
         ,
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $packageUrl
+        ,
+        [Parameter(Mandatory = $true)]
+        [bool]
+        $Ssl
+        ,
+        [Parameter(Mandatory = $true)]
+        [bool]
         $isAzure
         ,
         [string]
@@ -51,6 +57,14 @@ function InstallStackInAzure() {
         ,
         [string]
         $internalSubnetName
+        ,
+        [Parameter(Mandatory = $true)]
+        [string]
+        $IngressInternalType
+        ,
+        [Parameter(Mandatory = $true)]
+        [string]
+        $IngressExternalType
         ,
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
@@ -75,17 +89,19 @@ function InstallStackInAzure() {
 
     InstallStackInKubernetes `
         -namespace $namespace `
-        -baseUrl $baseUrl `
-        -appfolder "$appfolder" `
-        -config $config `
-        -isAzure $isAzure `
-        -externalIp $externalIp -internalIp $internalIp `
-        -externalSubnetName $externalSubnetName -internalSubnetName $internalSubnetName `
-        -local $local
+        -package $package `
+        -packageUrl $packageUrl `
+        -Ssl $Ssl `
+        -externalIp $externalIp `
+        -internalIp $internalIp `
+        -ExternalSubnet $externalSubnetName `
+        -InternalSubnet $internalSubnetName `
+        -IngressExternalType $IngressExternalType `
+        -IngressInternalType $IngressInternalType
 
-    if ($isAzure) {
-        WaitForLoadBalancers -resourceGroup $(GetResourceGroup).ResourceGroup
-    }
+    # if ($isAzure) {
+    #     WaitForLoadBalancers -resourceGroup $(GetResourceGroup).ResourceGroup
+    # }
 
     # open ports specified
     # if ($(HasProperty -object $($config) "ports")) {
@@ -103,11 +119,11 @@ function InstallStackInAzure() {
     #     }
     # }
 
-    if ($isAzure) {
-        $resourceGroup = $(GetResourceGroup).ResourceGroup
-        WaitForLoadBalancersToGetIPs -namespace $namespace
-        # MovePortsToLoadBalancerForNamespace -resourceGroup $resourceGroup -namespace $namespace
-    }
+    # if ($isAzure) {
+    #     $resourceGroup = $(GetResourceGroup).ResourceGroup
+    #     WaitForLoadBalancersToGetIPs -namespace $namespace
+    #     # MovePortsToLoadBalancerForNamespace -resourceGroup $resourceGroup -namespace $namespace
+    # }
 
     Write-Verbose 'InstallStackInAzure: Done'
     return $Return

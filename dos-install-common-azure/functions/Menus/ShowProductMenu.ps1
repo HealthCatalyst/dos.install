@@ -32,6 +32,10 @@ function ShowProductMenu() {
         [ValidateNotNullOrEmpty()]
         [string]
         $namespace
+        ,
+        [Parameter(Mandatory = $true)]
+        [bool]
+        $local
     )
 
     Write-Verbose 'ShowProductMenu: Starting'
@@ -60,7 +64,7 @@ function ShowProductMenu() {
             '1' {
                 $packageUrl = "https://raw.githubusercontent.com/HealthCatalyst/helm.realtime/master/fabricrealtime-1.0.0.tgz"
                 $namespace = "fabricrealtime"
-                InstallProductInAzure -namespace $namespace -packageUrl $packageUrl
+                InstallProductInAzure -namespace $namespace -packageUrl $packageUrl -local $local
             }
             '2' {
                 kubectl get 'deployments,pods,services,ingress,secrets,persistentvolumeclaims,persistentvolumes,nodes' --namespace=$namespace -o wide

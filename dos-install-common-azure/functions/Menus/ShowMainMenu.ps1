@@ -27,6 +27,10 @@ function ShowMainMenu() {
         [ValidateNotNullOrEmpty()]
         [string]
         $baseUrl
+        ,
+        [Parameter(Mandatory = $true)]
+        [bool]
+        $local
     )
 
     Write-Verbose 'ShowMainMenu: Starting'
@@ -100,7 +104,6 @@ function ShowMainMenu() {
 
                 InitHelm
 
-                $local = $false
                 SetupNetworkSecurity -config $config
                 SetupLoadBalancer -baseUrl $baseUrl -config $config -local $local
             }
@@ -187,11 +190,11 @@ function ShowMainMenu() {
                 LaunchTraefikDashboard -internalIp $loadBalancerInternalIP
             }
             '50' {
-                ShowTroubleshootingMenu -baseUrl $baseUrl
+                ShowTroubleshootingMenu -baseUrl $baseUrl -local $local
                 $skip = $true
             }
             '52' {
-                ShowProductMenu -baseUrl $baseUrl -namespace "fabricrealtime"
+                ShowProductMenu -baseUrl $baseUrl -namespace "fabricrealtime" -local $local
                 $skip = $true
             }
             '100' {
