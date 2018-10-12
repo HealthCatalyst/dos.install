@@ -50,15 +50,24 @@ if ($local) {
 }
 else {
     $minVersion = "1.3"
-    $moduleInfo = $(Get-Module -Name "$module")
-    if ($null -eq $moduleInfo) {
-        Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber
-    }
-    else {
-        Write-Host "Checking Version of $module module is $minVersion"
-        if ($minVersion -ne $moduleInfo.Version.ToString()) {
+    if (Get-Module -ListAvailable -Name $module) {
+        Write-Host "Module $module exists"
+
+        Import-Module -Name $module
+        $moduleInfo = $(Get-Module -Name "$module")
+        if ($null -eq $moduleInfo) {
             Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber
         }
+        else {
+            Write-Host "Checking Version of $module module is $minVersion"
+            if ($minVersion -ne $moduleInfo.Version.ToString()) {
+                Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber
+            }
+        }
+    }
+    else {
+        Write-Host "Module $module does not exist"
+        Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber
     }
 }
 
@@ -69,15 +78,24 @@ if ($local) {
 }
 else {
     $minVersion = "1.3"
-    $moduleInfo = $(Get-Module -Name "$module")
-    if ($null -eq $moduleInfo) {
-        Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber
-    }
-    else {
-        Write-Host "Checking Version of $module module is $minVersion"
-        if ($minVersion -ne $moduleInfo.Version.ToString()) {
+    if (Get-Module -ListAvailable -Name $module) {
+        Write-Host "Module $module exists"
+
+        Import-Module -Name $module
+        $moduleInfo = $(Get-Module -Name "$module")
+        if ($null -eq $moduleInfo) {
             Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber
         }
+        else {
+            Write-Host "Checking Version of $module module is $minVersion"
+            if ($minVersion -ne $moduleInfo.Version.ToString()) {
+                Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber
+            }
+        }
+    }
+    else {
+        Write-Host "Module $module does not exist"
+        Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber
     }
 }
 
@@ -88,15 +106,23 @@ if ($local) {
 }
 else {
     $minVersion = "1.0"
-    $moduleInfo = $(Get-Module -Name "$module")
-    if ($null -eq $moduleInfo) {
-        Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber
-    }
-    else {
-        Write-Host "Checking Version of $module module is $minVersion"
-        if ($minVersion -ne $moduleInfo.Version.ToString()) {
+    if (Get-Module -ListAvailable -Name $module) {
+        Write-Host "Module $module exists"
+        Import-Module -Name $module
+        $moduleInfo = $(Get-Module -Name "$module")
+        if ($null -eq $moduleInfo) {
             Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber
         }
+        else {
+            Write-Host "Checking Version of $module module is $minVersion"
+            if ($minVersion -ne $moduleInfo.Version.ToString()) {
+                Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber
+            }
+        }
+    }
+    else {
+        Write-Host "Module $module does not exist"
+        Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber
     }
 }
 
