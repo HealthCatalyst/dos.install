@@ -1,5 +1,5 @@
 param([bool]$prerelease, [bool]$local)
-$version = "2018.10.12.01"
+$version = "2018.10.12.02"
 [Console]::ResetColor()
 Write-Host "--- main.ps1 version $version ---"
 Write-Host "prerelease flag: $prerelease"
@@ -39,23 +39,25 @@ Write-Host "GITHUB_URL: $GITHUB_URL"
 
 Write-Host "Powershell version: $($PSVersionTable.PSVersion.Major).$($PSVersionTable.PSVersion.Minor).$($PSVersionTable.PSVersion.Build)"
 
+Import-Module PowerShellGet
+
+$module = "dos-install-common-kube"
+Get-Module "$module" | Remove-Module -Force
 if ($local) {
-    $here = Split-Path -Parent $MyInvocation.MyCommand.Path
-    $module = "dos-install-common-azure"
-    Get-Module "$module" | Remove-Module -Force
     Import-Module "$here\..\$module\$module.psm1" -Force
 }
 else {
-    Install-Module -Name dos-install-common-kube
+    Install-Module -Name $module -Force -AllowClobber
 }
 
+$module = "dos-install-common-azure"
+Get-Module "$module" | Remove-Module -Force
 if ($local) {
-    $module = "dos-install-common-kube"
-    Get-Module "$module" | Remove-Module -Force
+    $here = Split-Path -Parent $MyInvocation.MyCommand.Path
     Import-Module "$here\..\$module\$module.psm1" -Force
 }
 else {
-    Install-Module -Name dos-install-common-azure
+    Install-Module -Name $module -Force -AllowClobber
 }
 
 ShowMainMenu -baseUrl $GITHUB_URL
