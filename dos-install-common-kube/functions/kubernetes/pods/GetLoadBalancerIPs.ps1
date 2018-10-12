@@ -29,33 +29,45 @@ function GetLoadBalancerIPs() {
     [hashtable]$Return = @{}
 
     [DateTime] $startDate = Get-Date
-    [int] $timeoutInMinutes = 5
+    [int] $timeoutInMinutes = 10
     [int] $counter = 0
     Write-Host "Waiting for IP to get assigned to the load balancer (Note: It can take upto 5 minutes for Azure to finish creating the load balancer)"
     Do {
         $counter = $counter + 1
-        [string] $externalIP = $(kubectl get svc -l "k8s-app-external=traefik-ingress-lb" -n kube-system -o jsonpath='{.status.loadBalancer.ingress[].ip}')
+        [string] $externalIP = $(kubectl get svc -l "k8s-app-external=traefik-ingress-lb" -n "kube-system" -o jsonpath='{.items[].status.loadBalancer.ingress[].ip}')
         if (!$externalIP) {
             Write-Host -NoNewLine "${counter}0 "
             Start-Sleep -Seconds 10
         }
     }
     while ([string]::IsNullOrWhiteSpace($externalIP) -and ($startDate.AddMinutes($timeoutInMinutes) -gt (Get-Date)))
-    Write-Host ""
+
+    if (![string]::IsNullOrWhiteSpace($externalIP)) {
+        Write-Host " (Found)"
+    }
+    else {
+        Write-Host " (Not Found)"
+    }
     Write-Verbose "External IP: $externalIP"
 
     $counter = 0
     Write-Host "Waiting for IP to get assigned to the internal load balancer (Note: It can take upto 5 minutes for Azure to finish creating the load balancer)"
     Do {
         $counter = $counter + 1
-        [string] $internalIP = $(kubectl get svc -l "k8s-app-internal=traefik-ingress-lb" -n kube-system -o jsonpath='{.status.loadBalancer.ingress[].ip}')
+        [string] $internalIP = $(kubectl get svc -l "k8s-app-internal=traefik-ingress-lb" -n kube-system -o jsonpath='{.items[].status.loadBalancer.ingress[].ip}')
         if (!$internalIP) {
             Write-Host -NoNewLine "${counter}0 "
             Start-Sleep -Seconds 10
         }
     }
     while ([string]::IsNullOrWhiteSpace($internalIP) -and ($startDate.AddMinutes($timeoutInMinutes) -gt (Get-Date)))
-    Write-Host ""
+    if (![string]::IsNullOrWhiteSpace($internalIP)) {
+        Write-Host " (Found)"
+    }
+    else {
+        Write-Host " (Not Found)"
+    }
+
     Write-Verbose "Internal IP: $internalIP"
 
     if ([string]::IsNullOrWhiteSpace($externalIP) -or [string]::IsNullOrWhiteSpace($internalIP)) {

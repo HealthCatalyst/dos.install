@@ -100,6 +100,7 @@ function ShowMainMenu() {
 
                 InitHelm
 
+                $local = $false
                 SetupNetworkSecurity -config $config
                 SetupLoadBalancer -baseUrl $baseUrl -config $config -local $local
             }
@@ -177,6 +178,7 @@ function ShowMainMenu() {
                 $config = $(ReadConfigFile).Config
                 Write-Host $config
 
+                $local = $false
                 SetupLoadBalancer -baseUrl $baseUrl -config $config -local $local
             }
             '33' {

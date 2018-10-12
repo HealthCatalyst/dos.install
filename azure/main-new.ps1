@@ -1,5 +1,5 @@
 param([bool]$prerelease, [bool]$local)
-$version = "2018.06.06.01"
+$version = "2018.10.12.01"
 [Console]::ResetColor()
 Write-Host "--- main.ps1 version $version ---"
 Write-Host "prerelease flag: $prerelease"
