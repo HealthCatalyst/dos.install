@@ -40,6 +40,7 @@ Write-Host "GITHUB_URL: $GITHUB_URL"
 Write-Host "Powershell version: $($PSVersionTable.PSVersion.Major).$($PSVersionTable.PSVersion.Minor).$($PSVersionTable.PSVersion.Build)"
 
 Import-Module PowerShellGet -Force
+Import-Module AzureRM -Force
 
 $here = Split-Path -Parent $MyInvocation.MyCommand.Path
 $topLevelFolder = "$here\..\..\"
@@ -50,15 +51,24 @@ if ($local) {
 }
 else {
     $minVersion = "1.3"
-    $moduleInfo = $(Get-Module -Name "$module")
-    if ($null -eq $moduleInfo) {
-        Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber
-    }
-    else {
-        Write-Host "Checking Version of $module module is $minVersion"
-        if ($minVersion -ne $moduleInfo.Version.ToString()) {
+    if (Get-Module -ListAvailable -Name $module) {
+        Write-Host "Module $module exists"
+
+        Import-Module -Name $module
+        $moduleInfo = $(Get-Module -Name "$module")
+        if ($null -eq $moduleInfo) {
             Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber
         }
+        else {
+            Write-Host "Checking Version of $module module is $minVersion"
+            if ($minVersion -ne $moduleInfo.Version.ToString()) {
+                Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber
+            }
+        }
+    }
+    else {
+        Write-Host "Module $module does not exist"
+        Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber
     }
 }
 
@@ -69,15 +79,24 @@ if ($local) {
 }
 else {
     $minVersion = "1.3"
-    $moduleInfo = $(Get-Module -Name "$module")
-    if ($null -eq $moduleInfo) {
-        Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber
-    }
-    else {
-        Write-Host "Checking Version of $module module is $minVersion"
-        if ($minVersion -ne $moduleInfo.Version.ToString()) {
+    if (Get-Module -ListAvailable -Name $module) {
+        Write-Host "Module $module exists"
+
+        Import-Module -Name $module
+        $moduleInfo = $(Get-Module -Name "$module")
+        if ($null -eq $moduleInfo) {
             Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber
         }
+        else {
+            Write-Host "Checking Version of $module module is $minVersion"
+            if ($minVersion -ne $moduleInfo.Version.ToString()) {
+                Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber
+            }
+        }
+    }
+    else {
+        Write-Host "Module $module does not exist"
+        Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber
     }
 }
 
@@ -88,15 +107,23 @@ if ($local) {
 }
 else {
     $minVersion = "1.0"
-    $moduleInfo = $(Get-Module -Name "$module")
-    if ($null -eq $moduleInfo) {
-        Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber
-    }
-    else {
-        Write-Host "Checking Version of $module module is $minVersion"
-        if ($minVersion -ne $moduleInfo.Version.ToString()) {
+    if (Get-Module -ListAvailable -Name $module) {
+        Write-Host "Module $module exists"
+        Import-Module -Name $module
+        $moduleInfo = $(Get-Module -Name "$module")
+        if ($null -eq $moduleInfo) {
             Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber
         }
+        else {
+            Write-Host "Checking Version of $module module is $minVersion"
+            if ($minVersion -ne $moduleInfo.Version.ToString()) {
+                Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber
+            }
+        }
+    }
+    else {
+        Write-Host "Module $module does not exist"
+        Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber
     }
 }
 
