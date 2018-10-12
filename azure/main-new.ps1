@@ -1,5 +1,6 @@
 param([bool]$prerelease, [bool]$local)
 $version = "2018.06.06.01"
+[Console]::ResetColor()
 Write-Host "--- main.ps1 version $version ---"
 Write-Host "prerelease flag: $prerelease"
 
@@ -78,7 +79,11 @@ while ($userinput -ne "q") {
     Write-Host "1: Configure existing Azure Container Service"
 
     Write-Host "2: Launch Kubernetes Dashboard"
-#    Write-Host "3: Launch Traefik Dashboard"
+    #    Write-Host "3: Launch Traefik Dashboard"
+
+    Write-Host "------ Keyvault -------"
+    Write-Host "26: Copy Kubernetes secrets to keyvault"
+    Write-Host "27: Copy secrets from keyvault to kubernetes"
 
     Write-Host "------ Older Scripts -------"
     Write-Host "100: Go to old menu"
@@ -112,6 +117,15 @@ while ($userinput -ne "q") {
         '3' {
             LaunchTraefikDashboard
         }
+        '26' {
+            $currentResourceGroup = ReadSecretData -secretname azure-secret -valueName resourcegroup -Verbose
+            CopyKubernetesSecretsToKeyVault -resourceGroup $currentResourceGroup -Verbose
+        }
+        '27' {
+            $currentResourceGroup = ReadSecretData -secretname azure-secret -valueName resourcegroup -Verbose
+            CopyKeyVaultSecretsToKubernetes -resourceGroup $currentResourceGroup -Verbose
+        }
+
         '100' {
             # curl -useb https://raw.githubusercontent.com/HealthCatalyst/dos.install/master/azure/main.ps1 | iex;
             # $Script = Invoke-WebRequest -useb ${GITHUB_URL}/azure/main.ps1?f=$randomstring;

@@ -71,6 +71,8 @@ function InstallStackInAzure() {
         }
     }
 
+    CreateSecretsForStack -namespace $namespace
+
     InstallStackInKubernetes `
         -namespace $namespace `
         -baseUrl $baseUrl `

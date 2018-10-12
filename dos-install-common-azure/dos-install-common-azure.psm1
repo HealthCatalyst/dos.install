@@ -49,4 +49,15 @@ Import-Module "$here\..\dos-install-common-kube\dos-install-common-kube.psm1"
 
 # Stack
 . $PSScriptRoot\functions\Stack\InstallStackInAzure.ps1
+. $PSScriptRoot\functions\Stack\CreateSecretsForStack.ps1
+
+# keyvault
+. $PSScriptRoot\functions\KeyVault\CopyKubernetesSecretsToKeyVault.ps1
+. $PSScriptRoot\functions\KeyVault\SaveKeyInVault.ps1
+. $PSScriptRoot\functions\KeyVault\CreateKeyVault.ps1
+. $PSScriptRoot\functions\KeyVault\Get-KeyVaultName.ps1
+. $PSScriptRoot\functions\KeyVault\CopyKeyVaultSecretsToKubernetes.ps1
+. $PSScriptRoot\functions\KeyVault\GetListOfSecretsInVault.ps1
+. $PSScriptRoot\functions\KeyVault\GetKeyInVault.ps1
+
 

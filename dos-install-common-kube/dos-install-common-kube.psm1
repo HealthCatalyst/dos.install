@@ -1,6 +1,7 @@
 
 # kubernetes\namespace
 . $PSScriptRoot\functions\kubernetes\namespace\CleanOutNamespace.ps1
+. $PSScriptRoot\functions\kubernetes\namespace\CreateNamespaceIfNotExists.ps1
 
 # Kubernetes\secrets
 . $PSScriptRoot\functions\kubernetes\secrets\CreateSecretWithMultipleValues.ps1
@@ -10,6 +11,7 @@
 . $PSScriptRoot\functions\kubernetes\secrets\SaveSecretValue.ps1
 . $PSScriptRoot\functions\kubernetes\secrets\SaveSecretPassword.ps1
 . $PSScriptRoot\functions\kubernetes\secrets\DeleteAllSecretsInNamespace.ps1
+. $PSScriptRoot\functions\kubernetes\secrets\ReadAllSecretsAsHashTable.ps1
 
 # kubernetes\pods
 . $PSScriptRoot\functions\kubernetes\pods\WaitForPodsInNamespace.ps1
