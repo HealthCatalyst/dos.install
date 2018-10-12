@@ -45,29 +45,59 @@ $here = Split-Path -Parent $MyInvocation.MyCommand.Path
 $topLevelFolder = "$here\..\..\"
 $module = "DosInstallUtilities.Kube"
 if ($local) {
-    Get-Module "$module" | Remove-Module -Force
+    Get-Module -Name "$module" | Remove-Module -Force
     Import-Module "$topLevelFolder\$module\$module.psm1" -Force
 }
 else {
-    Install-Module -Name $module -MinimumVersion 1.3 -AllowClobber
+    $minVersion = "1.3"
+    $moduleInfo = $(Get-Module -Name "$module")
+    if ($null -eq $moduleInfo) {
+        Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber
+    }
+    else {
+        Write-Host "Checking Version of $module module is $minVersion"
+        if ($minVersion -ne $moduleInfo.Version.ToString()) {
+            Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber
+        }
+    }
 }
 
 $module = "DosInstallUtilities.Azure"
 if ($local) {
-    Get-Module "$module" | Remove-Module -Force
+    Get-Module -Name "$module" | Remove-Module -Force
     Import-Module "$topLevelFolder\$module\$module.psm1" -Force
 }
 else {
-    Install-Module -Name $module -MinimumVersion 1.3 -AllowClobber
+    $minVersion = "1.3"
+    $moduleInfo = $(Get-Module -Name "$module")
+    if ($null -eq $moduleInfo) {
+        Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber
+    }
+    else {
+        Write-Host "Checking Version of $module module is $minVersion"
+        if ($minVersion -ne $moduleInfo.Version.ToString()) {
+            Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber
+        }
+    }
 }
 
 $module = "DosInstallUtilities.Menu"
 if ($local) {
-    Get-Module "$module" | Remove-Module -Force
+    Get-Module -Name "$module" | Remove-Module -Force
     Import-Module "$topLevelFolder\$module\$module.psm1" -Force
 }
 else {
-    Install-Module -Name $module -MinimumVersion 1.0 -AllowClobber
+    $minVersion = "1.0"
+    $moduleInfo = $(Get-Module -Name "$module")
+    if ($null -eq $moduleInfo) {
+        Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber
+    }
+    else {
+        Write-Host "Checking Version of $module module is $minVersion"
+        if ($minVersion -ne $moduleInfo.Version.ToString()) {
+            Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber
+        }
+    }
 }
 
 ShowMainMenu -baseUrl $GITHUB_URL -local $local
