@@ -99,7 +99,7 @@ if ($local) {
     Import-Module "$topLevelFolder\$module\$module.psm1" -Force
 }
 else {
-    $minVersion = "1.3"
+    $minVersion = "1.4"
     if (Get-Module -ListAvailable -Name $module) {
         Write-Host "Module $module exists"
 
