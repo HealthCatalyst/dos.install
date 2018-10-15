@@ -1,5 +1,5 @@
 param([bool]$prerelease, [bool]$local)
-$version = "2018.10.12.06"
+$version = "2018.10.12.07"
 [Console]::ResetColor()
 Write-Host "--- main.ps1 version $version ---"
 Write-Host "prerelease flag: $prerelease"
@@ -39,92 +39,83 @@ Write-Host "GITHUB_URL: $GITHUB_URL"
 
 Write-Host "Powershell version: $($PSVersionTable.PSVersion.Major).$($PSVersionTable.PSVersion.Minor).$($PSVersionTable.PSVersion.Build)"
 
+$module = "AzureRM"
+$minVersion = "6.10.0"
+if (Get-Module -ListAvailable -Name $module) {
+    Write-Host "Module $module exists"
+
+    Import-Module -Name $module
+    $moduleInfo = $(Get-Module -Name "$module")
+    if ($null -eq $moduleInfo) {
+        Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber
+    }
+    else {
+        Write-Host "Checking Version of $module module is $minVersion"
+        if ($minVersion -ne $moduleInfo.Version.ToString()) {
+            Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber
+        }
+    }
+}
+else {
+    Write-Host "Module $module does not exist"
+    Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber
+}
+
 Import-Module PowerShellGet -Force
-Import-Module AzureRM -Force
 
-$here = Split-Path -Parent $MyInvocation.MyCommand.Path
-$topLevelFolder = "$here\..\..\"
-$module = "DosInstallUtilities.Kube"
-if ($local) {
-    Get-Module -Name "$module" | Remove-Module -Force
-    Import-Module "$topLevelFolder\$module\$module.psm1" -Force
-}
-else {
-    $minVersion = "1.3"
-    if (Get-Module -ListAvailable -Name $module) {
-        Write-Host "Module $module exists"
+[string] $here = Split-Path -Parent $MyInvocation.MyCommand.Path
+[string] $topLevelFolder = "$here\..\..\"
 
-        Import-Module -Name $module
-        $moduleInfo = $(Get-Module -Name "$module")
-        if ($null -eq $moduleInfo) {
-            Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber
-        }
-        else {
-            Write-Host "Checking Version of $module module is $minVersion"
-            if ($minVersion -ne $moduleInfo.Version.ToString()) {
-                Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber
-            }
-        }
+function InstallOrUpdateModule() {
+    [CmdletBinding()]
+    param
+    (
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $module
+        ,
+        [Parameter(Mandatory = $true)]
+        [bool]
+        $local
+        ,
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $minVersion
+    )
+
+    if ($local) {
+        Get-Module -Name "$module" | Remove-Module -Force
+        Import-Module "$topLevelFolder\$module\$module.psm1" -Force
     }
     else {
-        Write-Host "Module $module does not exist"
-        Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber
-    }
-}
+        if (Get-Module -ListAvailable -Name $module) {
+            Write-Host "Module $module exists"
 
-$module = "DosInstallUtilities.Azure"
-if ($local) {
-    Get-Module -Name "$module" | Remove-Module -Force
-    Import-Module "$topLevelFolder\$module\$module.psm1" -Force
-}
-else {
-    $minVersion = "1.3"
-    if (Get-Module -ListAvailable -Name $module) {
-        Write-Host "Module $module exists"
-
-        Import-Module -Name $module
-        $moduleInfo = $(Get-Module -Name "$module")
-        if ($null -eq $moduleInfo) {
-            Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber
-        }
-        else {
-            Write-Host "Checking Version of $module module is $minVersion"
-            if ($minVersion -ne $moduleInfo.Version.ToString()) {
+            Import-Module -Name $module
+            $moduleInfo = $(Get-Module -Name "$module")
+            if ($null -eq $moduleInfo) {
                 Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber
             }
+            else {
+                Write-Host "Checking Version of $module module is $minVersion"
+                if ($minVersion -ne $moduleInfo.Version.ToString()) {
+                    Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber
+                }
+            }
         }
-    }
-    else {
-        Write-Host "Module $module does not exist"
-        Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber
+        else {
+            Write-Host "Module $module does not exist"
+            Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber
+        }
     }
 }
 
-$module = "DosInstallUtilities.Menu"
-if ($local) {
-    Get-Module -Name "$module" | Remove-Module -Force
-    Import-Module "$topLevelFolder\$module\$module.psm1" -Force
-}
-else {
-    $minVersion = "1.0"
-    if (Get-Module -ListAvailable -Name $module) {
-        Write-Host "Module $module exists"
-        Import-Module -Name $module
-        $moduleInfo = $(Get-Module -Name "$module")
-        if ($null -eq $moduleInfo) {
-            Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber
-        }
-        else {
-            Write-Host "Checking Version of $module module is $minVersion"
-            if ($minVersion -ne $moduleInfo.Version.ToString()) {
-                Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber
-            }
-        }
-    }
-    else {
-        Write-Host "Module $module does not exist"
-        Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber
-    }
-}
+InstallOrUpdateModule -module "DosInstallUtilities.Kube" -local $local -minVersion "1.3"
+
+InstallOrUpdateModule -module "DosInstallUtilities.Azure" -local $local -minVersion "1.4"
+
+InstallOrUpdateModule -module "DosInstallUtilities.Menu" -local $local -minVersion "1.0"
 
 ShowMainMenu -baseUrl $GITHUB_URL -local $local
