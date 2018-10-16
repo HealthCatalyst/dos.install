@@ -1,8 +1,8 @@
-param([bool]$prerelease, [bool]$local)
+param([string]$branch, [bool]$local)
 $version = "2018.10.12.07"
 [Console]::ResetColor()
 Write-Host "--- main.ps1 version $version ---"
-Write-Host "prerelease flag: $prerelease"
+Write-Host "branch: $branch"
 
 # http://www.rlmueller.net/PSGotchas.htm
 # Trap {"Error: $_"; Break;}
@@ -24,13 +24,11 @@ $InformationPreference = "Continue"
 #   curl -useb https://raw.githubusercontent.com/HealthCatalyst/dos.install/master/azure/main.ps1 | iex;
 #   curl -sSL  https://raw.githubusercontent.com/HealthCatalyst/dos.install/master/azure/main.ps1 | pwsh -Interactive -NoExit -c -;
 
-if ($prerelease) {
-    if ($local) {
-        $GITHUB_URL = "."
-    }
-    else {
-        $GITHUB_URL = "https://raw.githubusercontent.com/HealthCatalyst/dos.install/master"
-    }
+if ($local) {
+    $GITHUB_URL = "."
+}
+elseif ($branch) {
+    $GITHUB_URL = "https://raw.githubusercontent.com/HealthCatalyst/dos.install/$branch"
 }
 else {
     $GITHUB_URL = "https://raw.githubusercontent.com/HealthCatalyst/dos.install/release"
