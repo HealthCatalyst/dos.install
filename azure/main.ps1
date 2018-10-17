@@ -116,4 +116,6 @@ InstallOrUpdateModule -module "DosInstallUtilities.Azure" -local $local -minVers
 
 InstallOrUpdateModule -module "DosInstallUtilities.Menu" -local $local -minVersion "1.0"
 
+InstallOrUpdateModule -module "DosInstallUtilities.Realtime" -local $local -minVersion "1.0"
+
 ShowMainMenu -baseUrl $GITHUB_URL -local $local
