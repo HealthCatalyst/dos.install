@@ -1,5 +1,5 @@
 param([string]$branch, [bool]$local)
-$version = "2018.10.18.03"
+$version = "2018.10.18.04"
 [Console]::ResetColor()
 Write-Host "--- main.ps1 version $version ---"
 Write-Host "branch: $branch"
