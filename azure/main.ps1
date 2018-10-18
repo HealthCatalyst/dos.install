@@ -1,8 +1,8 @@
-param([bool]$prerelease, [bool]$local)
-$version = "2018.10.12.07"
+param([string]$branch, [bool]$local)
+$version = "2018.10.18.03"
 [Console]::ResetColor()
 Write-Host "--- main.ps1 version $version ---"
-Write-Host "prerelease flag: $prerelease"
+Write-Host "branch: $branch"
 
 # http://www.rlmueller.net/PSGotchas.htm
 # Trap {"Error: $_"; Break;}
@@ -24,13 +24,11 @@ $InformationPreference = "Continue"
 #   curl -useb https://raw.githubusercontent.com/HealthCatalyst/dos.install/master/azure/main.ps1 | iex;
 #   curl -sSL  https://raw.githubusercontent.com/HealthCatalyst/dos.install/master/azure/main.ps1 | pwsh -Interactive -NoExit -c -;
 
-if ($prerelease) {
-    if ($local) {
-        $GITHUB_URL = "."
-    }
-    else {
-        $GITHUB_URL = "https://raw.githubusercontent.com/HealthCatalyst/dos.install/master"
-    }
+if ($local) {
+    $GITHUB_URL = "."
+}
+elseif ($branch) {
+    $GITHUB_URL = "https://raw.githubusercontent.com/HealthCatalyst/dos.install/$branch"
 }
 else {
     $GITHUB_URL = "https://raw.githubusercontent.com/HealthCatalyst/dos.install/release"
@@ -47,24 +45,26 @@ if (Get-Module -ListAvailable -Name $module) {
     Import-Module -Name $module
     $moduleInfo = $(Get-Module -Name "$module")
     if ($null -eq $moduleInfo) {
-        Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber
+        Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber -Scope CurrentUser
     }
     else {
         Write-Host "Checking Version of $module module is $minVersion"
         if ($minVersion -ne $moduleInfo.Version.ToString()) {
-            Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber
+            Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber -Force -Scope CurrentUser
         }
     }
 }
 else {
     Write-Host "Module $module does not exist"
-    Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber
+    Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber -Scope CurrentUser
 }
 
 Import-Module PowerShellGet -Force
 
-[string] $here = Split-Path -Parent $MyInvocation.MyCommand.Path
-[string] $topLevelFolder = "$here\..\..\"
+if($local){
+    [string] $here = Split-Path -Parent $MyInvocation.MyCommand.Path
+    [string] $topLevelFolder = "$here\..\..\"
+}
 
 function InstallOrUpdateModule() {
     [CmdletBinding()]
@@ -96,26 +96,35 @@ function InstallOrUpdateModule() {
             Import-Module -Name $module
             $moduleInfo = $(Get-Module -Name "$module")
             if ($null -eq $moduleInfo) {
-                Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber
+                Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber -Scope CurrentUser
             }
             else {
                 Write-Host "Checking Version of $module module is $minVersion"
                 if ($minVersion -ne $moduleInfo.Version.ToString()) {
-                    Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber
+                    Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber -Force -Scope CurrentUser
                 }
             }
         }
         else {
             Write-Host "Module $module does not exist"
-            Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber
+            Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber -Scope CurrentUser
         }
     }
 }
 
-InstallOrUpdateModule -module "DosInstallUtilities.Kube" -local $local -minVersion "1.3"
+# Set-StrictMode -Off
+# $global:options = @{CustomArgumentCompleters = @{};NativeArgumentCompleters = @{}}
+# InstallOrUpdateModule -module "RabbitMQTools" -local $false -minVersion "1.5"
+# Set-StrictMode -Version latest
 
-InstallOrUpdateModule -module "DosInstallUtilities.Azure" -local $local -minVersion "1.4"
+# InstallOrUpdateModule -module "PSRabbitMq" -local $false -minVersion "0.3.1"
 
-InstallOrUpdateModule -module "DosInstallUtilities.Menu" -local $local -minVersion "1.0"
+InstallOrUpdateModule -module "DosInstallUtilities.Kube" -local $local -minVersion "1.6"
+
+InstallOrUpdateModule -module "DosInstallUtilities.Azure" -local $local -minVersion "1.6"
+
+InstallOrUpdateModule -module "DosInstallUtilities.Menu" -local $local -minVersion "1.6"
+
+InstallOrUpdateModule -module "DosInstallUtilities.Realtime" -local $local -minVersion "1.6"
 
 ShowMainMenu -baseUrl $GITHUB_URL -local $local

@@ -1,18 +1,15 @@
-param([bool]$prerelease)
-Write-Host "prerelease flag: $prerelease"
-
-# curl -useb https://raw.githubusercontent.com/HealthCatalyst/dos.install/master/azure/dos.ps1 | iex;
-# Invoke-WebRequest -Uri https://raw.githubusercontent.com/HealthCatalyst/dos.install/master/azure/dos.ps1 -OutFile dos.ps1
+param([string]$branch)
+Write-Host "branch: $branch"
 
 $set = "abcdefghijklmnopqrstuvwxyz0123456789".ToCharArray()
 $result += $set | Get-Random
 
-if ($prerelease) {
-    $GITHUB_URL = "https://raw.githubusercontent.com/HealthCatalyst/dos.install/master"
+if ($branch) {
+    $GITHUB_URL = "https://raw.githubusercontent.com/HealthCatalyst/dos.install/$branch"
     Write-Host "GITHUB_URL: $GITHUB_URL"
     $Script = Invoke-WebRequest -useb ${GITHUB_URL}/azure/main.ps1?f=$result;
     $ScriptBlock = [Scriptblock]::Create($Script.Content)
-    Invoke-Command -ScriptBlock $ScriptBlock -ArgumentList (@("-prerelease 1"))
+    Invoke-Command -ScriptBlock $ScriptBlock -ArgumentList (@("$branch"))
 }
 else {
     $GITHUB_URL = "https://raw.githubusercontent.com/HealthCatalyst/dos.install/release"
