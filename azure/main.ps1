@@ -1,5 +1,5 @@
 param([string]$branch, [bool]$local)
-$version = "2018.10.12.07"
+$version = "2018.10.18.01"
 [Console]::ResetColor()
 Write-Host "--- main.ps1 version $version ---"
 Write-Host "branch: $branch"
@@ -110,12 +110,19 @@ function InstallOrUpdateModule() {
     }
 }
 
-InstallOrUpdateModule -module "DosInstallUtilities.Kube" -local $local -minVersion "1.3"
+# Set-StrictMode -Off
+# $global:options = @{CustomArgumentCompleters = @{};NativeArgumentCompleters = @{}}
+# InstallOrUpdateModule -module "RabbitMQTools" -local $false -minVersion "1.5"
+# Set-StrictMode -Version latest
 
-InstallOrUpdateModule -module "DosInstallUtilities.Azure" -local $local -minVersion "1.4"
+# InstallOrUpdateModule -module "PSRabbitMq" -local $false -minVersion "0.3.1"
 
-InstallOrUpdateModule -module "DosInstallUtilities.Menu" -local $local -minVersion "1.0"
+InstallOrUpdateModule -module "DosInstallUtilities.Kube" -local $local -minVersion "1.6"
 
-InstallOrUpdateModule -module "DosInstallUtilities.Realtime" -local $local -minVersion "1.0"
+InstallOrUpdateModule -module "DosInstallUtilities.Azure" -local $local -minVersion "1.6"
+
+InstallOrUpdateModule -module "DosInstallUtilities.Menu" -local $local -minVersion "1.6"
+
+InstallOrUpdateModule -module "DosInstallUtilities.Realtime" -local $local -minVersion "1.6"
 
 ShowMainMenu -baseUrl $GITHUB_URL -local $local
