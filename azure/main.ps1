@@ -1,5 +1,5 @@
 param([string]$branch, [bool]$local)
-$version = "2018.10.18.04"
+$version = "2018.10.18.05"
 [Console]::ResetColor()
 Write-Host "--- main.ps1 version $version ---"
 Write-Host "branch: $branch"
@@ -58,6 +58,7 @@ if (Get-Module -ListAvailable -Name $module) {
 else {
     Write-Host "Module $module does not exist"
     Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber -Scope CurrentUser
+    Import-Module -Name $module
 }
 
 Import-Module PowerShellGet -Force
@@ -105,12 +106,14 @@ function InstallOrUpdateModule() {
                 Write-Host "Checking Version of $module module is $minVersion"
                 if ($minVersion -ne $moduleInfo.Version.ToString()) {
                     Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber -Force -Scope CurrentUser
+                    Import-Module -Name $module
                 }
             }
         }
         else {
             Write-Host "Module $module does not exist"
             Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber -Scope CurrentUser
+            Import-Module -Name $module
         }
     }
 }
