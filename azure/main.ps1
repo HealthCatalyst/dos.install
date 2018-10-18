@@ -1,5 +1,5 @@
 param([string]$branch, [bool]$local)
-$version = "2018.10.18.01"
+$version = "2018.10.18.02"
 [Console]::ResetColor()
 Write-Host "--- main.ps1 version $version ---"
 Write-Host "branch: $branch"
@@ -61,8 +61,10 @@ else {
 
 Import-Module PowerShellGet -Force
 
-[string] $here = Split-Path -Parent $MyInvocation.MyCommand.Path
-[string] $topLevelFolder = "$here\..\..\"
+if($local){
+    [string] $here = Split-Path -Parent $MyInvocation.MyCommand.Path
+    [string] $topLevelFolder = "$here\..\..\"
+}
 
 function InstallOrUpdateModule() {
     [CmdletBinding()]
