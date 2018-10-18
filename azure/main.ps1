@@ -1,5 +1,5 @@
 param([string]$branch, [bool]$local)
-$version = "2018.10.18.03"
+$version = "2018.10.18.04"
 [Console]::ResetColor()
 Write-Host "--- main.ps1 version $version ---"
 Write-Host "branch: $branch"
@@ -21,6 +21,7 @@ $ErrorActionPreference = "Stop"
 $InformationPreference = "Continue"
 
 # This script is meant for quick & easy install via:
+#   curl -useb https://raw.githubusercontent.com/HealthCatalyst/dos.install/release/azure/main.ps1 | iex;
 #   curl -useb https://raw.githubusercontent.com/HealthCatalyst/dos.install/master/azure/main.ps1 | iex;
 #   curl -sSL  https://raw.githubusercontent.com/HealthCatalyst/dos.install/master/azure/main.ps1 | pwsh -Interactive -NoExit -c -;
 
@@ -60,6 +61,8 @@ else {
 }
 
 Import-Module PowerShellGet -Force
+
+Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
 
 if($local){
     [string] $here = Split-Path -Parent $MyInvocation.MyCommand.Path
@@ -119,7 +122,7 @@ function InstallOrUpdateModule() {
 
 # InstallOrUpdateModule -module "PSRabbitMq" -local $false -minVersion "0.3.1"
 
-InstallOrUpdateModule -module "DosInstallUtilities.Kube" -local $local -minVersion "1.6"
+InstallOrUpdateModule -module "DosInstallUtilities.Kube" -local $local -minVersion "1.7"
 
 InstallOrUpdateModule -module "DosInstallUtilities.Azure" -local $local -minVersion "1.6"
 
