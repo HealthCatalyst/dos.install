@@ -1,5 +1,5 @@
 param([string]$branch, [bool]$local)
-$version = "2018.10.18.02"
+$version = "2018.10.18.03"
 [Console]::ResetColor()
 Write-Host "--- main.ps1 version $version ---"
 Write-Host "branch: $branch"
@@ -50,7 +50,7 @@ if (Get-Module -ListAvailable -Name $module) {
     else {
         Write-Host "Checking Version of $module module is $minVersion"
         if ($minVersion -ne $moduleInfo.Version.ToString()) {
-            Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber -Scope CurrentUser
+            Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber -Force -Scope CurrentUser
         }
     }
 }
@@ -101,7 +101,7 @@ function InstallOrUpdateModule() {
             else {
                 Write-Host "Checking Version of $module module is $minVersion"
                 if ($minVersion -ne $moduleInfo.Version.ToString()) {
-                    Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber -Scope CurrentUser
+                    Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber -Force -Scope CurrentUser
                 }
             }
         }
