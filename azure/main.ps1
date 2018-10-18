@@ -45,18 +45,18 @@ if (Get-Module -ListAvailable -Name $module) {
     Import-Module -Name $module
     $moduleInfo = $(Get-Module -Name "$module")
     if ($null -eq $moduleInfo) {
-        Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber
+        Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber -Scope CurrentUser
     }
     else {
         Write-Host "Checking Version of $module module is $minVersion"
         if ($minVersion -ne $moduleInfo.Version.ToString()) {
-            Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber
+            Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber -Scope CurrentUser
         }
     }
 }
 else {
     Write-Host "Module $module does not exist"
-    Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber
+    Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber -Scope CurrentUser
 }
 
 Import-Module PowerShellGet -Force
@@ -94,18 +94,18 @@ function InstallOrUpdateModule() {
             Import-Module -Name $module
             $moduleInfo = $(Get-Module -Name "$module")
             if ($null -eq $moduleInfo) {
-                Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber
+                Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber -Scope CurrentUser
             }
             else {
                 Write-Host "Checking Version of $module module is $minVersion"
                 if ($minVersion -ne $moduleInfo.Version.ToString()) {
-                    Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber
+                    Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber -Scope CurrentUser
                 }
             }
         }
         else {
             Write-Host "Module $module does not exist"
-            Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber
+            Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber -Scope CurrentUser
         }
     }
 }
