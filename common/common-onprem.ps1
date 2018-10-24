@@ -6,6 +6,8 @@ function global:GetCommonOnPremVersion() {
 }
 
 $dockerversion = "18.06.1.ce-3"
+$dockerselinuxversion = "17.03.3.ce-1"
+
 # 18.06.1.ce-3
 # The list of validated docker versions was updated to 1.11.1, 1.12.1, 1.13.1, 17.03, 17.06, 17.09, 18.06. (#68495)
 $kubernetesversion = "1.12.1-0"
@@ -556,7 +558,7 @@ function SetupNewNode([Parameter(Mandatory=$true)][ValidateNotNullOrEmpty()][str
     WriteToConsole "Installing docker via yum "
     WriteToLog "using docker version ${dockerversion}, kubernetes version ${kubernetesversion}, cni version ${kubernetescniversion}"
     # need to pass --setpot=obsoletes=0 due to this bug: https://github.com/docker/for-linux/issues/20#issuecomment-312122325
-    sudo yum install -y --setopt=obsoletes=0 docker-ce-${dockerversion}.el7.centos docker-ce-selinux-${dockerversion}.el7.centos
+    sudo yum install -y --setopt=obsoletes=0 docker-ce-${dockerversion}.el7.centos docker-ce-selinux-${dockerselinuxversion}.el7.centos
     # installYumPackages "docker-ce-${dockerversion}.el7.centos docker-ce-selinux-${dockerversion}.el7.centos"
     lockPackageVersion "docker-ce docker-ce-selinux"
 
