@@ -6,14 +6,17 @@ function global:GetCommonOnPremVersion() {
 }
 
 $dockerversion = "17.03.2.ce-1"
+# 18.06.1.ce-3
+# The list of validated docker versions was updated to 1.11.1, 1.12.1, 1.13.1, 17.03, 17.06, 17.09, 18.06. (#68495)
 $kubernetesversion = "1.10.0-0"
+# 1.12.1-0
 $kubernetescniversion = "0.6.0-0"
 $kubernetesserverversion = "1.10.0"
 
 function SetupWorker([Parameter(Mandatory=$true)][ValidateNotNullOrEmpty()][string] $baseUrl, [Parameter(Mandatory=$true)][ValidateNotNullOrEmpty()][string] $joincommand) {
-    [hashtable]$Return = @{} 
-    
-    # Set-PSDebug -Trace 1   
+    [hashtable]$Return = @{}
+
+    # Set-PSDebug -Trace 1
     $logfile = "$(get-date -f yyyy-MM-dd-HH-mm)-setupworker.txt"
     WriteToConsole "Logging to $logfile"
     Start-Transcript -Path "$logfile"
@@ -36,22 +39,22 @@ function SetupWorker([Parameter(Mandatory=$true)][ValidateNotNullOrEmpty()][stri
     WriteToConsole "This node has successfully joined the cluster"
 
     kubectl get nodes
-    
+
     Stop-Transcript
 
-    return $Return    
+    return $Return
 }
 
 function SetupMaster([Parameter(Mandatory=$true)][ValidateNotNullOrEmpty()][string] $baseUrl, [bool]$singlenode) {
-    [hashtable]$Return = @{} 
+    [hashtable]$Return = @{}
 
     $logfile = "$(get-date -f yyyy-MM-dd-HH-mm)-setupmaster.txt"
     WriteToConsole "Logging to $logfile"
     Start-Transcript -Path "$logfile"
-    
+
     WriteToConsole "cleaning up old stuff"
     UninstallDockerAndKubernetes
-    
+
     WriteToConsole "setting up new node"
     SetupNewNode -baseUrl $baseUrl
 
@@ -61,38 +64,38 @@ function SetupMaster([Parameter(Mandatory=$true)][ValidateNotNullOrEmpty()][stri
     if ($singlenode -eq $True) {
         WriteToLog "enabling master node to run containers"
         # enable master to run containers
-        # kubectl taint nodes --all node-role.kubernetes.io/master-       
-        kubectl taint node --all node-role.kubernetes.io/master:NoSchedule- 
+        # kubectl taint nodes --all node-role.kubernetes.io/master-
+        kubectl taint node --all node-role.kubernetes.io/master:NoSchedule-
     }
     else {
         mountSharedFolder -saveIntoSecret $True
     }
-    
-    WriteToConsole "setting up load balancer"   
+
+    WriteToConsole "setting up load balancer"
     SetupNewLoadBalancer -baseUrl $baseUrl
 
-    WriteToConsole "setting up kubernetes dashboard"   
+    WriteToConsole "setting up kubernetes dashboard"
     InstallStack -baseUrl $baseUrl -namespace "kube-system" -appfolder "dashboard" -local $False
     # clear
     WriteToLog "waiting for pods to run in kube-system"
-    WaitForPodsInNamespace -namespace "kube-system" -interval 5    
+    WaitForPodsInNamespace -namespace "kube-system" -interval 5
 
     if ($singlenode -eq $True) {
         WriteToLog "Finished setting up a single-node cluster"
     }
     else {
-        ShowCommandToJoinCluster $baseUrl    
+        ShowCommandToJoinCluster $baseUrl
     }
 
     Stop-Transcript
 
-    return $Return    
+    return $Return
 }
 
 function SetupNewMasterNode([Parameter(Mandatory=$true)][ValidateNotNullOrEmpty()][string] $baseUrl) {
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingCmdletAliases", "", Justification="We're calling linux commands")]
 
-    [hashtable]$Return = @{} 
+    [hashtable]$Return = @{}
 
     $u = "$(whoami)"
     WriteToLog "User name: $u"
@@ -184,26 +187,26 @@ function SetupNewMasterNode([Parameter(Mandatory=$true)][ValidateNotNullOrEmpty(
 
     WriteToLog "enabling autocomplete for kubectl"
     echo "source <(kubectl completion bash)" >> ~/.bashrc
-    
-    return $Return    
+
+    return $Return
 }
 
 function ConfigureIpTables() {
     WriteToConsole "switching from firewalld to iptables"
-    # iptables-services: for iptables firewall  
+    # iptables-services: for iptables firewall
     sudo yum -y install iptables-services
     # https://www.digitalocean.com/community/tutorials/how-to-migrate-from-firewalld-to-iptables-on-centos-7
     sudo systemctl stop firewalld
-    sudo systemctl start iptables; 
+    sudo systemctl start iptables;
     # sudo systemctl start ip6tables
     # sudo firewall-cmd --state
     sudo systemctl disable firewalld
     sudo systemctl enable iptables
     # sudo systemctl enable ip6tables
-  
+
     WriteToConsole "removing firewalld"
     sudo yum -y remove firewalld
-    
+
     WriteToConsole "setting up iptables rules"
     # https://www.digitalocean.com/community/tutorials/iptables-essentials-common-firewall-rules-and-commands
     WriteToConsole "fixing kubedns"
@@ -211,9 +214,9 @@ function ConfigureIpTables() {
     sudo iptables -I INPUT -p tcp -m tcp --dport 8472 -j ACCEPT
     sudo iptables -I INPUT -p tcp -m tcp --dport 6443 -j ACCEPT
     sudo iptables -I INPUT -p tcp -m tcp --dport 9898 -j ACCEPT
-    sudo iptables -I INPUT -p tcp -m tcp --dport 10250 -j ACCEPT  
-    sudo iptables -I INPUT -p tcp -m tcp --dport 443 -j ACCEPT  
-    sudo iptables -I INPUT -p tcp -m tcp --dport 8081 -j ACCEPT  
+    sudo iptables -I INPUT -p tcp -m tcp --dport 10250 -j ACCEPT
+    sudo iptables -I INPUT -p tcp -m tcp --dport 443 -j ACCEPT
+    sudo iptables -I INPUT -p tcp -m tcp --dport 8081 -j ACCEPT
     # WriteToConsole "allow all outgoing connections"
     # sudo iptables -I OUTPUT -o eth0 -d 0.0.0.0/0 -j ACCEPT
     WriteToConsole "allowing loopback connections"
@@ -239,7 +242,7 @@ function ConfigureIpTables() {
     sudo iptables -A OUTPUT -p tcp --sport 443 -m conntrack --ctstate ESTABLISHED -j ACCEPT
     #WriteToConsole "block outgoing SMTP Mail"
     #sudo iptables -A OUTPUT -p tcp --dport 25 -j REJECT
-    
+
     WriteToConsole "reloading iptables"
     sudo systemctl reload iptables
     # WriteToConsole "saving iptables"
@@ -251,7 +254,7 @@ function ConfigureIpTables() {
     WriteToConsole "current iptables rules"
     sudo iptables -t nat -L
 }
-  
+
 function AddFirewallPort([Parameter(Mandatory=$true)][ValidateNotNullOrEmpty()][string]$port, [Parameter(Mandatory=$true)][ValidateNotNullOrEmpty()][string] $name) {
     if ("$(sudo firewall-cmd --query-port=${port})" -ne "yes") {
         WriteToLog "opening port $port for $name"
@@ -262,7 +265,7 @@ function AddFirewallPort([Parameter(Mandatory=$true)][ValidateNotNullOrEmpty()][
     }
 }
 function ConfigureFirewall() {
-    [hashtable]$Return = @{} 
+    [hashtable]$Return = @{}
 
     WriteToLog " installing firewalld"
     # https://www.digitalocean.com/community/tutorials/how-to-set-up-a-firewall-using-firewalld-on-centos-7
@@ -321,49 +324,49 @@ function ConfigureFirewall() {
     # sudo firewall-cmd --zone=trusted --add-interface eth0
     # sudo firewall-cmd --set-default-zone=trusted
     # sudo firewall-cmd --get-zone-of-interface=docker0
-    # sudo firewall-cmd --permanent --zone=trusted --add-interface=docker0  
-  
+    # sudo firewall-cmd --permanent --zone=trusted --add-interface=docker0
+
     # https://basildoncoder.com/blog/logging-connections-with-firewalld.html
     # sudo firewall-cmd --zone=public --add-rich-rule="rule family="ipv4" source address="198.51.100.0/32" port protocol="tcp" port="10000" log prefix="test-firewalld-log" level="info" accept"
     # sudo tail -f /var/log/messages |grep test-firewalld-log
-  
+
     # WriteToLog "log dropped packets"
     # sudo firewall-cmd  --set-log-denied=all
-    
+
     # flannel settings
     # from https://github.com/kubernetes/contrib/blob/master/ansible/roles/flannel/tasks/firewalld.yml
     # WriteToLog "Open flanneld subnet traffic"
-    # sudo firewall-cmd --direct --add-rule ipv4 filter FORWARD 1 -i flannel.1 -j ACCEPT -m comment --comment "flannel subnet"  
-  
+    # sudo firewall-cmd --direct --add-rule ipv4 filter FORWARD 1 -i flannel.1 -j ACCEPT -m comment --comment "flannel subnet"
+
     # WriteToLog "Save flanneld subnet traffic"
     # sudo firewall-cmd --permanent --direct --add-rule ipv4 filter FORWARD 1 -i flannel.1 -j ACCEPT -m comment --comment "flannel subnet"
-  
+
     # WriteToLog "Open flanneld to DNAT'ed traffic"
     # sudo firewall-cmd --direct --add-rule ipv4 filter FORWARD 1 -o flannel.1 -j ACCEPT -m comment --comment "flannel subnet"
-  
+
     # WriteToLog "Save flanneld to DNAT'ed traffic"
     # sudo firewall-cmd --permanent --direct --add-rule ipv4 filter FORWARD 1 -o flannel.1 -j ACCEPT -m comment --comment "flannel subnet"
-  
+
     WriteToLog "enable logging of rejected packets"
     sudo firewall-cmd --set-log-denied=all
-  
+
     # http://wrightrocket.blogspot.com/2017/11/installing-kubernetes-on-centos-7-with.html
     WriteToLog "reloading firewall"
     sudo firewall-cmd --reload
-  
+
     sudo systemctl status firewalld -l
-  
+
     WriteToLog "services enabled in firewall"
     sudo firewall-cmd --list-services
     WriteToLog "ports enabled in firewall"
     sudo firewall-cmd --list-ports
-  
+
     sudo firewall-cmd --list-all
 
-    return $Return        
+    return $Return
 }
 function SetupNewLoadBalancer([Parameter(Mandatory=$true)][ValidateNotNullOrEmpty()][string] $baseUrl) {
-    [hashtable]$Return = @{} 
+    [hashtable]$Return = @{}
 
     WriteToConsole "deleting any old resources"
     # enable running pods on master
@@ -424,18 +427,63 @@ function SetupNewLoadBalancer([Parameter(Mandatory=$true)][ValidateNotNullOrEmpt
     $externalIp = ""
     $internalIp = ""
 
-    LoadLoadBalancerStack -baseUrl $baseUrl -ssl 1 -customerid $customerid `
-                        -ingressInternalType $ingressInternalType -ingressExternalType $ingressExternalType `
-                        -isOnPrem $true `
-                        -externalSubnetName "" -externalIp "$externalIp" `
-                        -internalSubnetName "" -internalIp "$internalIp" `
-                        -local $False
+    # LoadLoadBalancerStack -baseUrl $baseUrl -ssl 1 -customerid $customerid `
+    #                     -ingressInternalType $ingressInternalType -ingressExternalType $ingressExternalType `
+    #                     -isOnPrem $true `
+    #                     -externalSubnetName "" -externalIp "$externalIp" `
+    #                     -internalSubnetName "" -internalIp "$internalIp" `
+    #                     -local $False
+
+    WriteToLog "installing helm"
+    curl https://raw.githubusercontent.com/helm/helm/master/scripts/get > get_helm.sh
+    chmod 700 get_helm.sh
+    ./get_helm.sh
+
+    helm init --client-only
+
+    # https://zero-to-jupyterhub.readthedocs.io/en/stable/setup-helm.html
+    kubectl --namespace kube-system create serviceaccount tiller
+
+    kubectl create clusterrolebinding tiller --clusterrole cluster-admin --serviceaccount=kube-system:tiller
+
+    helm init --service-account tiller
+
+    helm init --upgrade --service-account tiller
+
+    [string] $package = "nginx"
+    [string] $packageInternal = "nginx-internal"
+    [string] $ngniximageTag = "0.20.0"
+
+    Write-Output "Removing old deployment"
+    helm del --purge $package
+    helm del --purge $packageInternal
+
+    Start-Sleep -Seconds 5
+
+    # nginx configuration: https://github.com/helm/charts/tree/master/stable/nginx-ingress#configuration
+
+    Write-Verbose "Installing the public nginx load balancer"
+    helm install stable/nginx-ingress `
+        --namespace "kube-system" `
+        --name "$package" `
+        --set controller.image.tag="$ngniximageTag"
+
+    # setting values in helm: https://github.com/helm/helm/blob/master/docs/chart_best_practices/values.md
+    # and https://github.com/helm/helm/blob/master/docs/using_helm.md
+    # use "helm inspect values" to see values
+
+    Write-Verbose "Installing the internal nginx load balancer"
+    # NOTE: helm cannot handle spaces before or after "=" in --set command
+    helm install stable/nginx-ingress `
+        --namespace "kube-system" `
+        --name "$packageInternal" `
+        --set controller.image.tag="$ngniximageTag"
 
     return $Return
 }
 
 function SetupNewNode([Parameter(Mandatory=$true)][ValidateNotNullOrEmpty()][string] $baseUrl) {
-    [hashtable]$Return = @{} 
+    [hashtable]$Return = @{}
 
     WriteToLog "checking if this machine can access a DNS server via host $(hostname)"
     WriteToLog "/etc/resolv.conf"
@@ -488,7 +536,7 @@ function SetupNewNode([Parameter(Mandatory=$true)][ValidateNotNullOrEmpty()][str
 
     # remove older versions
     UninstallDockerAndKubernetes
-                    
+
     WriteToConsole "Adding docker repo "
     sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
 
@@ -503,7 +551,7 @@ function SetupNewNode([Parameter(Mandatory=$true)][ValidateNotNullOrEmpty()][str
     WriteToConsole "setting selinux to disabled so kubernetes can work"
     sudo setenforce 0
     sudo sed -i --follow-symlinks 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
-    # sudo sed -i --follow-symlinks 's/SELINUX=enforcing/SELINUX=permissive/g' /etc/sysconfig/selinux   
+    # sudo sed -i --follow-symlinks 's/SELINUX=enforcing/SELINUX=permissive/g' /etc/sysconfig/selinux
 
     WriteToConsole "Installing docker via yum "
     WriteToLog "using docker version ${dockerversion}, kubernetes version ${kubernetesversion}, cni version ${kubernetescniversion}"
@@ -518,7 +566,7 @@ function SetupNewNode([Parameter(Mandatory=$true)][ValidateNotNullOrEmpty()][str
     WriteToConsole "Configuring docker to use systemd and set logs to max size of 10MB and 5 days "
     sudo mkdir -p /etc/docker
     sudo curl -sSL -o /etc/docker/daemon.json ${baseUrl}/onprem/daemon.json?p=$RANDOM
-    
+
     WriteToConsole "Starting docker service "
     sudo systemctl enable docker
     sudo systemctl start docker
@@ -572,18 +620,18 @@ function SetupNewNode([Parameter(Mandatory=$true)][ValidateNotNullOrEmpty()][str
 }
 
 function UninstallDockerAndKubernetes() {
-    [hashtable]$Return = @{} 
+    [hashtable]$Return = @{}
 
     $logfile = "$(get-date -f yyyy-MM-dd-HH-mm)-uninstall.txt"
     WriteToConsole "Logging to $logfile"
     Start-Transcript -Path "$logfile"
 
     WriteToConsole "Uninstalling docker and kubernetes"
-   
+
     if ("$(command -v kubeadm)") {
         WriteToLog "resetting kubeadm"
         sudo kubeadm reset
-    }    
+    }
     sudo yum -y remove kubelet kubeadm kubectl kubernetes-cni
     unlockPackageVersion "kubelet kubeadm kubectl kubernetes-cni"
 
@@ -622,7 +670,7 @@ function unlockPackageVersion([Parameter(Mandatory=$true)][ValidateNotNullOrEmpt
 }
 
 function mountSharedFolder([Parameter(Mandatory=$true)][ValidateNotNullOrEmpty()][bool] $saveIntoSecret) {
-    [hashtable]$Return = @{} 
+    [hashtable]$Return = @{}
 
     Write-Host "DOS requires a network folder that can be accessed from all the worker VMs"
     Write-Host "1. Mount an existing Azure file share"
@@ -644,17 +692,17 @@ function mountSharedFolder([Parameter(Mandatory=$true)][ValidateNotNullOrEmpty()
         WriteToLog "User will mount a shared folder manually"
     }
 
-    return $Return    
+    return $Return
 }
 
 function mountSMB([Parameter(Mandatory=$true)][ValidateNotNullOrEmpty()][bool] $saveIntoSecret) {
-    [hashtable]$Return = @{} 
+    [hashtable]$Return = @{}
 
     Do {$pathToShare = Read-Host -Prompt "path to SMB share (e.g., //myserver.mydomain/myshare)"} while (!$pathToShare)
 
     # convert to unix style since that's what linux mount command expects
     $pathToShare = ($pathToShare -replace "\\", "/")
- 
+
     Do {$domain = Read-Host -Prompt "domain"} while (!$domain)
 
     Do {$username = Read-Host -Prompt "username"} while (!$username)
@@ -664,13 +712,13 @@ function mountSMB([Parameter(Mandatory=$true)][ValidateNotNullOrEmpty()][bool] $
 
     mountSMBWithParams -pathToShare $pathToShare -username $username -domain $domain -password $password -saveIntoSecret $saveIntoSecret -isUNC $True
 
-    return $Return    
+    return $Return
 
 }
 
 function mountAzureFile([Parameter(Mandatory=$true)][ValidateNotNullOrEmpty()][bool] $saveIntoSecret) {
-    [hashtable]$Return = @{} 
-    
+    [hashtable]$Return = @{}
+
     Do {$storageAccountName = Read-Host -Prompt "Storage Account Name"} while (!$storageAccountName)
 
     Do {$shareName = Read-Host -Prompt "Storage Share Name"} while (!$shareName)
@@ -681,11 +729,11 @@ function mountAzureFile([Parameter(Mandatory=$true)][ValidateNotNullOrEmpty()][b
     Do {$storageAccountKey = Read-Host -Prompt "storage account key"} while (!$storageAccountKey)
 
     mountSMBWithParams -pathToShare $pathToShare -username $username -domain "domain" -password $storageAccountKey -saveIntoSecret $saveIntoSecret -isUNC $False
-    return $Return    
+    return $Return
 }
 
 function MountFolderFromSecrets([Parameter(Mandatory=$true)][ValidateNotNullOrEmpty()][string] $baseUrl) {
-    [hashtable]$Return = @{} 
+    [hashtable]$Return = @{}
     WriteToConsole "waiting to let kubernetes come up"
     Do {
         Write-Host '.' -NoNewline;
@@ -706,7 +754,7 @@ function MountFolderFromSecrets([Parameter(Mandatory=$true)][ValidateNotNullOrEm
     WriteToConsole "reading secret for folder to mount "
 
     $secretname = "mountsharedfolder"
-    $namespace = "default"    
+    $namespace = "default"
     $pathToShare = $(ReadSecretData -secretname $secretname -valueName "path" -namespace $namespace)
     $username = $(ReadSecretData -secretname $secretname -valueName "username" -namespace $namespace)
     $domain = $(ReadSecretData -secretname $secretname -valueName "domain" -namespace $namespace)
@@ -719,7 +767,7 @@ function MountFolderFromSecrets([Parameter(Mandatory=$true)][ValidateNotNullOrEm
         WriteToLog "No username found in secrets"
         mountSMB -saveIntoSecret $False
     }
-    return $Return    
+    return $Return
 }
 
 function mountSMBWithParams([Parameter(Mandatory=$true)][ValidateNotNullOrEmpty()][string] $pathToShare, `
@@ -728,7 +776,7 @@ function mountSMBWithParams([Parameter(Mandatory=$true)][ValidateNotNullOrEmpty(
                         [Parameter(Mandatory=$true)][ValidateNotNullOrEmpty()][string] $password, `
                         [Parameter(Mandatory=$true)][ValidateNotNullOrEmpty()][bool] $saveIntoSecret, `
                         [Parameter(Mandatory=$true)][ValidateNotNullOrEmpty()][bool] $isUNC) {
-    [hashtable]$Return = @{} 
+    [hashtable]$Return = @{}
     $passwordlength = $($password.length)
     WriteToLog "mounting file share with path: [$pathToShare], user: [$username], domain: [$domain], password_length: [$passwordlength] saveIntoSecret: [$saveIntoSecret], isUNC: [$isUNC]"
     # save as secret
@@ -769,7 +817,7 @@ function mountSMBWithParams([Parameter(Mandatory=$true)][ValidateNotNullOrEmpty(
         if($result -ne 0){
             throw "Unable to mount $pathToShare with username=$username exitcode=$result"
         }
-        echo "$pathToShare /mnt/data cifs nofail,vers=2.1,username=$username,pass=$password,dir_mode=0777,file_mode=0777,serverino" | sudo tee -a /etc/fstab      
+        echo "$pathToShare /mnt/data cifs nofail,vers=2.1,username=$username,pass=$password,dir_mode=0777,file_mode=0777,serverino" | sudo tee -a /etc/fstab
     }
 
     WriteToLog "Mounting all shares"
@@ -782,25 +830,25 @@ function mountSMBWithParams([Parameter(Mandatory=$true)][ValidateNotNullOrEmpty(
         if ([string]::IsNullOrEmpty("$(kubectl get secret $secretname -n $namespace -o jsonpath='{.data}' --ignore-not-found=true)")) {
             kubectl delete secret $secretname --namespace=$namespace
         }
-        kubectl create secret generic $secretname --namespace=$namespace --from-literal=path=$pathToShare --from-literal=username=$username --from-literal=domain=$domain --from-literal=password=$password 
+        kubectl create secret generic $secretname --namespace=$namespace --from-literal=path=$pathToShare --from-literal=username=$username --from-literal=domain=$domain --from-literal=password=$password
     }
 
     touch "/mnt/data/$(hostname).txt"
 
     WriteToLog "Listing files in shared folder"
     ls -al /mnt/data
-    return $Return    
+    return $Return
 }
 
 function ShowCommandToJoinCluster([Parameter(Mandatory=$true)][ValidateNotNullOrEmpty()][string] $baseUrl, [bool]$prerelease) {
-    
+
     $joinCommand = $(sudo kubeadm token create --print-join-command)
     if ($joinCommand) {
         # $parts = $joinCommand.Split(' ');
         # $masterurl = $parts[2];
         # $token = $parts[4];
         # $discoverytoken = $parts[6];
-    
+
         WriteToConsole "Run this command on any new node to join this cluster (this command expires in 24 hours):"
         WriteToConsole "---------------- COPY BELOW THIS LINE ----------------"
         $fullCommand= "curl -sSL $baseUrl/onprem/setupworker.sh?p=`$RANDOM -o setupworker.sh; bash setupworker.sh `"$joinCommand`""
@@ -808,7 +856,7 @@ function ShowCommandToJoinCluster([Parameter(Mandatory=$true)][ValidateNotNullOr
             $fullCommand = "${fullCommand} -prerelease"
         }
         WriteToConsole $fullCommand
-    
+
         # if [[ ! -z "$pathToShare" ]]; then
         #     WriteToLog "curl -sSL $baseUrl/onprem/mountfolder.sh?p=$RANDOM | bash -s $pathToShare $username $domain $password 2>&1 | tee mountfolder.log"
         # fi
@@ -828,12 +876,12 @@ function OptimizeCentosForHyperv() {
     $myip = $(host $(hostname) | awk '/has address/ { print $4 ; exit }')
     WriteToConsole "You can connect to this machine via SSH: ssh $(whoami)@${myip}"
     # grep -v "$(hostname)" /etc/hosts | sudo tee /etc/hosts > /dev/null
-    # WriteToConsole "127.0.0.1 $(hostname)" | sudo tee -a /etc/hosts > /dev/null    
+    # WriteToConsole "127.0.0.1 $(hostname)" | sudo tee -a /etc/hosts > /dev/null
 }
 
 function TroubleshootNetworking() {
     # https://www.tecmint.com/things-to-do-after-minimal-rhel-centos-7-installation/3/
-    WriteToConsole " open ports " 
+    WriteToConsole " open ports "
     sudo nmap 127.0.0.1
     WriteToConsole "network interfaces "
     sudo ip link show
@@ -863,7 +911,7 @@ function TestDNS([Parameter(Mandatory=$true)][ValidateNotNullOrEmpty()][string] 
     WriteToConsole "Checking if DNS pods are running"
     kubectl get pods --namespace=kube-system -l k8s-app=kube-dns -o wide
     WriteToConsole "Details about DNS pods"
-    kubectl describe pods --namespace=kube-system -l k8s-app=kube-dns    
+    kubectl describe pods --namespace=kube-system -l k8s-app=kube-dns
     WriteToConsole "Details about flannel pods"
     kubectl logs --namespace kube-system -l app=flannel
     WriteToConsole "Checking if DNS service is running"
@@ -874,7 +922,7 @@ function TestDNS([Parameter(Mandatory=$true)][ValidateNotNullOrEmpty()][string] 
     # kubectl logs --namespace=kube-system $(kubectl get pods --namespace=kube-system -l k8s-app=kube-dns -o name)
     kubectl logs --namespace=kube-system $(kubectl get pods --namespace=kube-system -l k8s-app=kube-dns -o name) -c kubedns
     kubectl logs --namespace=kube-system $(kubectl get pods --namespace=kube-system -l k8s-app=kube-dns -o name) -c dnsmasq
-    kubectl logs --namespace=kube-system $(kubectl get pods --namespace=kube-system -l k8s-app=kube-dns -o name) -c sidecar        
+    kubectl logs --namespace=kube-system $(kubectl get pods --namespace=kube-system -l k8s-app=kube-dns -o name) -c sidecar
     WriteToConsole "Creating a busybox pod to test DNS"
     Do {
         WriteToConsole "Waiting for busybox to terminate"
@@ -883,7 +931,7 @@ function TestDNS([Parameter(Mandatory=$true)][ValidateNotNullOrEmpty()][string] 
     } while ($(kubectl get pods busybox -n default -o jsonpath='{.status.phase}' --ignore-not-found=true))
 
     kubectl create -f $baseUrl/kubernetes/test/busybox.yaml
-    Do {    
+    Do {
         WriteToConsole "."
         Start-Sleep 5
     } while ("$(kubectl get pods busybox -n default -o jsonpath='{.status.phase}')" -ne "Running")
@@ -893,7 +941,7 @@ function TestDNS([Parameter(Mandatory=$true)][ValidateNotNullOrEmpty()][string] 
     kubectl exec busybox nslookup kubernetes.default
     WriteToConsole "testing if we can access external network"
     kubectl exec busybox wget www.google.com
-    kubectl delete -f $baseUrl/kubernetes/test/busybox.yaml    
+    kubectl delete -f $baseUrl/kubernetes/test/busybox.yaml
     WriteToConsole "firewall logs"
     sudo systemctl status firewalld -l
 }
@@ -934,9 +982,9 @@ function ShowKubernetesServiceStatus() {
 function OpenPortOnPrem([Parameter(Mandatory=$true)][ValidateNotNullOrEmpty()][int]$port, `
                         [Parameter(Mandatory=$true)][ValidateNotNullOrEmpty()][string]$name, `
                         [Parameter(Mandatory=$true)][ValidateNotNullOrEmpty()][string]$protocol, `
-                        [Parameter(Mandatory=$true)][ValidateNotNullOrEmpty()][string]$type) 
+                        [Parameter(Mandatory=$true)][ValidateNotNullOrEmpty()][string]$type)
 {
     AddFirewallPort -port "${port}/${protocol}" -name "$name"
 }
-# 
+#
 Write-Information -MessageData "end common-onprem.ps1 version $versiononpremcommon"

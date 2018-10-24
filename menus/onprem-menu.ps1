@@ -1,4 +1,4 @@
-param([ValidateNotNullOrEmpty()][string]$baseUrl, [string]$prerelease)    
+param([ValidateNotNullOrEmpty()][string]$baseUrl, [string]$prerelease)
 $version = "2018.05.01.02"
 Write-Host "--- master.ps1 version $version ---"
 Write-Host "baseUrl = $baseUrl"
@@ -57,32 +57,32 @@ while ($userinput -ne "q") {
     $userinput = Read-Host "Please make a selection"
     switch ($userinput) {
         '1' {
-            SetupMaster -baseUrl $baseUrl -singlenode $false 
-        } 
+            SetupMaster -baseUrl $baseUrl -singlenode $false
+        }
         '2' {
             ShowCommandToJoinCluster -baseUrl $baseUrl -prerelease $isPrerelease
-        } 
+        }
         '3' {
             UninstallDockerAndKubernetes
-        } 
+        }
         '4' {
             ShowNodes
-        } 
+        }
         '5' {
             ShowStatusOfCluster
-        } 
+        }
         '20' {
             showTroubleshootingMenu -baseUrl $baseUrl -isAzure $false
             $skip=$true
-        } 
+        }
         '51' {
             showMenu -baseUrl $baseUrl -namespace "fabricnlp" -isAzure $false
             $skip=$true
-        } 
+        }
         '52' {
             showMenu -baseUrl $baseUrl -namespace "fabricrealtime" -isAzure $false
             $skip=$true
-        } 
+        }
         'q' {
             return
         }
@@ -91,7 +91,7 @@ while ($userinput -ne "q") {
         $userinput = Read-Host -Prompt "Press Enter to continue or q to exit"
         if($userinput -eq "q"){
             return
-        }    
+        }
     }
     [Console]::ResetColor()
     Clear-Host
