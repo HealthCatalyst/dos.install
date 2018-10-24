@@ -5,13 +5,13 @@ function global:GetCommonOnPremVersion() {
     return $versiononpremcommon
 }
 
-$dockerversion = "17.03.2.ce-1"
+$dockerversion = "18.06.1.ce-3"
 # 18.06.1.ce-3
 # The list of validated docker versions was updated to 1.11.1, 1.12.1, 1.13.1, 17.03, 17.06, 17.09, 18.06. (#68495)
-$kubernetesversion = "1.10.0-0"
+$kubernetesversion = "1.12.1-0"
 # 1.12.1-0
 $kubernetescniversion = "0.6.0-0"
-$kubernetesserverversion = "1.10.0"
+$kubernetesserverversion = "1.12.1-0"
 
 function SetupWorker([Parameter(Mandatory=$true)][ValidateNotNullOrEmpty()][string] $baseUrl, [Parameter(Mandatory=$true)][ValidateNotNullOrEmpty()][string] $joincommand) {
     [hashtable]$Return = @{}
