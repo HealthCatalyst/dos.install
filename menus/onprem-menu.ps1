@@ -25,7 +25,7 @@ else{
 [string] $randomstring = ""
 $randomstring += $set | Get-Random
 
-Write-Host "Powershell version: $($PSVersionTable.PSVersion.Major).$($PSVersionTable.PSVersion.Minor).$($PSVersionTable.PSVersion.Build)"
+Write-Host "Powershell version: $($PSVersionTable.PSVersion.Major).$($PSVersionTable.PSVersion.Minor)"
 
 mkdir -p ${HOME}
 
