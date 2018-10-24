@@ -5,21 +5,21 @@ function global:GetCommonOnPremVersion() {
     return $versiononpremcommon
 }
 
-$dockerversion = "17.03.2.ce-1"
-$dockerselinuxversion = "17.03.2.ce-1"
+[string] $dockerversion = "17.03.2.ce-1"
+[string] $dockerselinuxversion = "17.03.2.ce-1"
 
 # 18.06.1.ce-3
 # The list of validated docker versions was updated to 1.11.1, 1.12.1, 1.13.1, 17.03, 17.06, 17.09, 18.06. (#68495)
-$kubernetesversion = "1.12.1-0"
+[string] $kubernetesversion = "1.12.1-0"
 # 1.12.1-0
-$kubernetescniversion = "0.6.0-0"
-$kubernetesserverversion = "1.12.1-0"
+[string] $kubernetescniversion = "0.6.0-0"
+[string] $kubernetesserverversion = "1.12.1-0"
 
 function SetupWorker([Parameter(Mandatory=$true)][ValidateNotNullOrEmpty()][string] $baseUrl, [Parameter(Mandatory=$true)][ValidateNotNullOrEmpty()][string] $joincommand) {
     [hashtable]$Return = @{}
 
     # Set-PSDebug -Trace 1
-    $logfile = "$(get-date -f yyyy-MM-dd-HH-mm)-setupworker.txt"
+    [string] $logfile = "$(get-date -f yyyy-MM-dd-HH-mm)-setupworker.txt"
     WriteToConsole "Logging to $logfile"
     Start-Transcript -Path "$logfile"
 
@@ -50,7 +50,7 @@ function SetupWorker([Parameter(Mandatory=$true)][ValidateNotNullOrEmpty()][stri
 function SetupMaster([Parameter(Mandatory=$true)][ValidateNotNullOrEmpty()][string] $baseUrl, [bool]$singlenode) {
     [hashtable]$Return = @{}
 
-    $logfile = "$(get-date -f yyyy-MM-dd-HH-mm)-setupmaster.txt"
+    [string] $logfile = "$(get-date -f yyyy-MM-dd-HH-mm)-setupmaster.txt"
     WriteToConsole "Logging to $logfile"
     Start-Transcript -Path "$logfile"
 
@@ -99,7 +99,7 @@ function SetupNewMasterNode([Parameter(Mandatory=$true)][ValidateNotNullOrEmpty(
 
     [hashtable]$Return = @{}
 
-    $u = "$(whoami)"
+    [string] $u = "$(whoami)"
     WriteToLog "User name: $u"
 
     # for calico network plugin
@@ -607,14 +607,14 @@ function SetupNewNode([Parameter(Mandatory=$true)][ValidateNotNullOrEmpty()][str
     # sudo yum versionlock add kubectl
     # sudo yum versionlock add kubernetes-cni
 
-    WriteToConsole "starting kubernetes service"
-    sudo systemctl enable kubelet
-    sudo systemctl start kubelet
-
     WriteToLog "setting up iptables for kubernetes in k8s.conf"
     # # Some users on RHEL/CentOS 7 have reported issues with traffic being routed incorrectly due to iptables being bypassed
     sudo curl -o "/etc/sysctl.d/k8s.conf" -sSL "$baseUrl/onprem/k8s.conf"
     sudo sysctl --system
+
+    WriteToConsole "starting kubernetes service"
+    sudo systemctl enable kubelet
+    sudo systemctl start kubelet
 
     WriteToConsole "finished setting up node"
 
