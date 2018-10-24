@@ -4,6 +4,15 @@ Write-Host "--- master.ps1 version $version ---"
 Write-Host "baseUrl = $baseUrl"
 Write-Host "prerelease flag: $prerelease"
 
+# http://www.rlmueller.net/PSGotchas.htm
+# Trap {"Error: $_"; Break;}
+Set-StrictMode -Version latest
+
+# stop whenever there is an error
+$ErrorActionPreference = "Stop"
+# show Information messages
+$InformationPreference = "Continue"
+
 if("$prerelease" -eq "yes"){
     $isPrerelease = $true
     Write-Host "prerelease: yes"
@@ -12,7 +21,8 @@ else{
     $isPrerelease = $false
 }
 
-$set = "abcdefghijklmnopqrstuvwxyz0123456789".ToCharArray()
+[string] $set = "abcdefghijklmnopqrstuvwxyz0123456789".ToCharArray()
+[string] $randomstring = ""
 $randomstring += $set | Get-Random
 
 Write-Host "Powershell version: $($PSVersionTable.PSVersion.Major).$($PSVersionTable.PSVersion.Minor).$($PSVersionTable.PSVersion.Build)"

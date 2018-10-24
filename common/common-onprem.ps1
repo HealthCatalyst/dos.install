@@ -5,7 +5,7 @@ function global:GetCommonOnPremVersion() {
     return $versiononpremcommon
 }
 
-$dockerversion = "18.03.1.ce-1."
+$dockerversion = "17.03.2.ce-1"
 $dockerselinuxversion = "17.03.2.ce-1"
 
 # 18.06.1.ce-3
@@ -567,7 +567,7 @@ function SetupNewNode([Parameter(Mandatory=$true)][ValidateNotNullOrEmpty()][str
     # https://docs.docker.com/config/containers/logging/json-file/
     WriteToConsole "Configuring docker to use systemd and set logs to max size of 10MB and 5 days "
     sudo mkdir -p /etc/docker
-    sudo curl -sSL -o /etc/docker/daemon.json ${baseUrl}/onprem/daemon.json?p=$RANDOM
+    sudo curl -sSL -o /etc/docker/daemon.json ${baseUrl}/onprem/daemon.json?p=$dockerversion
 
     WriteToConsole "Starting docker service "
     sudo systemctl enable docker
@@ -579,7 +579,7 @@ function SetupNewNode([Parameter(Mandatory=$true)][ValidateNotNullOrEmpty()][str
         # reload permissions without requiring a logout
         # from https://superuser.com/questions/272061/reload-a-linux-users-group-assignments-without-logging-out
         # https://man.cx/newgrp(1)
-        WriteToConsole "Reloading permissions via newgrp"
+        # WriteToConsole "Reloading permissions via newgrp"
         # newgrp docker
     }
 
