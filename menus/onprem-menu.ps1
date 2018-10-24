@@ -9,7 +9,7 @@ Write-Host "prerelease flag: $prerelease"
 Set-StrictMode -Version latest
 
 # stop whenever there is an error
-$ErrorActionPreference = "Stop"
+# $ErrorActionPreference = "Stop"
 # show Information messages
 $InformationPreference = "Continue"
 

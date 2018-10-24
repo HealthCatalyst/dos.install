@@ -632,7 +632,7 @@ function UninstallDockerAndKubernetes() {
 
     if ("$(command -v kubeadm)") {
         WriteToLog "resetting kubeadm"
-        sudo kubeadm reset
+        sudo kubeadm reset -f
     }
     sudo yum -y remove kubelet kubeadm kubectl kubernetes-cni
     unlockPackageVersion "kubelet kubeadm kubectl kubernetes-cni"
