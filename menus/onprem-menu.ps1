@@ -1,5 +1,5 @@
 param([ValidateNotNullOrEmpty()][string]$baseUrl, [string]$prerelease)
-$version = "2018.10.24.01"
+$version = "2018.10.24.02"
 Write-Host "--- onprem-menu.ps1 version $version ---"
 Write-Host "baseUrl = $baseUrl"
 Write-Host "prerelease flag: $prerelease"
@@ -91,7 +91,7 @@ $InformationPreference = "Continue"
 $userinput = ""
 while ($userinput -ne "q") {
     $skip=$false
-    Write-Host "================ Health Catalyst version $version, common functions kube:$(GetCommonKubeVersion) onprem:$(GetCommonOnPremVersion) ================"
+    Write-Host "================ Health Catalyst version $version ================"
     Write-Host "------ On-Premise -------"
     Write-Host "1: Setup Master VM"
     Write-Host "2: Show command to join another node to this cluster"
