@@ -1,5 +1,5 @@
 param([ValidateNotNullOrEmpty()][string]$baseUrl, [string]$prerelease)
-$version = "2018.10.24.03"
+$version = "2018.10.24.04"
 Write-Host "--- onprem-menu.ps1 version $version ---"
 Write-Host "baseUrl = $baseUrl"
 Write-Host "prerelease flag: $prerelease"
@@ -31,8 +31,10 @@ Write-Host "Powershell version: $($PSVersionTable.PSVersion.Major).$($PSVersionT
 
 mkdir -p ${HOME}
 
+Write-Host "Importing PowershellGet module"
 Import-Module PowerShellGet -Force
 
+Write-Host "Setting PSGallery as trusted"
 Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
 
 function InstallOrUpdateModule() {
@@ -84,7 +86,7 @@ function InstallOrUpdateModule() {
     }
 }
 
-InstallOrUpdateModule -module "DosInstallUtilities.OnPrem" -local $local -minVersion "1.3"
+InstallOrUpdateModule -module "DosInstallUtilities.OnPrem" -local $local -minVersion "1.4"
 
 # show Information messages
 $InformationPreference = "Continue"
