@@ -1,5 +1,5 @@
 param([ValidateNotNullOrEmpty()][string]$baseUrl, [string]$prerelease)
-$version = "2018.10.25.08"
+$version = "2018.10.25.09"
 Write-Host "--- onprem-menu.ps1 version $version ---"
 Write-Host "baseUrl = $baseUrl"
 Write-Host "prerelease flag: $prerelease"
@@ -141,7 +141,7 @@ while ($userinput -ne "q") {
             $skip=$true
         }
         '52' {
-            ShowRealtimeMenu -baseUrl $baseUrl -namespace "fabricrealtime" -local $local
+            ShowRealtimeMenu -baseUrl $baseUrl -namespace "fabricrealtime" -local $local -isAzure $false
             $skip=$true
         }
         'q' {
