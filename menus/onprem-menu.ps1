@@ -1,5 +1,5 @@
 param([ValidateNotNullOrEmpty()][string]$baseUrl, [string]$prerelease)
-$version = "2018.10.25.05"
+$version = "2018.10.25.06"
 Write-Host "--- onprem-menu.ps1 version $version ---"
 Write-Host "baseUrl = $baseUrl"
 Write-Host "prerelease flag: $prerelease"
@@ -90,9 +90,9 @@ function InstallOrUpdateModule() {
     }
 }
 
-InstallOrUpdateModule -module "DosInstallUtilities.Kube" -local $local -minVersion "1.72"
+InstallOrUpdateModule -module "DosInstallUtilities.Kube" -local $local -minVersion "1.73"
 
-InstallOrUpdateModule -module "DosInstallUtilities.OnPrem" -local $local -minVersion "1.64"
+InstallOrUpdateModule -module "DosInstallUtilities.OnPrem" -local $local -minVersion "1.65"
 
 # show Information messages
 $InformationPreference = "Continue"
@@ -111,9 +111,8 @@ while ($userinput -ne "q") {
     Write-Host "-----------"
     Write-Host "20: Troubleshooting Menu"
     Write-Host "-----------"
-    Write-Host "51: Fabric NLP Menu"
-    Write-Host "-----------"
     Write-Host "52: Fabric Realtime Menu"
+    Write-Host "-----------"
     Write-Host "q: Quit"
     $userinput = Read-Host "Please make a selection"
     switch ($userinput) {
@@ -137,10 +136,6 @@ while ($userinput -ne "q") {
         }
         '20' {
             showTroubleshootingMenu -baseUrl $baseUrl -isAzure $false
-            $skip=$true
-        }
-        '51' {
-            showMenu -baseUrl $baseUrl -namespace "fabricnlp" -isAzure $false
             $skip=$true
         }
         '52' {
