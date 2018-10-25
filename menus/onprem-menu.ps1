@@ -1,5 +1,5 @@
 param([ValidateNotNullOrEmpty()][string]$baseUrl, [string]$prerelease)
-$version = "2018.10.25.01"
+$version = "2018.10.25.02"
 Write-Host "--- onprem-menu.ps1 version $version ---"
 Write-Host "baseUrl = $baseUrl"
 Write-Host "prerelease flag: $prerelease"
@@ -69,27 +69,29 @@ function InstallOrUpdateModule() {
             Import-Module -Name $module
             $moduleInfo = $(Get-Module -Name "$module")
             if ($null -eq $moduleInfo) {
+                Write-Host "Could not get info on $module so installing it..."
                 Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber -Scope CurrentUser
             }
             else {
                 Write-Host "Checking Version of $module module is $minVersion"
                 if ($minVersion -ne $moduleInfo.Version.ToString()) {
+                    Write-Host "Version of $module is $moduleInfo.Version.ToString() while we expected $minVersion.  Installing version $minVersion..."
                     Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber -Force -Scope CurrentUser
                     Import-Module -Name $module
                 }
             }
         }
         else {
-            Write-Host "Module $module does not exist"
+            Write-Host "Module $module does not exist.  Installing it..."
             Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber -Scope CurrentUser
             Import-Module -Name $module
         }
     }
 }
 
-InstallOrUpdateModule -module "DosInstallUtilities.Kube" -local $local -minVersion "1.7"
+InstallOrUpdateModule -module "DosInstallUtilities.Kube" -local $local -minVersion "1.71"
 
-InstallOrUpdateModule -module "DosInstallUtilities.OnPrem" -local $local -minVersion "1.61"
+InstallOrUpdateModule -module "DosInstallUtilities.OnPrem" -local $local -minVersion "1.62"
 
 # show Information messages
 $InformationPreference = "Continue"
