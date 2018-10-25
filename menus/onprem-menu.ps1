@@ -1,12 +1,14 @@
 param([ValidateNotNullOrEmpty()][string]$baseUrl, [string]$prerelease)
-$version = "2018.05.01.02"
-Write-Host "--- master.ps1 version $version ---"
+$version = "2018.10.24.01"
+Write-Host "--- onprem-menu.ps1 version $version ---"
 Write-Host "baseUrl = $baseUrl"
 Write-Host "prerelease flag: $prerelease"
 
 # http://www.rlmueller.net/PSGotchas.htm
 # Trap {"Error: $_"; Break;}
 Set-StrictMode -Version latest
+
+[bool] $local = $false
 
 # stop whenever there is an error
 # $ErrorActionPreference = "Stop"
@@ -29,20 +31,59 @@ Write-Host "Powershell version: $($PSVersionTable.PSVersion.Major).$($PSVersionT
 
 mkdir -p ${HOME}
 
-function ImportModuleFromUrl($module){
-    Invoke-WebRequest -useb -Uri "${baseUrl}/common/${module}.ps1?f=$randomstring" -OutFile "${HOME}/${module}.psm1"
-    Import-Module -Name "${HOME}/${module}.psm1" -Force
+Import-Module PowerShellGet -Force
+
+Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+
+function InstallOrUpdateModule() {
+    [CmdletBinding()]
+    param
+    (
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $module
+        ,
+        [Parameter(Mandatory = $true)]
+        [bool]
+        $local
+        ,
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $minVersion
+    )
+
+    if ($local) {
+        Get-Module -Name "$module" | Remove-Module -Force
+        Import-Module "$topLevelFolder\$module\$module.psm1" -Force
+    }
+    else {
+        if (Get-Module -ListAvailable -Name $module) {
+            Write-Host "Module $module exists"
+
+            Import-Module -Name $module
+            $moduleInfo = $(Get-Module -Name "$module")
+            if ($null -eq $moduleInfo) {
+                Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber -Scope CurrentUser
+            }
+            else {
+                Write-Host "Checking Version of $module module is $minVersion"
+                if ($minVersion -ne $moduleInfo.Version.ToString()) {
+                    Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber -Force -Scope CurrentUser
+                    Import-Module -Name $module
+                }
+            }
+        }
+        else {
+            Write-Host "Module $module does not exist"
+            Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber -Scope CurrentUser
+            Import-Module -Name $module
+        }
+    }
 }
 
-ImportModuleFromUrl -module "common"
-
-ImportModuleFromUrl -module "common-kube"
-
-ImportModuleFromUrl -module "common-onprem"
-
-ImportModuleFromUrl -module "product-menu"
-
-ImportModuleFromUrl -module "troubleshooting-menu"
+InstallOrUpdateModule -module "DosInstallUtilities.OnPrem" -local $local -minVersion "1.0"
 
 # show Information messages
 $InformationPreference = "Continue"
