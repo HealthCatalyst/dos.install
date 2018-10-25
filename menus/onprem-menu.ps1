@@ -84,7 +84,7 @@ function InstallOrUpdateModule() {
     }
 }
 
-InstallOrUpdateModule -module "DosInstallUtilities.OnPrem" -local $local -minVersion "1.1"
+InstallOrUpdateModule -module "DosInstallUtilities.OnPrem" -local $local -minVersion "1.2"
 
 # show Information messages
 $InformationPreference = "Continue"
