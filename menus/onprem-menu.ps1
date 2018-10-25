@@ -84,7 +84,7 @@ function InstallOrUpdateModule() {
     }
 }
 
-InstallOrUpdateModule -module "DosInstallUtilities.OnPrem" -local $local -minVersion "1.2"
+InstallOrUpdateModule -module "DosInstallUtilities.OnPrem" -local $local -minVersion "1.3"
 
 # show Information messages
 $InformationPreference = "Continue"
@@ -109,7 +109,7 @@ while ($userinput -ne "q") {
     $userinput = Read-Host "Please make a selection"
     switch ($userinput) {
         '1' {
-            SetupMaster -baseUrl $baseUrl -singlenode $false
+            SetupMaster -baseUrl $baseUrl -singlenode $false -Verbose
         }
         '2' {
             ShowCommandToJoinCluster -baseUrl $baseUrl -prerelease $isPrerelease
