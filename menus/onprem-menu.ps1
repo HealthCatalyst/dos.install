@@ -1,5 +1,5 @@
 param([ValidateNotNullOrEmpty()][string]$baseUrl, [string]$prerelease)
-$version = "2018.10.25.04"
+$version = "2018.10.25.05"
 Write-Host "--- onprem-menu.ps1 version $version ---"
 Write-Host "baseUrl = $baseUrl"
 Write-Host "prerelease flag: $prerelease"
@@ -92,7 +92,7 @@ function InstallOrUpdateModule() {
 
 InstallOrUpdateModule -module "DosInstallUtilities.Kube" -local $local -minVersion "1.72"
 
-InstallOrUpdateModule -module "DosInstallUtilities.OnPrem" -local $local -minVersion "1.63"
+InstallOrUpdateModule -module "DosInstallUtilities.OnPrem" -local $local -minVersion "1.64"
 
 # show Information messages
 $InformationPreference = "Continue"
@@ -107,6 +107,7 @@ while ($userinput -ne "q") {
     Write-Host "3: Uninstall Docker and Kubernetes"
     Write-Host "4: Show all nodes"
     Write-Host "5: Show status of cluster"
+    Write-Host "6: Setup Single Node Cluster"
     Write-Host "-----------"
     Write-Host "20: Troubleshooting Menu"
     Write-Host "-----------"
@@ -130,6 +131,9 @@ while ($userinput -ne "q") {
         }
         '5' {
             ShowStatusOfCluster
+        }
+        '6' {
+            SetupMaster -baseUrl $baseUrl -singlenode $true -Verbose
         }
         '20' {
             showTroubleshootingMenu -baseUrl $baseUrl -isAzure $false
