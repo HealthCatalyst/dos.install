@@ -141,7 +141,7 @@ while ($userinput -ne "q") {
             $skip=$true
         }
         '52' {
-            showMenu -baseUrl $baseUrl -namespace "fabricrealtime" -isAzure $false
+            ShowRealtimeMenu -baseUrl $baseUrl -namespace "fabricrealtime" -local $local
             $skip=$true
         }
         'q' {
