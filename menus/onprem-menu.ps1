@@ -1,5 +1,5 @@
 param([ValidateNotNullOrEmpty()][string]$baseUrl, [string]$prerelease)
-$version = "2018.10.24.02"
+$version = "2018.10.24.03"
 Write-Host "--- onprem-menu.ps1 version $version ---"
 Write-Host "baseUrl = $baseUrl"
 Write-Host "prerelease flag: $prerelease"
@@ -59,6 +59,7 @@ function InstallOrUpdateModule() {
         Import-Module "$topLevelFolder\$module\$module.psm1" -Force
     }
     else {
+        Write-Host "Checking Module $module with minVersion=$minVersion"
         if (Get-Module -ListAvailable -Name $module) {
             Write-Host "Module $module exists"
 
