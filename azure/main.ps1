@@ -1,5 +1,5 @@
 param([string]$branch, [bool]$local)
-$version = "2018.10.29.04"
+$version = "2018.10.29.05"
 [Console]::ResetColor()
 Write-Host "--- main.ps1 version $version ---"
 Write-Host "branch: $branch"
@@ -147,7 +147,7 @@ function InstallOrUpdateModule() {
 
 InstallOrUpdateModule -module "DosInstallUtilities.Kube" -local $local -minVersion "1.80"
 
-InstallOrUpdateModule -module "DosInstallUtilities.Azure" -local $local -minVersion "1.81"
+InstallOrUpdateModule -module "DosInstallUtilities.Azure" -local $local -minVersion "1.82"
 
 InstallOrUpdateModule -module "DosInstallUtilities.Menu" -local $local -minVersion "1.81"
 
