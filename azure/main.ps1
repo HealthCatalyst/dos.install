@@ -1,5 +1,5 @@
 param([string]$branch, [bool]$local)
-$version = "2018.10.18.05"
+$version = "2018.10.29.02"
 [Console]::ResetColor()
 Write-Host "--- main.ps1 version $version ---"
 Write-Host "branch: $branch"
@@ -40,32 +40,50 @@ Write-Host "Powershell version: $($PSVersionTable.PSVersion.Major).$($PSVersionT
 
 $module = "AzureRM"
 $minVersion = "6.10.0"
+Write-Host "Checking Module $module with minVersion=$minVersion"
 if (Get-Module -ListAvailable -Name $module) {
     Write-Host "Module $module exists"
 
     Import-Module -Name $module
     $moduleInfo = $(Get-Module -Name "$module")
     if ($null -eq $moduleInfo) {
+        Write-Host "Could not get info on $module so installing it..."
         Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber -Scope CurrentUser
     }
     else {
         Write-Host "Checking Version of $module module is $minVersion"
-        if ($minVersion -ne $moduleInfo.Version.ToString()) {
+        [string] $currentVersion = $moduleInfo.Version.ToString()
+        if ($minVersion -ne $currentVersion) {
+            Write-Host "Version of $module is $currentVersion while we expected $minVersion.  Installing version $minVersion..."
             Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber -Force -Scope CurrentUser
+            Import-Module -Name $module
         }
     }
 }
 else {
-    Write-Host "Module $module does not exist"
+    Write-Host "Module $module does not exist.  Installing it..."
     Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber -Scope CurrentUser
     Import-Module -Name $module
 }
 
 Import-Module PowerShellGet -Force
 
-Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+$repo = $(Get-PSRepository -Name "PSGallery")
 
-if($local){
+if ($repo) {
+    if ( $repo.InstallationPolicy -ne "Trusted") {
+        Write-Host "Setting PSGallery to be trusted"
+        Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+
+    }
+}
+else {
+    Write-Host "Setting PSGallery to be trusted"
+    Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+
+}
+
+if ($local) {
     [string] $here = Split-Path -Parent $MyInvocation.MyCommand.Path
     [string] $topLevelFolder = "$here\..\..\"
 }
@@ -105,7 +123,9 @@ function InstallOrUpdateModule() {
             else {
                 Write-Host "Checking Version of $module module is $minVersion"
                 if ($minVersion -ne $moduleInfo.Version.ToString()) {
+                    Write-Host "Installing Version of $module = $minVersion"
                     Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber -Force -Scope CurrentUser
+                    Write-Host "Importing $module"
                     Import-Module -Name $module
                 }
             }
@@ -125,12 +145,12 @@ function InstallOrUpdateModule() {
 
 # InstallOrUpdateModule -module "PSRabbitMq" -local $false -minVersion "0.3.1"
 
-InstallOrUpdateModule -module "DosInstallUtilities.Kube" -local $local -minVersion "1.7"
+InstallOrUpdateModule -module "DosInstallUtilities.Kube" -local $local -minVersion "1.80"
 
-InstallOrUpdateModule -module "DosInstallUtilities.Azure" -local $local -minVersion "1.6"
+InstallOrUpdateModule -module "DosInstallUtilities.Azure" -local $local -minVersion "1.80"
 
-InstallOrUpdateModule -module "DosInstallUtilities.Menu" -local $local -minVersion "1.6"
+InstallOrUpdateModule -module "DosInstallUtilities.Menu" -local $local -minVersion "1.80"
 
-InstallOrUpdateModule -module "DosInstallUtilities.Realtime" -local $local -minVersion "1.6"
+InstallOrUpdateModule -module "DosInstallUtilities.Realtime" -local $local -minVersion "1.80"
 
 ShowMainMenu -baseUrl $GITHUB_URL -local $local
