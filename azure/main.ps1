@@ -1,5 +1,5 @@
 param([string]$branch, [bool]$local)
-$version = "2018.10.29.05"
+$version = "2018.10.29.06"
 [Console]::ResetColor()
 Write-Host "--- main.ps1 version $version ---"
 Write-Host "branch: $branch"
@@ -39,7 +39,7 @@ Write-Host "GITHUB_URL: $GITHUB_URL"
 Write-Host "Powershell version: $($PSVersionTable.PSVersion.Major).$($PSVersionTable.PSVersion.Minor).$($PSVersionTable.PSVersion.Build)"
 
 $module = "AzureRM"
-$minVersion = "6.10.0"
+$minVersion = "6.11.0"
 Write-Host "Checking Module $module with minVersion=$minVersion"
 if (Get-Module -ListAvailable -Name $module) {
     Write-Host "Module $module exists"
