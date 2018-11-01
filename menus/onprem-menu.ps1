@@ -1,5 +1,5 @@
 param([ValidateNotNullOrEmpty()][string]$baseUrl, [string]$prerelease)
-$version = "2018.10.25.15"
+$version = "2018.11.01.02"
 Write-Host "--- onprem-menu.ps1 version $version ---"
 Write-Host "baseUrl = $baseUrl"
 Write-Host "prerelease flag: $prerelease"
@@ -34,9 +34,18 @@ mkdir -p ${HOME}
 Write-Host "Importing PowershellGet module"
 Import-Module PowerShellGet -Force
 
-Write-Host "Setting PSGallery as trusted"
-Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
-Write-Host "Finished setting PSGallery as trusted"
+$repo = $(Get-PSRepository -Name "PSGallery")
+
+if ($repo) {
+    if ( $repo.InstallationPolicy -ne "Trusted") {
+        Write-Host "Setting PSGallery to be trusted"
+        Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+    }
+}
+else {
+    Write-Host "Setting PSGallery to be trusted"
+    Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+}
 
 function InstallOrUpdateModule() {
     [CmdletBinding()]
@@ -90,70 +99,13 @@ function InstallOrUpdateModule() {
     }
 }
 
-InstallOrUpdateModule -module "DosInstallUtilities.Kube" -local $local -minVersion "1.75"
+InstallOrUpdateModule -module "DosInstallUtilities.Kube" -local $local -minVersion "1.83"
 
-InstallOrUpdateModule -module "DosInstallUtilities.OnPrem" -local $local -minVersion "1.70"
+InstallOrUpdateModule -module "DosInstallUtilities.OnPrem" -local $local -minVersion "1.85"
 
-InstallOrUpdateModule -module "DosInstallUtilities.Realtime" -local $local -minVersion "1.63"
+InstallOrUpdateModule -module "DosInstallUtilities.Realtime" -local $local -minVersion "1.80"
 
 # show Information messages
 $InformationPreference = "Continue"
 
-$userinput = ""
-while ($userinput -ne "q") {
-    $skip=$false
-    Write-Host "================ Health Catalyst version $version ================"
-    Write-Host "------ On-Premise -------"
-    Write-Host "1: Setup Master VM"
-    Write-Host "2: Show command to join another node to this cluster"
-    Write-Host "3: Uninstall Docker and Kubernetes"
-    Write-Host "4: Show all nodes"
-    Write-Host "5: Show status of cluster"
-    Write-Host "6: Setup Single Node Cluster"
-    Write-Host "-----------"
-    Write-Host "20: Troubleshooting Menu"
-    Write-Host "-----------"
-    Write-Host "52: Fabric Realtime Menu"
-    Write-Host "-----------"
-    Write-Host "q: Quit"
-    $userinput = Read-Host "Please make a selection"
-    switch ($userinput) {
-        '1' {
-            SetupMaster -baseUrl $baseUrl -singlenode $false -Verbose
-        }
-        '2' {
-            ShowCommandToJoinCluster -baseUrl $baseUrl -prerelease $isPrerelease
-        }
-        '3' {
-            UninstallDockerAndKubernetes
-        }
-        '4' {
-            ShowNodes
-        }
-        '5' {
-            ShowStatusOfCluster
-        }
-        '6' {
-            SetupMaster -baseUrl $baseUrl -singlenode $true -Verbose
-        }
-        '20' {
-            showTroubleshootingMenu -baseUrl $baseUrl -isAzure $false
-            $skip=$true
-        }
-        '52' {
-            ShowRealtimeMenu -baseUrl $baseUrl -namespace "fabricrealtime" -local $local -isAzure $false
-            $skip=$true
-        }
-        'q' {
-            return
-        }
-    }
-    if(!($skip)){
-        $userinput = Read-Host -Prompt "Press Enter to continue or q to exit"
-        if($userinput -eq "q"){
-            return
-        }
-    }
-    [Console]::ResetColor()
-    Clear-Host
-}
+ShowOnPremMenu -baseUrl $baseUrl -local $local -isPrerelease $isPrerelease
