@@ -1,5 +1,5 @@
 param([ValidateNotNullOrEmpty()][string]$baseUrl, [string]$prerelease)
-$version = "2018.11.01.04"
+$version = "2018.11.01.05"
 Write-Host "--- onprem-menu.ps1 version $version ---"
 Write-Host "baseUrl = $baseUrl"
 Write-Host "prerelease flag: $prerelease"
@@ -103,7 +103,7 @@ InstallOrUpdateModule -module "DosInstallUtilities.Kube" -local $local -minVersi
 
 InstallOrUpdateModule -module "DosInstallUtilities.OnPrem" -local $local -minVersion "1.89"
 
-InstallOrUpdateModule -module "DosInstallUtilities.Realtime" -local $local -minVersion "1.81"
+InstallOrUpdateModule -module "DosInstallUtilities.Realtime" -local $local -minVersion "1.82"
 
 # show Information messages
 $InformationPreference = "Continue"
