@@ -103,7 +103,7 @@ InstallOrUpdateModule -module "DosInstallUtilities.Kube" -local $local -minVersi
 
 InstallOrUpdateModule -module "DosInstallUtilities.OnPrem" -local $local -minVersion "1.88"
 
-InstallOrUpdateModule -module "DosInstallUtilities.Realtime" -local $local -minVersion "1.80"
+InstallOrUpdateModule -module "DosInstallUtilities.Realtime" -local $local -minVersion "1.81"
 
 # show Information messages
 $InformationPreference = "Continue"
