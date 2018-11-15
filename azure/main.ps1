@@ -55,7 +55,7 @@ if (Get-Module -ListAvailable -Name $module) {
         [string] $currentVersion = $moduleInfo.Version.ToString()
         if ($minVersion -ne $currentVersion) {
             Write-Host "Version of $module is $currentVersion while we expected $minVersion.  Installing version $minVersion..."
-            Update-Module -Name $module -MinimumVersion $minVersion -AllowClobber -Force -Scope CurrentUser
+            Update-Module -Name $module -AllowClobber -Force -Scope CurrentUser
             Import-Module -Name $module
         }
     }
