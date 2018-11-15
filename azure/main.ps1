@@ -39,7 +39,7 @@ Write-Host "GITHUB_URL: $GITHUB_URL"
 Write-Host "Powershell version: $($PSVersionTable.PSVersion.Major).$($PSVersionTable.PSVersion.Minor).$($PSVersionTable.PSVersion.Build)"
 
 $module = "AzureRM"
-$minVersion = "6.11.0"
+$minVersion = "6.12.0"
 Write-Host "Checking Module $module with minVersion=$minVersion"
 if (Get-Module -ListAvailable -Name $module) {
     Write-Host "Module $module exists. Importing it."
@@ -52,10 +52,10 @@ if (Get-Module -ListAvailable -Name $module) {
     }
     else {
         Write-Host "Checking Version of $module module is $minVersion"
-        [string] $currentVersion = $moduleInfo.Version.ToString()
-        if ($minVersion -ne $currentVersion) {
-            Write-Host "Version of $module is $currentVersion while we expected $minVersion.  Installing version $minVersion..."
-            Update-Module -Name $module -Force -Scope CurrentUser
+        [Version] $minimumVersionObject = [Version]::new($minVersion)
+        if ($minimumVersionObject -gt $($moduleInfo.Version)) {
+            Write-Host "Version of $module is $($moduleInfo.Version.ToString()) while we expected $minVersion.  Installing version $minVersion..."
+            Update-Module -Name $module -Force
             Import-Module -Name $module
         }
     }
@@ -122,7 +122,8 @@ function InstallOrUpdateModule() {
             }
             else {
                 Write-Host "Checking Version of $module module is $minVersion"
-                if ($minVersion -ne $moduleInfo.Version.ToString()) {
+                [Version] $minimumVersionObject = [Version]::new($minVersion)
+                if ($minimumVersionObject -gt $($moduleInfo.Version)) {
                     Write-Host "Installing Version of $module = $minVersion"
                     Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber -Force -Scope CurrentUser
                     Write-Host "Importing $module"
