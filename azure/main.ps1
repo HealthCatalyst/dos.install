@@ -42,9 +42,9 @@ $module = "AzureRM"
 $minVersion = "6.11.0"
 Write-Host "Checking Module $module with minVersion=$minVersion"
 if (Get-Module -ListAvailable -Name $module) {
-    Write-Host "Module $module exists"
-
+    Write-Host "Module $module exists. Importing it."
     Import-Module -Name $module
+    Write-Host "Getting Module info for $module."
     $moduleInfo = $(Get-Module -Name "$module")
     if ($null -eq $moduleInfo) {
         Write-Host "Could not get info on $module so installing it..."
@@ -145,14 +145,14 @@ function InstallOrUpdateModule() {
 
 # InstallOrUpdateModule -module "PSRabbitMq" -local $false -minVersion "0.3.1"
 
-InstallOrUpdateModule -module "DosInstallUtilities.Kube" -local $local -minVersion "1.80"
+InstallOrUpdateModule -module "DosInstallUtilities.Kube" -local $local -minVersion "2.11"
 
-InstallOrUpdateModule -module "DosInstallUtilities.Azure" -local $local -minVersion "1.82"
+InstallOrUpdateModule -module "DosInstallUtilities.Azure" -local $local -minVersion "2.11"
 
-InstallOrUpdateModule -module "DosInstallUtilities.Menu" -local $local -minVersion "1.81"
+InstallOrUpdateModule -module "DosInstallUtilities.Menu" -local $local -minVersion "2.11"
 
-InstallOrUpdateModule -module "DosInstallUtilities.Realtime" -local $local -minVersion "1.80"
+InstallOrUpdateModule -module "DosInstallUtilities.Realtime" -local $local -minVersion "2.11"
 
-InstallOrUpdateModule -module "DosInstallUtilities.Nlp" -local $local -minVersion "1.00"
+InstallOrUpdateModule -module "DosInstallUtilities.Nlp" -local $local -minVersion "2.11"
 
 ShowMainMenu -baseUrl $GITHUB_URL -local $local
