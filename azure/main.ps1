@@ -124,6 +124,8 @@ function InstallOrUpdateModule() {
                 Write-Host "Checking Version of $module module is $minVersion"
                 [Version] $minimumVersionObject = [Version]::new($minVersion)
                 if ($minimumVersionObject -gt $($moduleInfo.Version)) {
+                    Write-Host "Removing old versions of $module"
+                    Remove-Module -Name $module -Force
                     Write-Host "Installing Version of $module = $minVersion"
                     Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber -Force -Scope CurrentUser
                     Write-Host "Importing $module"
