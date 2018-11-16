@@ -39,12 +39,12 @@ Write-Host "GITHUB_URL: $GITHUB_URL"
 Write-Host "Powershell version: $($PSVersionTable.PSVersion.Major).$($PSVersionTable.PSVersion.Minor).$($PSVersionTable.PSVersion.Build)"
 
 $module = "AzureRM"
-$minVersion = "6.11.0"
+$minVersion = "6.12.0"
 Write-Host "Checking Module $module with minVersion=$minVersion"
 if (Get-Module -ListAvailable -Name $module) {
-    Write-Host "Module $module exists"
-
+    Write-Host "Module $module exists. Importing it."
     Import-Module -Name $module
+    Write-Host "Getting Module info for $module."
     $moduleInfo = $(Get-Module -Name "$module")
     if ($null -eq $moduleInfo) {
         Write-Host "Could not get info on $module so installing it..."
@@ -52,10 +52,10 @@ if (Get-Module -ListAvailable -Name $module) {
     }
     else {
         Write-Host "Checking Version of $module module is $minVersion"
-        [string] $currentVersion = $moduleInfo.Version.ToString()
-        if ($minVersion -ne $currentVersion) {
-            Write-Host "Version of $module is $currentVersion while we expected $minVersion.  Installing version $minVersion..."
-            Update-Module -Name $module -MinimumVersion $minVersion -AllowClobber -Force -Scope CurrentUser
+        [Version] $minimumVersionObject = [Version]::new($minVersion)
+        if ($minimumVersionObject -gt $($moduleInfo.Version)) {
+            Write-Host "Version of $module is $($moduleInfo.Version.ToString()) while we expected $minVersion.  Installing version $minVersion..."
+            Update-Module -Name $module -Force
             Import-Module -Name $module
         }
     }
@@ -122,7 +122,10 @@ function InstallOrUpdateModule() {
             }
             else {
                 Write-Host "Checking Version of $module module is $minVersion"
-                if ($minVersion -ne $moduleInfo.Version.ToString()) {
+                [Version] $minimumVersionObject = [Version]::new($minVersion)
+                if ($minimumVersionObject -gt $($moduleInfo.Version)) {
+                    Write-Host "Removing old versions of $module"
+                    Remove-Module -Name $module -Force
                     Write-Host "Installing Version of $module = $minVersion"
                     Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber -Force -Scope CurrentUser
                     Write-Host "Importing $module"
@@ -145,12 +148,14 @@ function InstallOrUpdateModule() {
 
 # InstallOrUpdateModule -module "PSRabbitMq" -local $false -minVersion "0.3.1"
 
-InstallOrUpdateModule -module "DosInstallUtilities.Kube" -local $local -minVersion "1.80"
+InstallOrUpdateModule -module "DosInstallUtilities.Kube" -local $local -minVersion "2.11"
 
-InstallOrUpdateModule -module "DosInstallUtilities.Azure" -local $local -minVersion "1.82"
+InstallOrUpdateModule -module "DosInstallUtilities.Azure" -local $local -minVersion "2.11"
 
-InstallOrUpdateModule -module "DosInstallUtilities.Menu" -local $local -minVersion "1.81"
+InstallOrUpdateModule -module "DosInstallUtilities.Menu" -local $local -minVersion "2.11"
 
-InstallOrUpdateModule -module "DosInstallUtilities.Realtime" -local $local -minVersion "1.80"
+InstallOrUpdateModule -module "DosInstallUtilities.Realtime" -local $local -minVersion "2.11"
+
+InstallOrUpdateModule -module "DosInstallUtilities.Nlp" -local $local -minVersion "2.11"
 
 ShowMainMenu -baseUrl $GITHUB_URL -local $local
