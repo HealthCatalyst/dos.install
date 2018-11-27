@@ -148,14 +148,14 @@ function InstallOrUpdateModule() {
 
 # InstallOrUpdateModule -module "PSRabbitMq" -local $false -minVersion "0.3.1"
 
-InstallOrUpdateModule -module "DosInstallUtilities.Kube" -local $local -minVersion "2.11"
+InstallOrUpdateModule -module "DosInstallUtilities.Kube" -local $local -minVersion "2.15"
 
-InstallOrUpdateModule -module "DosInstallUtilities.Azure" -local $local -minVersion "2.11"
+InstallOrUpdateModule -module "DosInstallUtilities.Azure" -local $local -minVersion "2.13"
 
-InstallOrUpdateModule -module "DosInstallUtilities.Menu" -local $local -minVersion "2.11"
+InstallOrUpdateModule -module "DosInstallUtilities.Menu" -local $local -minVersion "2.14"
 
 InstallOrUpdateModule -module "DosInstallUtilities.Realtime" -local $local -minVersion "2.11"
 
-InstallOrUpdateModule -module "DosInstallUtilities.Nlp" -local $local -minVersion "2.11"
+InstallOrUpdateModule -module "DosInstallUtilities.Nlp" -local $local -minVersion "2.15"
 
 ShowMainMenu -baseUrl $GITHUB_URL -local $local
