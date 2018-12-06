@@ -156,6 +156,6 @@ InstallOrUpdateModule -module "DosInstallUtilities.Menu" -local $local -minVersi
 
 InstallOrUpdateModule -module "DosInstallUtilities.Realtime" -local $local -minVersion "2.11"
 
-InstallOrUpdateModule -module "DosInstallUtilities.Nlp" -local $local -minVersion "2.15"
+InstallOrUpdateModule -module "DosInstallUtilities.Nlp" -local $local -minVersion "2.16"
 
 ShowMainMenu -baseUrl $GITHUB_URL -local $local
