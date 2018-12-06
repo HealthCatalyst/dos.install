@@ -152,7 +152,7 @@ InstallOrUpdateModule -module "DosInstallUtilities.Kube" -local $local -minVersi
 
 InstallOrUpdateModule -module "DosInstallUtilities.Azure" -local $local -minVersion "2.14"
 
-InstallOrUpdateModule -module "DosInstallUtilities.Menu" -local $local -minVersion "2.15"
+InstallOrUpdateModule -module "DosInstallUtilities.Menu" -local $local -minVersion "2.16"
 
 InstallOrUpdateModule -module "DosInstallUtilities.Realtime" -local $local -minVersion "2.11"
 
