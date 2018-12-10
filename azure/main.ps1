@@ -1,5 +1,5 @@
 param([string]$branch, [bool]$local)
-$version = "2018.12.10.01"
+$version = "2018.12.10.02"
 [Console]::ResetColor()
 Write-Host "--- main.ps1 version $version ---"
 Write-Host "branch: $branch"
@@ -123,7 +123,7 @@ function InstallOrUpdateModule() {
             else {
                 Write-Host "Checking Version of $module module is $minVersion"
                 [Version] $minimumVersionObject = [Version]::new($minVersion)
-                if ($($moduleInfo.Count) -gt 1) {
+                if ($moduleInfo -is [array]) {
                     Write-Host "Found $($moduleInfo.Count) versions of module.  Removing all..."
                     Remove-Module -Name $module
                     Uninstall-Module -Name $module -Force -AllVersions
