@@ -158,11 +158,11 @@ function InstallOrUpdateModule() {
 
 InstallOrUpdateModule -module "DosInstallUtilities.Kube" -local $local -minVersion "2.17"
 
-InstallOrUpdateModule -module "DosInstallUtilities.Azure" -local $local -minVersion "2.14"
+InstallOrUpdateModule -module "DosInstallUtilities.Azure" -local $local -minVersion "2.15"
 
-InstallOrUpdateModule -module "DosInstallUtilities.Menu" -local $local -minVersion "2.17"
+InstallOrUpdateModule -module "DosInstallUtilities.Menu" -local $local -minVersion "2.18"
 
-InstallOrUpdateModule -module "DosInstallUtilities.Realtime" -local $local -minVersion "2.11"
+InstallOrUpdateModule -module "DosInstallUtilities.Realtime" -local $local -minVersion "2.12"
 
 InstallOrUpdateModule -module "DosInstallUtilities.Nlp" -local $local -minVersion "2.16"
 
