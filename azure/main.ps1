@@ -1,5 +1,5 @@
 param([string]$branch, [bool]$local)
-$version = "2018.10.29.06"
+$version = "2018.12.10.02"
 [Console]::ResetColor()
 Write-Host "--- main.ps1 version $version ---"
 Write-Host "branch: $branch"
@@ -123,9 +123,16 @@ function InstallOrUpdateModule() {
             else {
                 Write-Host "Checking Version of $module module is $minVersion"
                 [Version] $minimumVersionObject = [Version]::new($minVersion)
-                if ($minimumVersionObject -gt $($moduleInfo.Version)) {
+                if ($moduleInfo -is [array]) {
+                    Write-Host "Found $($moduleInfo.Count) versions of module.  Removing all..."
+                    Remove-Module -Name $module
+                    Uninstall-Module -Name $module -Force -AllVersions
+                    Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber -Scope CurrentUser
+                }
+                elseif ($minimumVersionObject -gt $($moduleInfo.Version)) {
                     Write-Host "Removing old versions of $module"
-                    Remove-Module -Name $module -Force
+                    Remove-Module -Name $module
+                    Uninstall-Module -Name $module -Force
                     Write-Host "Installing Version of $module = $minVersion"
                     Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber -Force -Scope CurrentUser
                     Write-Host "Importing $module"
@@ -134,8 +141,9 @@ function InstallOrUpdateModule() {
             }
         }
         else {
-            Write-Host "Module $module does not exist"
+            Write-Host "Module $module does not exist.  Installing it...."
             Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber -Scope CurrentUser
+            Write-Host "Importing module $module"
             Import-Module -Name $module
         }
     }
@@ -148,14 +156,14 @@ function InstallOrUpdateModule() {
 
 # InstallOrUpdateModule -module "PSRabbitMq" -local $false -minVersion "0.3.1"
 
-InstallOrUpdateModule -module "DosInstallUtilities.Kube" -local $local -minVersion "2.15"
+InstallOrUpdateModule -module "DosInstallUtilities.Kube" -local $local -minVersion "2.17"
 
-InstallOrUpdateModule -module "DosInstallUtilities.Azure" -local $local -minVersion "2.13"
+InstallOrUpdateModule -module "DosInstallUtilities.Azure" -local $local -minVersion "2.15"
 
-InstallOrUpdateModule -module "DosInstallUtilities.Menu" -local $local -minVersion "2.14"
+InstallOrUpdateModule -module "DosInstallUtilities.Menu" -local $local -minVersion "2.18"
 
-InstallOrUpdateModule -module "DosInstallUtilities.Realtime" -local $local -minVersion "2.11"
+InstallOrUpdateModule -module "DosInstallUtilities.Realtime" -local $local -minVersion "2.12"
 
-InstallOrUpdateModule -module "DosInstallUtilities.Nlp" -local $local -minVersion "2.15"
+InstallOrUpdateModule -module "DosInstallUtilities.Nlp" -local $local -minVersion "2.16"
 
 ShowMainMenu -baseUrl $GITHUB_URL -local $local
