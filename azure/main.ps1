@@ -1,5 +1,5 @@
 param([string]$branch, [bool]$local)
-$version = "2018.12.10.02"
+$version = "2018.12.13.01"
 [Console]::ResetColor()
 Write-Host "--- main.ps1 version $version ---"
 Write-Host "branch: $branch"
@@ -38,6 +38,44 @@ Write-Host "GITHUB_URL: $GITHUB_URL"
 
 Write-Host "Powershell version: $($PSVersionTable.PSVersion.Major).$($PSVersionTable.PSVersion.Minor).$($PSVersionTable.PSVersion.Build)"
 
+function Uninstall-AllModules() {
+    [CmdletBinding()]
+    param
+    (
+        [Parameter(Mandatory = $true)]
+        [string]$TargetModule,
+
+        [Parameter(Mandatory = $true)]
+        [string]$Version,
+
+        [switch]$Force
+    )
+
+    Write-Verbose 'Uninstall-AllModules: Starting'
+
+    $AllModules = @()
+
+    'Creating list of dependencies...'
+    $target = Find-Module $TargetModule -RequiredVersion $version
+    $target.Dependencies | ForEach-Object {
+        $AllModules += New-Object -TypeName psobject -Property @{name = $_.name; version = $_.requiredversion}
+    }
+    $AllModules += New-Object -TypeName psobject -Property @{name = $TargetModule; version = $Version}
+
+    foreach ($module in $AllModules) {
+        Write-Host ('Uninstalling {0} version {1}' -f $module.name, $module.version)
+        try {
+            Remove-Module -Name $module.name -Force
+            Uninstall-Module -Name $module.name -RequiredVersion $module.version -Force:$Force -ErrorAction Stop
+        }
+        catch {
+            Write-Host ("`t" + $_.Exception.Message)
+        }
+    }
+
+    Write-Verbose 'Uninstall-AllModules: Done'
+}
+
 $module = "AzureRM"
 $minVersion = "6.12.0"
 Write-Host "Checking Module $module with minVersion=$minVersion"
@@ -55,7 +93,13 @@ if (Get-Module -ListAvailable -Name $module) {
         [Version] $minimumVersionObject = [Version]::new($minVersion)
         if ($minimumVersionObject -gt $($moduleInfo.Version)) {
             Write-Host "Version of $module is $($moduleInfo.Version.ToString()) while we expected $minVersion.  Installing version $minVersion..."
-            Update-Module -Name $module -Force
+            Write-Host "Removing $module from current session"
+            Get-Module "$module" | Remove-Module -Force
+            Write-Host "Uninstalling old version $($moduleInfo.Version.ToString()) of $module"
+            Uninstall-AllModules -TargetModule AzureRM -Version "$($moduleInfo.Version.ToString())" -Force
+            Write-Host "Installing new version of $module"
+            Install-Module -Name $module -MinimumVersion $minVersion -AllowClobber -Scope CurrentUser
+            Write-Host "Importing $module"
             Import-Module -Name $module
         }
     }
@@ -160,7 +204,7 @@ InstallOrUpdateModule -module "DosInstallUtilities.Kube" -local $local -minVersi
 
 InstallOrUpdateModule -module "DosInstallUtilities.Azure" -local $local -minVersion "2.15"
 
-InstallOrUpdateModule -module "DosInstallUtilities.Menu" -local $local -minVersion "2.19"
+InstallOrUpdateModule -module "DosInstallUtilities.Menu" -local $local -minVersion "2.20"
 
 InstallOrUpdateModule -module "DosInstallUtilities.Realtime" -local $local -minVersion "2.13"
 
