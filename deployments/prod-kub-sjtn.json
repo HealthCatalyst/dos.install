@@ -19,11 +19,11 @@
             "version": "0.15.0"
         },
         "masterVMSize": "Standard_DS2_v2",
-        "workerVMSize": "Standard_DS3_v2",
+        "workerVMSize": "Standard_DS13-4_v2",
         "sethostfile": true
     },
     "service_principal": {
-        "name": "prod-kub-sjtn-rg2",
+        "name": "prod-kub-sjtn-rg3",
         "delete_if_exists": false
     },
     "storage_account": {
@@ -33,7 +33,7 @@
     "customerid": "sjtn",
     "ssl": true,
     "ssl_folder": "c:\\kubernetes\\certs\\sjtn",
-    "ssl_merge_intermediate_cert": true,
+	"ssl_merge_intermediate_cert": true,
     "allow_kubectl_from_outside_vnet": false,
     "ingress": {
         "external": {
