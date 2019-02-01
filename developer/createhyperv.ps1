@@ -73,7 +73,8 @@ function New-LinuxVM {
 	$VMDVDDrive = Add-VMDvdDrive -VM $VM -ControllerNumber 0 -ControllerLocation 1 -Passthru
 	$VMNetAdapter = Get-VMNetworkAdapter -VM $VM
 	Set-VMNetworkAdapter -VMNetworkAdapter $VMNetAdapter -StaticMacAddress ($VMNetAdapter.MacAddress)
-	Set-VMFirmware -VM $VM -BootOrder $VMDVDDrive, $VMVHD, $VMNetAdapter -EnableSecureBoot On -SecureBootTemplate 'MicrosoftUEFICertificateAuthority'
+	Set-VMFirmware -VM $VM -BootOrder $VMDVDDrive, $VMVHD, $VMNetAdapter -EnableSecureBoot Off
+#	Set-VMFirmware -VM $VM -BootOrder $VMDVDDrive, $VMVHD, $VMNetAdapter -EnableSecureBoot On -SecureBootTemplate 'MicrosoftUEFICertificateAuthority'
 	Set-VMDvdDrive -VMDvdDrive $VMDVDDrive -Path $InstallISOPath
 	if($Cluster)
 	{
@@ -86,9 +87,9 @@ do {
 	[string] $myVmName = Read-Host -Prompt "Enter name for new VM"
 } while ([string]::IsNullOrEmpty($myVmName))
 
-# New-LinuxVM -InstallISOPath C:\hyperv\CentOS-7-x86_64-Minimal-1708.iso -VMSwitchName "Default Switch"
+New-LinuxVM -VMName $myVmName -InstallISOPath C:\hyperv\CentOS-7-x86_64-Minimal-1708.iso -VMSwitchName "Default Switch"
 
-New-LinuxVM  -VMName $myVmName -InstallISOPath C:\hyperv\rhel-server-7.1-x86_64-dvd.iso -VMSwitchName "Default Switch"
+# New-LinuxVM -VMName $myVmName -InstallISOPath C:\hyperv\rhel-server-7.2-x86_64-dvd.iso -VMSwitchName "Default Switch"
 
 
 # New-LinuxVM -InstallISOPath C:\hyperv\SLE-12-SP3-Server-DVD-x86_64-GM-DVD1.iso -VMSwitchName "Default Switch"
