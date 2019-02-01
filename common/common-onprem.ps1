@@ -10,10 +10,11 @@ function global:GetCommonOnPremVersion() {
 
 # 18.06.1.ce-3
 # The list of validated docker versions was updated to 1.11.1, 1.12.1, 1.13.1, 17.03, 17.06, 17.09, 18.06. (#68495)
-[string] $kubernetesversion = "1.12.1-0"
+[string] $kubernetesversion = "1.11.3-0"
 # 1.12.1-0
 [string] $kubernetescniversion = "0.6.0-0"
-[string] $kubernetesserverversion = "1.12.1-0"
+[string] $kubernetesserverversion = "1.11.3-0"
+[string] $kubernetesserverversionsimple = "1.11.3"
 
 function SetupWorker([Parameter(Mandatory=$true)][ValidateNotNullOrEmpty()][string] $baseUrl, [Parameter(Mandatory=$true)][ValidateNotNullOrEmpty()][string] $joincommand) {
     [hashtable]$Return = @{}
@@ -40,7 +41,7 @@ function SetupWorker([Parameter(Mandatory=$true)][ValidateNotNullOrEmpty()][stri
 
     WriteToConsole "This node has successfully joined the cluster"
 
-    kubectl get nodes
+    # kubectl get nodes
 
     Stop-Transcript
 
@@ -989,6 +990,17 @@ function OpenPortOnPrem([Parameter(Mandatory=$true)][ValidateNotNullOrEmpty()][i
                         [Parameter(Mandatory=$true)][ValidateNotNullOrEmpty()][string]$type)
 {
     AddFirewallPort -port "${port}/${protocol}" -name "$name"
+}
+
+function UpgradeKubernetes(){
+    kubeadm version
+    kubectl get configmap --all-namespaces
+    unlockPackageVersion "kubelet kubeadm kubectl kubernetes-cni"
+    sudo yum -y install kubelet-${kubernetesversion} kubeadm-${kubernetesversion} kubectl-${kubernetesversion} kubernetes-cni-${kubernetescniversion}
+    lockPackageVersion "kubelet kubeadm kubectl kubernetes-cni"
+    sudo kubeadm upgrade plan
+    sudo kubeadm upgrade apply --yes v${kubernetesserverversionsimple}
+    kubectl get configmap --all-namespaces
 }
 #
 Write-Information -MessageData "end common-onprem.ps1 version $versiononpremcommon"
