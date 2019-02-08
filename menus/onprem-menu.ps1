@@ -99,7 +99,7 @@ function InstallOrUpdateModule() {
     }
 }
 
-InstallOrUpdateModule -module "DosInstallUtilities.Kube" -local $local -minVersion "1.87"
+InstallOrUpdateModule -module "DosInstallUtilities.Kube" -local $local -minVersion "2.18"
 
 InstallOrUpdateModule -module "DosInstallUtilities.OnPrem" -local $local -minVersion "2.31"
 

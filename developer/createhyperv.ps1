@@ -18,7 +18,7 @@ function New-LinuxVM {
 		[Parameter()][Uint32]$StartupMemory = 2048MB,
 		[Parameter()][Uint32]$MinimumMemory = 256MB,
 		[Parameter()][Uint32]$MaximumMemory = 2GB,
-		[Parameter()][Uint64]$VHDXSizeBytes = 30GB
+		[Parameter()][Uint64]$VHDXSizeBytes = 15GB
 	)
 
 	if([String]::IsNullOrEmpty($VHDXName))
@@ -87,9 +87,9 @@ do {
 	[string] $myVmName = Read-Host -Prompt "Enter name for new VM"
 } while ([string]::IsNullOrEmpty($myVmName))
 
-New-LinuxVM -VMName $myVmName -InstallISOPath C:\hyperv\CentOS-7-x86_64-Minimal-1708.iso -VMSwitchName "Default Switch"
+# New-LinuxVM -VMName $myVmName -InstallISOPath C:\hyperv\CentOS-7-x86_64-Minimal-1708.iso -VMSwitchName "Default Switch"
 
-# New-LinuxVM -VMName $myVmName -InstallISOPath C:\hyperv\rhel-server-7.2-x86_64-dvd.iso -VMSwitchName "Default Switch"
+New-LinuxVM -VMName $myVmName -InstallISOPath C:\hyperv\rhel-server-7.1-x86_64-dvd.iso -VMSwitchName "Default Switch"
 
 
 # New-LinuxVM -InstallISOPath C:\hyperv\SLE-12-SP3-Server-DVD-x86_64-GM-DVD1.iso -VMSwitchName "Default Switch"
