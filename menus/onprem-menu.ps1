@@ -101,9 +101,9 @@ function InstallOrUpdateModule() {
 
 InstallOrUpdateModule -module "DosInstallUtilities.Kube" -local $local -minVersion "2.18"
 
-InstallOrUpdateModule -module "DosInstallUtilities.OnPrem" -local $local -minVersion "2.31"
+InstallOrUpdateModule -module "DosInstallUtilities.OnPrem" -local $local -minVersion "2.32"
 
-InstallOrUpdateModule -module "DosInstallUtilities.Realtime" -local $local -minVersion "1.83"
+InstallOrUpdateModule -module "DosInstallUtilities.Realtime" -local $local -minVersion "2.13"
 
 # show Information messages
 $InformationPreference = "Continue"
