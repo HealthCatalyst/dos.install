@@ -15,7 +15,7 @@ set -euo pipefail
 #   curl -sSL https://raw.githubusercontent.com/HealthCatalyst/dos.install/master/onprem/main.sh -o "${HOME}/main.sh"; bash "${HOME}/main.sh"
 #   curl https://bit.ly/2GOPcyX | bash
 #
-version="2018.04.23.01"
+version="2019.02.10.01"
 
 prerelease=false
 joincommand=""
