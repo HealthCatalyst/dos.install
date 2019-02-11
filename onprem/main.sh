@@ -20,10 +20,18 @@ version="2018.04.23.01"
 prerelease=false
 joincommand=""
 if [[ "${1:-}" = "-prerelease" ]]; then
+    echo "setting prerelease"
     prerelease=true
 else
-    joincommand=$1
+    echo "reading joincommand: $1"
+    joincommand="$1"
 fi
+
+if [[ "${2:-}" = "-prerelease" ]]; then
+    echo "setting prerelease"
+    prerelease=true
+fi
+echo "joincommand = $joincommand"
 
 GITHUB_URL="https://raw.githubusercontent.com/HealthCatalyst/dos.install/release"
 if [[ "${prerelease:-false}" = true ]]; then
