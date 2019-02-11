@@ -1,5 +1,5 @@
-param([ValidateNotNullOrEmpty()][string]$baseUrl, [string]$prerelease)
-$version = "2018.11.01.06"
+param([ValidateNotNullOrEmpty()][string]$baseUrl, [string]$prerelease, [string]$joinCommand)
+$version = "2019.02.10.01"
 Write-Host "--- onprem-menu.ps1 version $version ---"
 Write-Host "baseUrl = $baseUrl"
 Write-Host "prerelease flag: $prerelease"
@@ -99,13 +99,18 @@ function InstallOrUpdateModule() {
     }
 }
 
-InstallOrUpdateModule -module "DosInstallUtilities.Kube" -local $local -minVersion "1.87"
+InstallOrUpdateModule -module "DosInstallUtilities.Kube" -local $local -minVersion "2.18"
 
-InstallOrUpdateModule -module "DosInstallUtilities.OnPrem" -local $local -minVersion "2.31"
+InstallOrUpdateModule -module "DosInstallUtilities.OnPrem" -local $local -minVersion "2.38"
 
-InstallOrUpdateModule -module "DosInstallUtilities.Realtime" -local $local -minVersion "1.83"
+InstallOrUpdateModule -module "DosInstallUtilities.Realtime" -local $local -minVersion "2.13"
 
 # show Information messages
 $InformationPreference = "Continue"
 
-ShowOnPremMenu -baseUrl $baseUrl -local $local -isPrerelease $isPrerelease
+if([String]::IsNullOrWhiteSpace($joinCommand)){
+    ShowOnPremMenu -baseUrl $baseUrl -local $local -isPrerelease $isPrerelease
+}
+else {
+    SetupWorker -baseUrl $baseUrl -joincommand $joinCommand
+}

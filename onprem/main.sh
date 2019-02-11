@@ -15,12 +15,23 @@ set -euo pipefail
 #   curl -sSL https://raw.githubusercontent.com/HealthCatalyst/dos.install/master/onprem/main.sh -o "${HOME}/main.sh"; bash "${HOME}/main.sh"
 #   curl https://bit.ly/2GOPcyX | bash
 #
-version="2018.04.23.01"
+version="2019.02.10.01"
 
 prerelease=false
+joincommand=""
 if [[ "${1:-}" = "-prerelease" ]]; then
+    echo "setting prerelease"
+    prerelease=true
+else
+    echo "reading joincommand: $1"
+    joincommand="$1"
+fi
+
+if [[ "${2:-}" = "-prerelease" ]]; then
+    echo "setting prerelease"
     prerelease=true
 fi
+echo "joincommand = $joincommand"
 
 GITHUB_URL="https://raw.githubusercontent.com/HealthCatalyst/dos.install/release"
 if [[ "${prerelease:-false}" = true ]]; then
@@ -61,6 +72,14 @@ createShortcutFordos $GITHUB_URL $prerelease
 echo "--- installing prerequisites ---"
 InstallPrerequisites
 
-dos
+if [[ -z "$joincommand" ]]; then
+    dos
+else
+    echo "--- download onprem-menu.ps1 ---"
+    curl -o "${HOME}/onprem-menu.ps1" -sSL "${GITHUB_URL}/menus/onprem-menu.ps1?p=$RANDOM"
+
+    echo "--- running onprem-menu.ps1 ---"
+    pwsh -f "${HOME}/onprem-menu.ps1" -baseUrl $GITHUB_URL -joincommand "$joincommand"
+fi
 
 echo " --- end of main.sh $version ---"
