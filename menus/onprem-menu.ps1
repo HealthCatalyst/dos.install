@@ -1,4 +1,4 @@
-param([ValidateNotNullOrEmpty()][string]$baseUrl, [string]$prerelease)
+param([ValidateNotNullOrEmpty()][string]$baseUrl, [string]$prerelease, [string]$joinCommand)
 $version = "2018.11.01.06"
 Write-Host "--- onprem-menu.ps1 version $version ---"
 Write-Host "baseUrl = $baseUrl"
@@ -108,4 +108,9 @@ InstallOrUpdateModule -module "DosInstallUtilities.Realtime" -local $local -minV
 # show Information messages
 $InformationPreference = "Continue"
 
-ShowOnPremMenu -baseUrl $baseUrl -local $local -isPrerelease $isPrerelease
+if([String]::IsNullOrWhiteSpace($joinCommand)){
+    ShowOnPremMenu -baseUrl $baseUrl -local $local -isPrerelease $isPrerelease
+}
+else {
+    SetupWorker -baseUrl $baseUrl -joincommand $joinCommand
+}

@@ -18,8 +18,11 @@ set -euo pipefail
 version="2018.04.23.01"
 
 prerelease=false
+joincommand=""
 if [[ "${1:-}" = "-prerelease" ]]; then
     prerelease=true
+else
+    joincommand=$1
 fi
 
 GITHUB_URL="https://raw.githubusercontent.com/HealthCatalyst/dos.install/release"
@@ -61,6 +64,14 @@ createShortcutFordos $GITHUB_URL $prerelease
 echo "--- installing prerequisites ---"
 InstallPrerequisites
 
-dos
+if [[ -z "$joincommand" ]]; then
+    dos
+else
+    echo "--- download onprem-menu.ps1 ---"
+    curl -o "${HOME}/onprem-menu.ps1" -sSL "${GITHUB_URL}/menus/onprem-menu.ps1?p=$RANDOM"
+
+    echo "--- running onprem-menu.ps1 ---"
+    pwsh -f "${HOME}/onprem-menu.ps1" -baseUrl $GITHUB_URL -joincommand "$joincommand"
+fi
 
 echo " --- end of main.sh $version ---"
