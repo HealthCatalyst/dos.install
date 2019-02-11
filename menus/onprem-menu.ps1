@@ -101,11 +101,11 @@ function InstallOrUpdateModule() {
 
 InstallOrUpdateModule -module "DosInstallUtilities.Kube" -local $local -minVersion "2.18"
 
-InstallOrUpdateModule -module "DosInstallUtilities.OnPrem" -local $local -minVersion "2.39"
+InstallOrUpdateModule -module "DosInstallUtilities.OnPrem" -local $local -minVersion "2.45"
 
 InstallOrUpdateModule -module "DosInstallUtilities.Realtime" -local $local -minVersion "2.13"
 
-# show Information messages
+# show Informational messages
 $InformationPreference = "Continue"
 
 if([String]::IsNullOrWhiteSpace($joinCommand)){
