@@ -200,7 +200,7 @@ function InstallOrUpdateModule() {
 
 # InstallOrUpdateModule -module "PSRabbitMq" -local $false -minVersion "0.3.1"
 
-InstallOrUpdateModule -module "DosInstallUtilities.Kube" -local $local -minVersion "2.17"
+InstallOrUpdateModule -module "DosInstallUtilities.Kube" -local $local -minVersion "2.18"
 
 InstallOrUpdateModule -module "DosInstallUtilities.Azure" -local $local -minVersion "2.15"
 
