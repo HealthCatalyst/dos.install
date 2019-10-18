@@ -1542,10 +1542,10 @@ function global:ConfigureWAF() {
     [hashtable]$Return = @{} 
 
     # not working yet
-    $publicip = az network public-ip show -g $AKS_PERS_RESOURCE_GROUP -n IngressPublicIP --query "ipAddress" -o tsv;
+    $publicip = az network public-ip show -g $AKS_PERS_RESOURCE_GROUP -n NewIngressPublicIP --query "ipAddress" -o tsv;
     if ([string]::IsNullOrWhiteSpace($publicip)) {
-        az network public-ip create -g $AKS_PERS_RESOURCE_GROUP -n IngressPublicIP --location $AKS_PERS_LOCATION --allocation-method Static
-        $publicip = az network public-ip show -g $AKS_PERS_RESOURCE_GROUP -n IngressPublicIP --query "ipAddress" -o tsv;
+        az network public-ip create -g $AKS_PERS_RESOURCE_GROUP -n NewIngressPublicIP --location $AKS_PERS_LOCATION --allocation-method Static
+        $publicip = az network public-ip show -g $AKS_PERS_RESOURCE_GROUP -n NewIngressPublicIP --query "ipAddress" -o tsv;
     }  
 
     Write-Information -MessageData "Using Public IP: [$publicip]"

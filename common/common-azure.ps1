@@ -763,10 +763,10 @@ function global:SetupAzureLoadBalancer([Parameter(Mandatory = $true)][ValidateNo
     elseif ("$($config.ingress.external.type)" -ne "vnetonly") {
         Write-Host "Setting up a public load balancer"
     
-        $externalip = az network public-ip show -g $AKS_PERS_RESOURCE_GROUP -n IngressPublicIP --query "ipAddress" -o tsv;
+        $externalip = az network public-ip show -g $AKS_PERS_RESOURCE_GROUP -n NewIngressPublicIP --query "ipAddress" -o tsv;
         if ([string]::IsNullOrWhiteSpace($externalip)) {
-            az network public-ip create -g $AKS_PERS_RESOURCE_GROUP -n IngressPublicIP --location $AKS_PERS_LOCATION --allocation-method Static
-            $externalip = az network public-ip show -g $AKS_PERS_RESOURCE_GROUP -n IngressPublicIP --query "ipAddress" -o tsv;
+            az network public-ip create -g $AKS_PERS_RESOURCE_GROUP -n NewIngressPublicIP --location $AKS_PERS_LOCATION --allocation-method Static
+            $externalip = az network public-ip show -g $AKS_PERS_RESOURCE_GROUP -n NewIngressPublicIP --query "ipAddress" -o tsv;
         }  
         Write-Host "Using Public IP: [$externalip]"
     }
